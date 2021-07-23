@@ -179,7 +179,7 @@ class Response extends Action implements CsrfAwareActionInterface
             $redirectUrl = $urlInterface->getUrl('checkout/onepage/failure/');
         }
         $params['redirectUrl'] = $redirectUrl;
-echo 'testzdd';exit;
+
         $this->registry->register(\EService\Payment\Block\Response::REGISTRY_PARAMS_KEY, $params);
 
         $this->_view->loadLayout();
