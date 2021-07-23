@@ -79,7 +79,7 @@ class Response extends Action implements CsrfAwareActionInterface
     }
 
     /**
-     * Execute view action
+     * Execute view action: LandingPageOnReturnAfterRedirect(sychronous)
      *
      * @return \Magento\Framework\Controller\ResultInterface
      */
@@ -119,47 +119,67 @@ class Response extends Action implements CsrfAwareActionInterface
         try {
 			$params = array(
 				"allowOriginUrl" => $urlInterface->getBaseUrl(),
-				"merchantTxId" => $order->getRealOrderId()
+				"merchantTxId" => $order->getRealOrderId(),
+                'transactionKey' => $request->getParam('merchantTxId')
 			);
-            $gatewayTransaction = $this->_helper->executeGatewayTransaction("GET_STATUS", $params);
+            $result = $this->_helper->executeGatewayTransaction("GET_STATUS", $params);
         } catch (\Exception $e) {
             $this->_redirect($urlInterface->getUrl('checkout/onepage/failure/'));
             return;
         }
+        $status = strtolower($result->TrxResponse->Status);
+        if ($status == "approved") {
+            $transactionState = strtolower($result->TransactionState);
+            if($transactionState == "pending capture") { //Auth transaction
+                if($order->getState() == 'Authorized'){
+                    return false;
+                }
+                $order->setState('holded')
+                    ->setStatus("holded")
+                    ->addStatusHistoryComment(__('Order payment authorized'))
+                    ->setIsCustomerNotified(true);
+                $order->save();
+                $payment = $order->getPayment();
+                $payment->setIsTransactionClosed(false);
 
-        if ($gatewayTransaction->result == 'success') {
-            $realStatus = $gatewayTransaction->status;
-            if ($realStatus == 'SET_FOR_CAPTURE') { //PURCHASE was successful
+
+                $payment->resetTransactionAdditionalInfo()
+                    ->setTransactionId($request->getParam('merchantTxId'));
+
+                $transaction = $payment->addTransaction(Transaction::TYPE_AUTH, null, true);
+                $transaction->setIsClosed(0);
+                $transaction->save();
+                $payment->save();
                 $redirectUrl = $urlInterface->getUrl('checkout/onepage/success/');
-            } else if ($realStatus == 'NOT_SET_FOR_CAPTURE') { // AUTH was successful
-                $redirectUrl = $urlInterface->getUrl('checkout/onepage/success/');
-            } else if ($realStatus == 'CAPTURED') { // transaction captured
-                $redirectUrl = $urlInterface->getUrl('checkout/onepage/success/');
-            } else if ($realStatus == 'SUCCESS') {
-                $redirectUrl = $urlInterface->getUrl('checkout/onepage/success/');
-            } else if ($realStatus == 'DECLINED' ||
-                $realStatus == 'ERROR') {
-                $redirectUrl = $urlInterface->getUrl('checkout/onepage/failure/');
-            } else if ($realStatus == 'VERIFIED') {
+            } elseif (in_array($transactionState,array('pending settlement','settled','captured'))){//Purchase transaction
+                if($order->getStatus() != \Magento\Sales\Model\Order::STATE_PROCESSING && $order->getStatus() != \Magento\Sales\Model\Order::STATE_COMPLETE){
+                    if($order->getState() == 'Paid'){
+                        return false;
+                    }
+                    $order->setState("processing")
+                        ->setStatus("processing")
+                        ->addStatusHistoryComment(__('Payment completed successfully.'))
+                        ->setIsCustomerNotified(true);
+                    $order->save();
+                    try {
+                        $this->_helper->generateInvoice($order, $this->invoiceService, $this->_transaction);
+                    } catch (\Exception $e) {
+                        //log
+                    }
+                }
                 $redirectUrl = $urlInterface->getUrl('checkout/onepage/success/');
             } else {
                 $redirectUrl = $urlInterface->getUrl('checkout/onepage/failure/');
             }
-        } else if ($gatewayTransaction->result == 'failure') {
-            $order->setState("canceled")
-                ->setStatus("canceled")
-                ->addStatusHistoryComment(__('Order cancelled due to failed transaction'))->setIsCustomerNotified(true);
-            $order->save();
-            $redirectUrl = $urlInterface->getUrl('checkout/onepage/failure/');
         } else {
             $order->setState("canceled")
                 ->setStatus("canceled")
-                ->addStatusHistoryComment('Order cancelled due to failed transaction: ' . $gatewayTransaction->merchantTxId . '(' . $gatewayTransaction->txId . ') failed: ' . implode("|", $gatewayTransaction->errors))->setIsCustomerNotified(true);
+                ->addStatusHistoryComment('Order cancelled due to failed transaction: ' . $params['transactionKey'] . '(Order ID:' . $params['merchantTxId'] . ')' )->setIsCustomerNotified(true);
             $order->save();
             $redirectUrl = $urlInterface->getUrl('checkout/onepage/failure/');
         }
         $params['redirectUrl'] = $redirectUrl;
-
+echo 'testzdd';exit;
         $this->registry->register(\EService\Payment\Block\Response::REGISTRY_PARAMS_KEY, $params);
 
         $this->_view->loadLayout();

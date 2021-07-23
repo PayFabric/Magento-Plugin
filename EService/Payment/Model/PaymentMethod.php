@@ -309,21 +309,17 @@ class PaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod impleme
     private function getAPIParametersForRedirect($apiOperation)
     {
         $sessionTokenData = $this->getTokenHostedData($apiOperation);
-        $token = $this->_helper->executeGatewayTransaction($sessionTokenData['action'],$sessionTokenData);
-        if ($token->result != 'success' ) {
-            throw new \Magento\Framework\Validator\Exception(__(json_encode($token->errors)));
+        $responseToken = $this->_helper->executeGatewayTransaction($sessionTokenData['action'],$sessionTokenData);
+        if (empty($responseToken->Token)) {
+            throw new \Magento\Framework\Validator\Exception(__(json_encode($responseToken)));
         }
-        $merchantId = trim($this->_helper->getConfigData('merchant_id'));
-        $formFields = [];
-        $formFields['token'] = $token->token;
-        $formFields['merchantId'] = $merchantId;
-
-        $paymentMethodID = trim($this->_helper->getConfigData('payment_method'));
-        if ($paymentMethodID != '') {
-            $formFields['paymentSolutionId'] = $paymentMethodID;
-        }
-        $formFields['integrationMode'] = $this->_helper->getIntegrationMode();
-
+        $formFields = array(
+            'environment' => $this->_helper->isSandboxMode() ? (stripos(TESTGATEWAY,'DEV-US2')===FALSE ? (stripos(TESTGATEWAY,'QA')===FALSE ? 'SANDBOX' : 'QA') : 'DEV-US2') : 'LIVE',
+            'target' => 'cashierDiv',
+            'displayMethod' => 'IN_PLACE',
+            'session' => $responseToken->Token,
+            'disableCancel' => true
+        );
         return $formFields;
     }
 
@@ -424,32 +420,42 @@ class PaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod impleme
 
         $sessionTokenData = array(
             "action" => $apiOperation,
-            "merchantTxId" => $orderId,
+            "referenceNum" => $merchantReference, // REQUIRED - Merchant internal order number //
+            "Amount" => $amount, // REQUIRED - Transaction amount in US format //
+            "Currency" => 'USD', // Optional - Valid only for ChasePaymentech multi-currecy setup. Please see full documentation for more info
+            "pluginName" => "Magento PayFabric Gateway",
+            "pluginVersion" => "1.0.0",
+            //Shipping Information
+            "shippingCity" => $shippingAddressCity, // Optional - Customer city //
+            "shippingCountry" => $shippingAddressCountry, // Optional - Customer country code per ISO 3166-2 //
             "customerId" => $customerId,
-            "channel" => "ECOM",
-            "amount" => $amount,
-            "currency" => $orderCurrencyCode,
-            "country" => $billingAddressCountry,
-            "allowOriginUrl" => $allowOriginUrl,
+            "shippingEmail" => $order->get_billing_email(), // Optional - Customer email address, use the billing email as shipping email because there is no shipping email//
+            "shippingAddress1" => $shippingAddressStreet, // Optional - Customer address //
+//            "shippingAddress2" => $order->get_shipping_address_2(), // Optional - Customer address //
+            "shippingPhone" => $shippingAddressPhone, // Optional - Customer phone number, use the billing phone as shipping phone because there is no shipping phone //
+//            "shippingState" => $order->get_shipping_state(), // Optional - Customer state with 2 characters //
+            "shippingPostalCode" => $shippingAddressPostalCode, // Optional - Customer zip code //
+            //Billing Information
+            'billingFirstName' => $customerFirstName,
+            'billingLastName'  => $customerLastName,
+//            'billingCompany'    => $order->get_billing_company(),
+            'billingAddress1'  => $customerAddressStreet,
+//            'billingAddress2'  => $order->get_billing_address_2(),
+            'billingCity'       => $customerAddressCity,
+            'billingState'      => $customerAddressState,
+            'billingPostalCode'   => $customerAddressPostalCode,
+            'billingCountry'    => $customerAddressCountry,
+            'billingEmail'      => $customerEmail,
+            'billingPhone'      => $customerPhone,
+            //level2/3
+//            'freightAmount'    => $order->get_shipping_total(),
+//            'taxAmount' => $order->get_total_tax(),
+//            'lineItems' => $level3_data,
+            //Optional
+            'allowOriginUrl' => $allowOriginUrl,
             "merchantNotificationUrl" => $merchantNotificationUrl,
-            "merchantLandingPageUrl" => $merchantLandingPageUrl,
-            "customerFirstName" => $customerFirstName,
-            "customerLastName" => $customerLastName,
-            "customerEmail" => $customerEmail,
-            "customerPhone" => $customerPhone,
-            "userDevice" => 'DESKTOP',
-            "userAgent" => getenv('HTTP_USER_AGENT'),
-            "customerIPAddress" => $order->getRemoteIp(),
-            "customerAddressHouseName" => $customerAddressStreet,
-            "customerAddressStreet" => $customerAddressStreet,
-            "customerAddressCity" => $customerAddressCity,
-            "customerAddressPostalCode" => $customerAddressPostalCode,
-            "customerAddressState" => $customerAddressState,
-            "customerAddressCountry" => $customerAddressCountry,
-            "merchantChallengeInd" => '01',
-            "merchantDecReqInd" => 'N',
-            "merchantLandingPageRedirectMethod" => 'GET'
-
+//            "userAgent" => $order->get_customer_user_agent(),
+//            "customerIPAddress" => $ip
         );
 
         $sessionTokenData["paymentSolutionId"] = '';

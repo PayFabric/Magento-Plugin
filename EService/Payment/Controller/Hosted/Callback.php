@@ -64,7 +64,7 @@ class Callback extends \Magento\Framework\App\Action\Action
     }
 
     /**
-     * to handle the IPG Gateway callback when the payment finished
+     * to handle the IPG Gateway callback when the payment finished asychronous
      *
      * @return \Magento\Framework\Controller\ResultInterface
      */

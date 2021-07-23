@@ -2,7 +2,7 @@
 
 namespace EService\Payment\Controller\Gateway;
 
-//require_once(__DIR__ . '/../../Helper/sdk/Payments.php');
+//require_once(__DIR__ . '/../../Helper/sdk/payments.php');
 
 use EService;
 

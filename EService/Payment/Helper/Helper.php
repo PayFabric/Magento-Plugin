@@ -34,6 +34,19 @@ class Helper extends AbstractHelper
         parent::__construct($context);
         $this->_storeManager = $storeManager;
         $this->_encryptor = $encryptor;
+
+        /*Define live and test gateway host */
+        !defined('LIVEGATEWAY') && define('LIVEGATEWAY' , 'https://www.payfabric.com');
+        !defined('TESTGATEWAY') && define('TESTGATEWAY' , 'https://dev-us2.payfabric.com');
+
+        /*
+        * Define log dir, severity level of logging mode and whether enable on-screen debug ouput.
+        * PLEASE DO NOT USE "DEBUG" LOGGING MODE IN PRODUCTION
+        */
+//        !defined('PayFabric_LOG_SEVERITY') && define('PayFabric_LOG_SEVERITY' , 'INFO');
+        !defined('PayFabric_LOG_SEVERITY') && define('PayFabric_LOG_SEVERITY' , 'DEBUG');
+        !defined('PayFabric_LOG_DIR') && define('PayFabric_LOG_DIR' , dirname(__FILE__).'/logs');
+        !defined('PayFabric_DEBUG') && define('PayFabric_DEBUG' , false);
     }
 
     public static function log()
@@ -151,9 +164,9 @@ class Helper extends AbstractHelper
     {
         $displayMode = $this->getConfigData('display_mode');
         if ($displayMode === DisplayMode::DISPLAY_MODE_REDIRECT) {
-            return "POST";
+            return "GET";
         } else if ($displayMode === DisplayMode::DISPLAY_MODE_HOSTEDPAY) {
-            return "POST";
+            return "GET";
         }else if ($displayMode === DisplayMode::DISPLAY_MODE_EMBEDDED) {
 
         } else if ($displayMode === DisplayMode::DISPLAY_MODE_IFRAME) {
@@ -356,57 +369,54 @@ class Helper extends AbstractHelper
         if(!$this->getConfigData('merchant_id') || !$this->getConfigData('merchant_password')){
             throw new \Magento\Framework\Exception\LocalizedException(__('miss merchant configuration info'));
         }
-        $this->environment_params['merchantId'] =  $this->getConfigData('merchant_id');
-        $this->environment_params['password'] =  $this->getConfigData('merchant_password');
-        if ($this->isSandboxMode()) {
-            $this->environment_params['tokenURL'] = $this->getConfigData('token_url_sandbox');
-            $this->environment_params['paymentsURL'] = $this->getConfigData('payments_url_sandbox');
-            $this->environment_params['baseUrl'] = $this->getConfigData('cashier_url_sandbox');
-            $this->environment_params['jsApiUrl'] = $this->getConfigData('js_url_sandbox');
-        } else {
-            $this->environment_params['tokenURL'] = $this->getConfigData('token_url_production');
-            $this->environment_params['paymentsURL'] = $this->getConfigData('payments_url_production');
-            $this->environment_params['baseUrl'] = $this->getConfigData('cashier_url_production');
-            $this->environment_params['jsApiUrl'] = $this->getConfigData('js_url_production');
-        }
-        $payments = (new Payments())->environmentUrls($this->environment_params);
+
+        $maxiPago = new payments();
+        $maxiPago->setLogger(PayFabric_LOG_DIR,PayFabric_LOG_SEVERITY);
+        $maxiPago->setCredentials($this->getConfigData('merchant_id') , $this->getConfigData('merchant_password'));
+        $maxiPago->setDebug(PayFabric_DEBUG);
+        $maxiPago->setEnvironment($this->getConfigData('environment'));
+
         switch ($action){
+            case "TOKEN":
+                $maxiPago->token($params);
+                break;
             case "AUTH":
-                $auth = $payments->auth();
-                $result = $this->generateToken($auth,$params);
-                break;
+                $maxiPago->creditCardAuth($params);
+                $responseTran = json_decode($maxiPago->response);
+                if(!$responseTran->Key){
+                    if (is_object(\payFabric_RequestBase::$logger)) {
+                        \payFabric_RequestBase::$logger->logCrit($maxiPago->response);
+                    }
+                    throw new \UnexpectedValueException($maxiPago->response, 503);
+                }
+                return $this->executeGatewayTransaction("TOKEN", array("Audience" => "PaymentPage" , "Subject" => $responseTran->Key));
             case "PURCHASE":
-                $purchase = $payments->purchase();
-                $result = $this->generateToken($purchase,$params);
-                break;
+                $maxiPago->creditCardSale($params);
+                $responseTran = json_decode($maxiPago->response);
+                if(!$responseTran->Key){
+                    if (is_object(\payFabric_RequestBase::$logger)) {
+                        \payFabric_RequestBase::$logger->logCrit($maxiPago->response);
+                    }
+                    throw new \UnexpectedValueException($maxiPago->response, 503);
+                }
+                return $this->executeGatewayTransaction("TOKEN", array("Audience" => "PaymentPage" , "Subject" => $responseTran->Key));
             case "CAPTURE":
-                $capture = $payments->capture();
-                $capture->originalMerchantTxId($params['originalMerchantTxId'])->
-                amount($params['amount'])->
-                allowOriginUrl($params['allowOriginUrl']);
-                $result = $capture->execute();
+                $maxiPago->creditCardCapture($params['originalMerchantTxId']);
                 break;
             case "REFUND":
-                $refund = $payments->refund();
-                $refund->originalMerchantTxId($params['originalMerchantTxId'])->
-                amount($params['amount'])->
-                allowOriginUrl($params['allowOriginUrl']);
-                $result = $refund->execute();
+                $maxiPago->creditCardRefund(array(
+                    'Amount'=>$params['amount'],
+                    'ReferenceKey'=>$params['originalMerchantTxId']
+                ));
                 break;
             case "VOID":
-                $void = $payments->void();
-                $void->originalMerchantTxId($params['originalMerchantTxId'])->
-                allowOriginUrl($params['allowOriginUrl']);
-                $result = $void->execute();
+                $maxiPago->creditCardVoid($params['originalMerchantTxId']);
                 break;
             case "GET_STATUS":
-                $status_check = $payments->status_check();
-                $status_check->merchantTxId($params['merchantTxId'])->
-                allowOriginUrl($params['allowOriginUrl']);
-                $result = $status_check->execute();
+                $maxiPago->retrieveTransaction($params['transactionKey']);
                 break;
         }
-        return $result;
+        return json_decode($maxiPago->response);
     }
     public function generateToken($payments,$post_data){
         $payments->

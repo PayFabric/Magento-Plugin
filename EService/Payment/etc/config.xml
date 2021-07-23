@@ -13,16 +13,16 @@
                 <merchant_brandid></merchant_brandid>
                 <payment_methods>500</payment_methods>
                 <display_mode>hostedPayPage</display_mode>
-                <debug_log>0</debug_log>
+                <debug_log>1</debug_log>
                 <environment>production</environment>
                 <token_url_production>https://api.secure.eservice.com.pl/token</token_url_production>
                 <cashier_url_production>https://cashierui-api.secure.eservice.com.pl/ui/cashier</cashier_url_production>
                 <payments_url_production>https://api.secure.eservice.com.pl/payments</payments_url_production>
                 <js_url_production>https://cashierui-api.secure.eservice.com.pl/js/api.js</js_url_production>
-                <token_url_sandbox>https://apiuat.test.secure.eservice.com.pl/token</token_url_sandbox>
-                <cashier_url_sandbox>https://cashierui-apiuat.test.secure.eservice.com.pl/ui/cashier</cashier_url_sandbox>
-                <payments_url_sandbox>https://apiuat.test.secure.eservice.com.pl/payments</payments_url_sandbox>
-                <js_url_sandbox>https://cashierui-apiuat.test.secure.eservice.com.pl/js/api.js</js_url_sandbox>
+                <token_url_sandbox>https://dev-us2.payfabric.com/payment/api/jwt/create</token_url_sandbox>
+                <cashier_url_sandbox>https://dev-us2.payfabric.com/payment/web/transaction/ResponsiveProcess</cashier_url_sandbox>
+                <payments_url_sandbox>https://dev-us2.payfabric.com/payment/api/transaction/create</payments_url_sandbox>
+                <js_url_sandbox>https://dev-us2.payfabric.com/Payment/WebGate/Content/bundles/payfabricpayments.bundle.js</js_url_sandbox>
                 <is_gateway>1</is_gateway>
                 <allowspecific>0</allowspecific>
                 <specific_countries></specific_countries>
