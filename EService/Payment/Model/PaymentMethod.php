@@ -533,179 +533,6 @@ class PaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod impleme
     }
 
     /**
-     * Authorize payment method
-     *
-     * @param \Magento\Framework\DataObject|InfoInterface $payment
-     * @param float $amount
-     * @return $this
-     * @throws \Magento\Framework\Exception\LocalizedException
-     * @api
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     * @deprecated 100.2.0
-     */
-    public function authorize(\Magento\Payment\Model\InfoInterface $payment, $amount)
-    {
-        parent::authorize($payment, $amount);
-
-        // TODO: tokenize card and add the token to the token request
-
-        $data = array(
-            "amount" => $amount
-        );
-        $sessionTokenData = $this->getTokenHostedData("AUTH", $data);
-        // direct api supports only 500
-        $sessionTokenData["paymentSolutionId"] = '500';
-        $token = $this->getToken($sessionTokenData);
-        if ($token->result != 'success' ) {
-            throw new \Magento\Framework\Validator\Exception(__(json_encode($token->errors)));
-        }
-        $params = $this->getAPIParametersForDirect("AUTH", $data);
-        $params['token'] = $token->token;
-        $result = $this->_helper->executeGatewayTransaction("AUTH", $params);
-        if($result->result === 'success') {
-            $payment->setTransactionId($result->merchantTxId)
-                ->setIsTransactionClosed(false)
-                ->setTransactionAdditionalInfo(\Magento\Sales\Model\Order\Payment\Transaction::RAW_DETAILS, $result);
-            $order = $payment->getOrder();
-            $transactionStatus = $result->status;
-            if ($transactionStatus === 'NOT_SET_FOR_CAPTURE') { // auth was successful
-                $order->setState("processing")
-                    ->setStatus("processing")
-                    ->addStatusHistoryComment('Payment authorised');
-                $order->save();
-            } else if($transactionStatus === 'DECLINED') {
-                $order->setState("canceled")
-                    ->setStatus("canceled")
-                    ->addStatusHistoryComment('Payment declined');
-                $order->save();
-            } else { // error
-                $order->setState("canceled")
-                    ->setStatus("canceled")
-                    ->addStatusHistoryComment('Payment auth error');
-                $order->save();
-            }
-            return $this;
-        } else if($result->result === 'redirection') {
-            // redirect to the redirection URL
-            $merchantId = $result->merchantId;
-            $merchantTxId = $result->merchantTxId;
-            $txId = $result->txId;
-            $redirectionUrl = $result->redirectionUrl;
-            Mage::app()->getFrontController()
-                ->getResponse()
-                ->setRedirect($redirectionUrl);
-        } else {
-            throw new \Magento\Framework\Validator\Exception(__(json_encode($result->errors)));
-        }
-
-        return $this;
-    }
-
-    private function getTokenDirectData($apiOperation, $data = array())
-    {
-        switch ($apiOperation) {
-
-            case "CAPTURE":
-            case "REFUND":
-                {
-                    return $this->getTokenDirectDataCaptureRefund($apiOperation, $data);
-                }
-            case "VOID":
-                {
-                    return $this->getTokenDirectDataVoid($apiOperation);
-                }
-        }
-        return null;
-    }
-
-
-    private function getTokenDirectDataCaptureRefund($apiOperation, $data = array()) {
-        $payment = $this->getInfoInstance();
-        $order = $payment->getOrder();
-        // allow origin url
-        $allowOriginUrl = $this->_urlBuilder->getBaseUrl();
-
-        // amount
-        $amount = $data['amount'];
-        // merchant transaction id or order id
-        $orderId = $order->getRealOrderId();
-        if(strlen($orderId) > 50) {
-            $orderId = substr($orderId, -50);
-        }
-
-        $sessionTokenData = array(
-            "action" => $apiOperation,
-            "originalMerchantTxId" => $orderId,
-            "amount" => $amount,
-            "allowOriginUrl" => $allowOriginUrl
-
-        );
-
-        return $sessionTokenData;
-    }
-
-    private function getTokenDirectDataVoid($apiOperation) {
-        $payment = $this->getInfoInstance();
-        $order = $payment->getOrder();
-        // allow origin url
-        $allowOriginUrl = $this->_urlBuilder->getBaseUrl();
-
-        // merchant transaction id or order id
-        $orderId = $order->getRealOrderId();
-        if(strlen($orderId) > 50) {
-            $orderId = substr($orderId, -50);
-        }
-
-        $sessionTokenData = array(
-            "action" => $apiOperation,
-            "originalMerchantTxId" => $orderId,
-            "allowOriginUrl" => $allowOriginUrl
-
-        );
-
-        return $sessionTokenData;
-    }
-
-    private function getAPIParametersForDirect($apiOperation, $data = array())
-    {
-        switch ($apiOperation) {
-            case "AUTH":
-            case "PURCHASE":
-            case "VERIFY":
-                {
-                    return $this->getAPIParametersForDirectAuthPurchaseVerify($apiOperation, $data);
-                }
-            case "CAPTURE":
-            case "REFUND":
-            case "VOID":
-                {
-                    return $this->getAPIParametersForDirectCaptureRefundVoid($apiOperation, $data);
-                }
-        }
-        return null;
-    }
-
-    private function getAPIParametersForDirectAuthPurchaseVerify($apiOperation, $data = array())
-    {
-        $merchantId = trim($this->_helper->getConfigData('merchant_id'));
-        $data['merchantId'] = $merchantId;
-        $paymentMethodID = trim($this->_helper->getConfigData('payment_method'));
-        if ($paymentMethodID != '') {
-            $data['paymentSolutionId'] = $paymentMethodID;
-        }
-
-        return $data;
-    }
-
-    private function getAPIParametersForDirectCaptureRefundVoid($apiOperation, $data = array())
-    {
-        $merchantId = trim($this->_helper->getConfigData('merchant_id'));
-        $data['merchantId'] = $merchantId;
-
-        return $data;
-    }
-
-    /**
      * Capture payment
      *
      * @param \Magento\Framework\DataObject|InfoInterface $payment
@@ -719,55 +546,21 @@ class PaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod impleme
     public function capture(\Magento\Payment\Model\InfoInterface $payment, $amount)
     {
         parent::capture($payment, $amount);
-        $data = array(
-            "amount" => $amount
+        $params = array(
+            "amount" => $amount,
+            "originalMerchantTxId" => $payment->getParentTransactionId()
         );
-        $sessionTokenData = $this->getTokenDirectData("CAPTURE", $data);
-
-        /*$token = $this->getToken($sessionTokenData);
-        if ($token->result != 'success' ) {
-            throw new \Magento\Framework\Validator\Exception(__(json_encode($token->errors)));
-        }*/
-        $params = $this->getAPIParametersForDirect("CAPTURE", $data);
-        //$params['token'] = $token->token;
-		$params = array_merge($sessionTokenData, $params);
 		$result = $this->_helper->executeGatewayTransaction("CAPTURE", $params);
-        if($result->result === 'success') {
-            $payment->setTransactionId($result->originalMerchantTxId)
+        if(strtolower($result->Status) == 'approved') {
+            $payment->setTransactionId($result->TrxKey)
                 ->setTransactionAdditionalInfo(\Magento\Sales\Model\Order\Payment\Transaction::RAW_DETAILS, json_encode($result));
-            $order = $payment->getOrder();
-            $transactionStatus = $result->status;
-            if ($transactionStatus === 'SET_FOR_CAPTURE') { // capture was successful
-                $order->setState("Paid")
-                    ->setStatus("processing")
-                    ->addStatusHistoryComment(__('Payment captured'));
-                $order->save();
-            } else { // error
-                $order->setState("canceled")
-                    ->setStatus("canceled")
-                    ->addStatusHistoryComment('Payment capture error');
-                $order->save();
-            }
-            return $this;
-        } else if($result->result === 'redirection') {
-            // redirect to the redirection URL
-            $merchantId = $result->merchantId;
-            $merchantTxId = $result->merchantTxId;
-            $txId = $result->txId;
-            $redirectionUrl = $result->redirectionUrl;
-            Mage::app()->getFrontController()
-                ->getResponse()
-                ->setRedirect($redirectionUrl);
-        } else if (strpos($result->errors, 'current status: SUCCESS') !== false) {
-            $order = $payment->getOrder();
-            $payment->setTransactionId($order->getRealOrderId());
-            $order->setState("Paid")
-                ->setStatus("processing")
-                ->addStatusHistoryComment(__('Payment captured'));
-            $order->save();
-            return $this;
+//            $order = $payment->getOrder();
+//            $order->setState("processing")
+//                ->setStatus("processing")
+//                ->addStatusHistoryComment(__('Payment captured'));
+//            $order->save();
         } else {
-            throw new \Magento\Framework\Validator\Exception(__(json_encode($result->errors)));
+            throw new \Magento\Framework\Validator\Exception(isset($result->Message) ? __($result->Message) : __( 'Capture error!' ));
         }
 
         return $this;
@@ -788,51 +581,24 @@ class PaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod impleme
     {
         parent::refund($payment, $amount);
 
-        $data = array(
-            "amount" => $amount
+        $params = array(
+            "amount" => $amount,
+            "originalMerchantTxId" => $payment->getParentTransactionId()
         );
-        $sessionTokenData = $this->getTokenDirectData("REFUND", $data);
-/*
-        $token = $this->getToken($sessionTokenData);
-        if ($token->result != 'success' ) {
-            throw new \Magento\Framework\Validator\Exception(__(json_encode($token->errors)));
-        }
-*/
-        $params = $this->getAPIParametersForDirect("REFUND", $data);
-        //$params['token'] = $token->token;
-        $params = array_merge($sessionTokenData, $params);
         $result = $this->_helper->executeGatewayTransaction("REFUND", $params);
-        if($result->result === 'success') {
-            $payment->setTransactionId($result->originalMerchantTxId)
+        if(strtolower($result->Status) == 'approved') {
+            $payment->setTransactionId($result->TrxKey)
                 ->setTransactionAdditionalInfo(\Magento\Sales\Model\Order\Payment\Transaction::RAW_DETAILS, json_encode($result));
-            $order = $payment->getOrder();
-            $transactionStatus = $result->status;
-            if ($transactionStatus === 'SET_FOR_REFUND') { // refund was successful
-                $order->setState("processing")
-                    ->setStatus("processing")
-                    ->addStatusHistoryComment('Payment refunded amount ' . $amount);
-                $transaction = $payment->addTransaction(Transaction::TYPE_REFUND, null, true);
-                $transaction->setIsClosed(0);
-                $transaction->save();
-                $order->save();
-            } else { // error
-                $order->setState("canceled")
-                    ->setStatus("canceled")
-                    ->addStatusHistoryComment('Payment refund error');
-                $order->save();
-            }
-            return $this;
+//            $order = $payment->getOrder();
+//            $order->setState("processing")
+//                ->setStatus("processing")
+//                ->addStatusHistoryComment('Payment refunded amount ' . $amount);
+//            $transaction = $payment->addTransaction(Transaction::TYPE_REFUND, null, true);
+//            $transaction->setIsClosed(0);
+//            $transaction->save();
+//            $order->save();
         } else {
-            if (strpos($result->errors, 'Transaction not refundable: Original transaction not SUCCESS') !== false) {
-                if($payment->getOrder()->getBaseGrandTotal() == $amount) {
-                    return $this->void($payment);
-                } else {
-                    throw new \Magento\Framework\Validator\Exception(__(json_encode($result->errors)));
-                }
-            }
-            else {
-                throw new \Magento\Framework\Validator\Exception(__(json_encode($result->errors)));
-            }
+            throw new \Magento\Framework\Validator\Exception(isset($result->Message) ? __($result->Message) : __( 'Refund error!' ));
         }
 
         return $this;
@@ -865,40 +631,23 @@ class PaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod impleme
     public function void(\Magento\Payment\Model\InfoInterface $payment)
     {
         parent::void($payment);
-
-        $sessionTokenData = $this->getTokenDirectData("VOID");
-/*
-        $token = $this->getToken($sessionTokenData);
-        if ($token->result != 'success' ) {
-            throw new \Magento\Framework\Validator\Exception(__(json_encode($token->errors)));
-        }
-*/
-        $params = $this->getAPIParametersForDirect("VOID");
-        //$params['token'] = $token->token;
-        $params = array_merge($sessionTokenData, $params);
+        $params = array(
+            "originalMerchantTxId" => $payment->getParentTransactionId()
+        );
         $result = $this->_helper->executeGatewayTransaction("VOID", $params);
-        if($result->result === 'success') {
-            $payment->setTransactionId($result->originalMerchantTxId)
+        if(strtolower($result->Status) == 'approved') {
+            $payment->setTransactionId($result->TrxKey)
                 ->setTransactionAdditionalInfo(\Magento\Sales\Model\Order\Payment\Transaction::RAW_DETAILS, json_encode($result));
-            $order = $payment->getOrder();
-            $transactionStatus = $result->status;
-            if ($transactionStatus === 'VOID') { // void was successful
-                $order->setState("processing")
-                    ->setStatus("processing")
-                    ->addStatusHistoryComment('Payment voided');
-                $transaction = $payment->addTransaction(Transaction::TYPE_VOID, null, true);
-                $transaction->setIsClosed(1);
-                $transaction->save();
-                $order->save();
-            } else { // error
-                $order->setState("canceled")
-                    ->setStatus("canceled")
-                    ->addStatusHistoryComment('Payment void error');
-                $order->save();
-            }
-            return $this;
+//            $order = $payment->getOrder();
+//            $order->setState("canceled")
+//                ->setStatus("canceled")
+//                ->addStatusHistoryComment(__('Payment voided'));
+//            $transaction = $payment->addTransaction(Transaction::TYPE_VOID, null, true);
+//            $transaction->setIsClosed(1);
+//            $transaction->save();
+//            $order->save();
         } else {
-            throw new \Magento\Framework\Validator\Exception(__(json_encode($result->errors)));
+            throw new \Magento\Framework\Validator\Exception(isset($result->Message) ? __($result->Message) : __( 'Void error!' ));
         }
 
         return $this;

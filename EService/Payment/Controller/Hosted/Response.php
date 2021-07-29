@@ -131,11 +131,11 @@ class Response extends Action implements CsrfAwareActionInterface
         if ($status == "approved") {
             $transactionState = strtolower($result->TransactionState);
             if($transactionState == "pending capture") { //Auth transaction
-                if($order->getState() == 'Authorized'){
+                if($order->getState() == 'pending_payment'){
                     return false;
                 }
-                $order->setState('holded')
-                    ->setStatus("holded")
+                $order->setState('pending_payment')
+                    ->setStatus("pending_payment")
                     ->addStatusHistoryComment(__('Order payment authorized'))
                     ->setIsCustomerNotified(true);
                 $order->save();
@@ -153,7 +153,7 @@ class Response extends Action implements CsrfAwareActionInterface
                 $redirectUrl = $urlInterface->getUrl('checkout/onepage/success/');
             } elseif (in_array($transactionState,array('pending settlement','settled','captured'))){//Purchase transaction
                 if($order->getStatus() != \Magento\Sales\Model\Order::STATE_PROCESSING && $order->getStatus() != \Magento\Sales\Model\Order::STATE_COMPLETE){
-                    if($order->getState() == 'Paid'){
+                    if($order->getState() == 'processing'){
                         return false;
                     }
                     $order->setState("processing")
