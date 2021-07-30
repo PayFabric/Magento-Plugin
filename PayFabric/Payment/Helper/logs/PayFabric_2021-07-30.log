@@ -229,3 +229,168 @@
 2021-07-30 6:50:13 - INFO --> Sending data to https://dev-us2.payfabric.com/payment/api/transaction/21072900740515
 2021-07-30 6:50:13 - INFO --> Response received
 2021-07-30 6:50:13 - DEBUG -->  ; '{"Amount":"39.00","AuthorizationType":"NotSet","BatchNumber":"","CCEntryIndicator":"Entered","Card":{"Aba":"","Account":"XXXXXXXXXXXX1111","AccountType":"","Billto":{"City":"San Francisco","Country":"USA","Customer":"","Email":"","ID":"00000000-0000-0000-0000-000000000000","Line1":"600 Ellis Street","Line2":"","Line3":"","ModifiedOn":"1\\/1\\/0001 12:00:00 AM","Phone":"","State":"CA","Zip":"94109"},"CardHolder":{"DriverLicense":"","FirstName":"test","LastName":"zdd","MiddleName":"","SSN":""},"CardName":"Visa","CardType":"Credit","CheckNumber":"","Connector":"PayflowPro","Customer":"guest_000000076","ExpDate":"1122","GPAddressCode":"","GatewayToken":"","ID":"00000000-0000-0000-0000-000000000000","Identifier":"","IsDefaultCard":false,"IsLocked":false,"IsSaveCard":false,"IssueNumber":"","LastUsedDate":"1\\/1\\/0001 12:00:00 AM","ModifiedOn":"1\\/1\\/0001 12:00:00 AM","NewCustomerNumber":null,"StartDate":"","Tender":"CreditCard","UserDefine1":"","UserDefine2":"","UserDefine3":"","UserDefine4":""},"CardHolderAttendance":"NotSet","CardType":"Credit","Currency":"USD","Customer":"guest_000000076","Document":{"DefaultBillTo":{"City":"San Francisco","Country":"US","Customer":"guest_000000076","Email":"Jack.Zhang@nodus.com","ID":"00000000-0000-0000-0000-000000000000","Line1":"600 Ellis Street","Line2":null,"Line3":null,"ModifiedOn":"1\\/1\\/0001 12:00:00 AM","Phone":"12345","State":"CA","Zip":"94109"},"Head":[{"Name":"InvoiceNumber","Value":"000000076"},{"Name":"FreightAmount","Value":""},{"Name":"TaxAmount","Value":""}],"Lines":[{"Columns":[],"UserDefined":[]}],"UserDefined":[{"Name":"PluginName","Value":"Magento PayFabric Gateway"},{"Name":"PluginVersion","Value":"1.0.0"}]},"ECheckSetupId":"","EntryClass":"","EntryMode":"MRHostedPage","Key":"21072900740515","MSO_EngineGUID":"8bd91556-6e0b-42e3-a86e-a427f7bb877f","ModifiedOn":"7\\/29\\/2021 11:49:59 PM","OrigTrxAmount":"39.00","PayDate":"","ReferenceKey":null,"ReferenceTrxs":[],"ReqAuthCode":"","SetupId":"PFP_CC","Shipto":{"City":"San Francisco","Country":"US","Customer":"","Email":"","ID":"e4434e2e-f6d2-42ff-a37d-e72ac3e5e8bd","Line1":"600 Ellis Street","Line2":"","Line3":"","ModifiedOn":"1\\/1\\/0001 12:00:00 AM","Phone":"12345","State":"","Zip":"94109"},"SurchargeAmount":"0.00","SurchargePercentage":"0.0","Tender":"CreditCard","TransactionState":"Pending Capture","TrxInitiation":"Customer","TrxResponse":{"AVSAddressResponse":"N","AVSZipResponse":"N","AuthCode":"010101","CVV2Response":"N","CardType":"Credit","ExpectedSettledTime":null,"FinalAmount":"39.00","IAVSAddressResponse":"N","Message":"Approved","OrigTrxAmount":"39.00","OriginationID":"A40E0E215ABD","PayFabricErrorCode":null,"RespTrxTag":"","ResultCode":"0","SettledTime":null,"Status":"Approved","SurchargeAmount":"0.00","SurchargePercentage":"0.00","TAXml":"<TransactionData><Connection name=\\"PFP_CC\\" connector=\\"PayflowPro\\"><Processor id=\\"18\\">TSYS(Vital\\/VisaNet)<\\/Processor><PaymentType id=\\"1\\">Credit<\\/PaymentType><\\/Connection><Transaction post=\\"False\\" type=\\"2\\" status=\\"1\\"><NeededData><Transaction><Type>2<\\/Type><Status>Approved<\\/Status><Category>NeededData<\\/Category><Fields \\/><\\/Transaction><\\/NeededData><FailureData><Transaction><Type>2<\\/Type><Status>Approved<\\/Status><Category>FailureData<\\/Category><Fields \\/><\\/Transaction><\\/FailureData><ResponseData><Transaction><Type>7<\\/Type><Status>Approved<\\/Status><Category>ResponseData<\\/Category><Fields><Field id=\\"TrxField_D17\\"><Name>ResultCode<\\/Name><Desc>0<\\/Desc><Value>0<\\/Value><\\/Field><Field id=\\"TrxField_D31\\"><Name>ResponseMsg<\\/Name><Desc>Approved<\\/Desc><Value>Approved<\\/Value><\\/Field><Field id=\\"TrxField_D24\\"><Name>AuthCode<\\/Name><Desc>010101<\\/Desc><Value>010101<\\/Value><\\/Field><Field id=\\"TrxField_D16\\"><Name>OriginationID<\\/Name><Desc>A40E0E215ABD<\\/Desc><Value>A40E0E215ABD<\\/Value><\\/Field><Field id=\\"TrxField_D186\\"><Name>Token<\\/Name><Desc>A40E0E215ABD<\\/Desc><Value>A40E0E215ABD<\\/Value><\\/Field><Field id=\\"TrxField_D83\\"><Name>CVV2ResponseCode<\\/Name><Desc>N<\\/Desc><Value>N<\\/Value><\\/Field><Field id=\\"TrxField_D32\\"><Name>AVSAddResponse<\\/Name><Desc>N<\\/Desc><Value>N<\\/Value><\\/Field><Field id=\\"TrxField_D33\\"><Name>AVSZipResponse<\\/Name><Desc>N<\\/Desc><Value>N<\\/Value><\\/Field><Field id=\\"TrxField_D185\\"><Name>IAVSAddressResponse<\\/Name><Desc>N<\\/Desc><Value>N<\\/Value><\\/Field><\\/Fields><\\/Transaction><\\/ResponseData><RequestData><Transaction><Type>2<\\/Type><Status>1<\\/Status><Category>RequestData<\\/Category><Fields><Field id=\\"TrxField_D1\\"><Name>ACCT<\\/Name><Desc>Credit Card Number<\\/Desc><Required>0<\\/Required><Encrypted>0<\\/Encrypted><Type>1<\\/Type><Value>XXXXXXXXXXXX1111<\\/Value><\\/Field><Field id=\\"TrxField_D3\\"><Name>EXPDATE<\\/Name><Desc>Expiration Date MMYY<\\/Desc><Required>0<\\/Required><Encrypted>0<\\/Encrypted><Type>1<\\/Type><Value>1122<\\/Value><\\/Field><Field id=\\"TrxField_D5\\"><Name>BillToFirstName<\\/Name><Desc>First Name<\\/Desc><Required>0<\\/Required><Encrypted>0<\\/Encrypted><Type>2<\\/Type><Value>test<\\/Value><\\/Field><Field id=\\"TrxField_D7\\"><Name>BillToLastName<\\/Name><Desc>Last Name<\\/Desc><Required>0<\\/Required><Encrypted>0<\\/Encrypted><Type>2<\\/Type><Value>zdd<\\/Value><\\/Field><Field id=\\"TrxField_D11\\"><Name>BillToCity<\\/Name><Desc>City<\\/Desc><Required>0<\\/Required><Encrypted>0<\\/Encrypted><Type>2<\\/Type><Value>San Francisco<\\/Value><\\/Field><Field id=\\"TrxField_D12\\"><Name>BillToState<\\/Name><Desc>State<\\/Desc><Required>0<\\/Required><Encrypted>0<\\/Encrypted><Type>2<\\/Type><Value>CA<\\/Value><\\/Field><Field id=\\"TrxField_D13\\"><Name>BillToZip<\\/Name><Desc>Zip<\\/Desc><Required>0<\\/Required><Encrypted>0<\\/Encrypted><Type>2<\\/Type><Value>94109<\\/Value><\\/Field><Field id=\\"TrxField_D15\\"><Name>Amt<\\/Name><Desc>Transaction Amount<\\/Desc><Required>1<\\/Required><Encrypted>0<\\/Encrypted><Type>3<\\/Type><Value>39.00<\\/Value><\\/Field><Field id=\\"TrxField_D40\\"><Name>InvNum<\\/Name><Desc>Invoice Number<\\/Desc><Required>0<\\/Required><Encrypted>0<\\/Encrypted><Type>2<\\/Type><Value>000000076<\\/Value><\\/Field><Field id=\\"TrxField_D41\\"><Name>ShipToZip<\\/Name><Desc>Ship to Zip<\\/Desc><Required>0<\\/Required><Encrypted>0<\\/Encrypted><Type>2<\\/Type><Value>94109<\\/Value><\\/Field><Field id=\\"TrxField_D47\\"><Name>BillToCountry<\\/Name><Desc>Country Code<\\/Desc><Required>0<\\/Required><Encrypted>0<\\/Encrypted><Type>2<\\/Type><Value>USA<\\/Value><\\/Field><Field id=\\"TrxField_D48\\"><Name>CustCode<\\/Name><Desc>Customer Code<\\/Desc><Required>0<\\/Required><Encrypted>0<\\/Encrypted><Type>2<\\/Type><Value>guest_000000076<\\/Value><\\/Field><Field id=\\"TrxField_D49\\"><Name>CVV2<\\/Name><Desc>CVV2<\\/Desc><Required>0<\\/Required><Encrypted>0<\\/Encrypted><Type>2<\\/Type><Value><\\/Value><\\/Field><Field id=\\"TrxField_D55\\"><Name>BillToStreet<\\/Name><Desc>Account Holder Street<\\/Desc><Required>0<\\/Required><Encrypted>0<\\/Encrypted><Type>2<\\/Type><Value>600 Ellis Street <\\/Value><\\/Field><Field id=\\"TrxField_D74\\"><Name>CurrencyCode<\\/Name><Desc>Currency Code<\\/Desc><Required>0<\\/Required><Encrypted>0<\\/Encrypted><Type>2<\\/Type><Value>USD<\\/Value><\\/Field><Field id=\\"TrxField_D99\\"><Name>ShipToCity<\\/Name><Desc>Shipping City<\\/Desc><Required>0<\\/Required><Encrypted>0<\\/Encrypted><Type>2<\\/Type><Value>San Francisco<\\/Value><\\/Field><Field id=\\"TrxField_D104\\"><Name>ShipToStreet<\\/Name><Desc>Shipping Street<\\/Desc><Required>0<\\/Required><Encrypted>0<\\/Encrypted><Type>2<\\/Type><Value>600 Ellis Street <\\/Value><\\/Field><Field id=\\"TrxField_D111\\"><Name>ShipToCountry<\\/Name><Desc>Shipping Country<\\/Desc><Required>0<\\/Required><Encrypted>0<\\/Encrypted><Type>2<\\/Type><Value>US<\\/Value><\\/Field><Field id=\\"TrxField_D141\\"><Name>CustIP<\\/Name><Desc>IP Address<\\/Desc><Required>0<\\/Required><Encrypted>0<\\/Encrypted><Type>2<\\/Type><Value>122.97.16.122<\\/Value><\\/Field><Field id=\\"TrxField_D155\\"><Name>ShipToPhone<\\/Name><Desc>Shipping Phone<\\/Desc><Required>0<\\/Required><Encrypted>0<\\/Encrypted><Type>2<\\/Type><Value>12345<\\/Value><\\/Field><Field id=\\"TRXFIELD_D19\\"><Name>PaymentType<\\/Name><Value>1<\\/Value><\\/Field><Field id=\\"TRXFIELD_D2\\"><Name>TRXFIELD_D2<\\/Name><Value>XXXXXXXXXXXX1111<\\/Value><\\/Field><Field id=\\"TRXFIELD_D18\\"><Name>CCType<\\/Name><Value>Visa<\\/Value><\\/Field><Field id=\\"TRXFIELD_D54\\"><Name>AccountName<\\/Name><Value>test zdd <\\/Value><\\/Field><Field id=\\"TRXFIELD_D8\\"><Name>Address1<\\/Name><Value>600 Ellis Street<\\/Value><\\/Field><Field id=\\"SaveCreditCard\\"><Name>SaveCreditCard<\\/Name><Value>0<\\/Value><\\/Field><Field id=\\"MSO_PFTrxKey\\"><Name>MSO_PFTrxKey<\\/Name><Value>21072900740515<\\/Value><\\/Field><Field id=\\"TRXFIELD_D550\\"><Name>PF_TransactionKey<\\/Name><Value>21072900740515<\\/Value><\\/Field><Field id=\\"MSO_WalletID\\"><Name>MSO_WalletID<\\/Name><Value>00000000-0000-0000-0000-000000000000<\\/Value><\\/Field><Field id=\\"MSO_EngineGUID\\"><Name>MSO_EngineGUID<\\/Name><Value>8bd91556-6e0b-42e3-a86e-a427f7bb877f<\\/Value><\\/Field><Field id=\\"TRXFIELD_D539\\"><Name>TransactionInitiation<\\/Name><Value>Customer<\\/Value><\\/Field><Field id=\\"TRXFIELD_D540\\"><Name>TransactionSchedule<\\/Name><Value>Unscheduled<\\/Value><\\/Field><Field id=\\"TRXFIELD_D541\\"><Name>AuthorizationType<\\/Name><Value>NotSet<\\/Value><\\/Field><Field id=\\"TRXFIELD_D542\\"><Name>CCEntryIndicator<\\/Name><Value>Entered<\\/Value><\\/Field><Field id=\\"TRXFIELD_D543\\"><Name>POSEntryMode<\\/Name><Value>01<\\/Value><\\/Field><Field id=\\"MSO_Last_Xmit_Date\\"><Name>MSO_Last_Xmit_Date<\\/Name><Value>2021-07-29 00:00:00<\\/Value><\\/Field><Field id=\\"MSO_Last_Xmit_Time\\"><Name>MSO_Last_Xmit_Time<\\/Name><Value>1900-01-01 11:49:59 PM<\\/Value><\\/Field><Field id=\\"MSO_Last_Settled_Date\\"><Name>MSO_Last_Settled_Date<\\/Name><Value>1900-01-01<\\/Value><\\/Field><Field id=\\"MSO_Last_Settled_Time\\"><Name>MSO_Last_Settled_Time<\\/Name><Value>1900-01-01 00:00:00<\\/Value><\\/Field><Field id=\\"MSO_TrxType\\"><Name>MSO_TrxType<\\/Name><Value>7<\\/Value><\\/Field><Field id=\\"MSO_TrxStatus\\"><Name>MSO_TrxStatus<\\/Name><Value>0<\\/Value><\\/Field><Field id=\\"MSO_IsCardValid\\"><Name>MSO_IsCardValid<\\/Name><Value>1<\\/Value><\\/Field><Field id=\\"MSO_Auth_Amount\\"><Name>MSO_Auth_Amount<\\/Name><Value>39.00<\\/Value><\\/Field><\\/Fields><\\/Transaction><\\/RequestData><\\/Transaction><\\/TransactionData>","TerminalID":"","TerminalResultCode":"","TrxAmount":"39.00","TrxDate":"7\\/29\\/2021 11:49:59 PM","TrxKey":"21072900740515","WalletID":null},"TrxSchedule":"Unscheduled","TrxUserDefine1":"000000076","TrxUserDefine2":"","TrxUserDefine3":"","TrxUserDefine4":"","Type":"Book"}'
+2021-07-30 7:14:09 - INFO --> Starting transaction log
+2021-07-30 7:14:09 - DEBUG --> PLEASE DO NOT USE "DEBUG" LOGGING MODE IN PRODUCTION
+2021-07-30 7:14:09 - NOTICE --> Setting credentials "1:aae54723-18fe-67c6-314b-7afd62df0ff1" and "Wustzdd1234!@#$qwer"
+2021-07-30 7:14:09 - NOTICE --> Setting enviroment to "sandbox"
+2021-07-30 7:14:09 - NOTICE --> Calling method PayFabric\Payment\Helper\sdk\lib\payments::creditCardAuth
+2021-07-30 7:14:09 - NOTICE --> Parameters sent; array (
+  'action' => 'AUTH',
+  'referenceNum' => '000000077',
+  'Amount' => '39.00',
+  'Currency' => 'USD',
+  'pluginName' => 'Magento PayFabric Gateway',
+  'pluginVersion' => '1.0.0',
+  'shippingCity' => 'San Francisco',
+  'shippingCountry' => 'US',
+  'customerId' => 'guest_000000077',
+  'shippingEmail' => NULL,
+  'shippingAddress1' => '600 Ellis Street',
+  'shippingPhone' => '12345',
+  'shippingPostalCode' => '94109',
+  'billingFirstName' => 'jack',
+  'billingLastName' => 'zhang',
+  'billingAddress1' => '600 Ellis Street',
+  'billingCity' => 'San Francisco',
+  'billingState' => 'CA',
+  'billingPostalCode' => '94109',
+  'billingCountry' => 'US',
+  'billingEmail' => 'Jack.Zhang@nodus.com',
+  'billingPhone' => '12345',
+  'allowOriginUrl' => 'http://localmagento.com',
+  'merchantNotificationUrl' => 'http://localmagento.com/index.php/eservice/hosted/callback/orderid/000000077/',
+  'paymentSolutionId' => '',
+  'brandId' => '1762590000',
+  'language' => 'en',
+)
+2021-07-30 7:14:09 - DEBUG --> Setting endpoint to "https://dev-us2.payfabric.com/payment/api/transaction/create"
+2021-07-30 7:14:09 - INFO --> _data has been generated
+2021-07-30 7:14:09 - DEBUG -->  ; '{"Type":"Authorization","TrxUserDefine1":"000000077","Amount":"39.00","Currency":"USD","Customer":"guest_000000077","Document":{"DefaultBillTo":{"City":"San Francisco","Country":"US","Customer":"guest_000000077","Email":"Jack.Zhang@nodus.com","Line1":"600 Ellis Street","Phone":"12345","State":"CA","Zip":"94109"},"Head":[{"Name":"InvoiceNumber","Value":"000000077"},{"Name":"FreightAmount","Value":""},{"Name":"TaxAmount","Value":""}],"Lines":[],"UserDefined":[{"Name":"PluginName","Value":"Magento PayFabric Gateway"},{"Name":"PluginVersion","Value":"1.0.0"}]},"Shipto":{"City":"San Francisco","Country":"US","Customer":"guest_000000077","Line1":"600 Ellis Street","Phone":"12345","Zip":"94109"}}'
+2021-07-30 7:14:10 - INFO --> Sending data to https://dev-us2.payfabric.com/payment/api/transaction/create
+2021-07-30 7:14:10 - INFO --> Response received
+2021-07-30 7:14:10 - DEBUG -->  ; '{"Key":"21073000740520"}'
+2021-07-30 7:14:10 - INFO --> Starting transaction log
+2021-07-30 7:14:10 - DEBUG --> PLEASE DO NOT USE "DEBUG" LOGGING MODE IN PRODUCTION
+2021-07-30 7:14:10 - NOTICE --> Setting credentials "1:aae54723-18fe-67c6-314b-7afd62df0ff1" and "Wustzdd1234!@#$qwer"
+2021-07-30 7:14:10 - NOTICE --> Setting enviroment to "sandbox"
+2021-07-30 7:14:10 - NOTICE --> Calling method PayFabric\Payment\Helper\sdk\lib\payments::token
+2021-07-30 7:14:10 - NOTICE --> Parameters sent; array (
+  'Audience' => 'PaymentPage',
+  'Subject' => '21073000740520',
+)
+2021-07-30 7:14:10 - DEBUG --> Setting endpoint to "https://dev-us2.payfabric.com/payment/api/jwt/create"
+2021-07-30 7:14:10 - INFO --> _data has been generated
+2021-07-30 7:14:10 - DEBUG -->  ; '{"Audience":"PaymentPage","Subject":"21073000740520"}'
+2021-07-30 7:14:11 - INFO --> Sending data to https://dev-us2.payfabric.com/payment/api/jwt/create
+2021-07-30 7:14:11 - INFO --> Response received
+2021-07-30 7:14:11 - DEBUG -->  ; '{"Message":"","Payload":{"aud":"PaymentPage","dcn":"1","device":"7e243d6c-765d-4f78-92a3-b23919573b97","exp":"1627630151","iat":"1627629251","inst":"a0de262f-67bb-417e-b282-72b83b8db5fc","iss":"PayFabric_V3","sub":"21073000740520","supportedPaymentMethods":[{"attributes":null,"src":"URL","type":"CreditCard"}]},"Token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJQYXlGYWJyaWNfVjMiLCJpYXQiOiIxNjI3NjI5MjUxIiwiZXhwIjoiMTYyNzYzMDE1MSIsImF1ZCI6IlBheW1lbnRQYWdlIiwic3ViIjoiMjEwNzMwMDA3NDA1MjAiLCJpbnN0IjoiYTBkZTI2MmYtNjdiYi00MTdlLWIyODItNzJiODNiOGRiNWZjIiwiZGV2aWNlIjoiN2UyNDNkNmMtNzY1ZC00Zjc4LTkyYTMtYjIzOTE5NTczYjk3IiwiZGNuIjoiMSIsInN1cHBvcnRlZFBheW1lbnRNZXRob2RzIjpbeyJ0eXBlIjoiQ3JlZGl0Q2FyZCIsInNyYyI6IlVSTCIsImF0dHJpYnV0ZXMiOm51bGx9XX0.cvBu_1Ctyobo_x1elimkUDZQH-HeKSwo7ggI1PbllMo"}'
+2021-07-30 7:18:03 - INFO --> Starting transaction log
+2021-07-30 7:18:03 - DEBUG --> PLEASE DO NOT USE "DEBUG" LOGGING MODE IN PRODUCTION
+2021-07-30 7:18:03 - NOTICE --> Setting credentials "1:aae54723-18fe-67c6-314b-7afd62df0ff1" and "Wustzdd1234!@#$qwer"
+2021-07-30 7:18:03 - NOTICE --> Setting enviroment to "sandbox"
+2021-07-30 7:18:03 - NOTICE --> Calling method PayFabric\Payment\Helper\sdk\lib\payments::creditCardAuth
+2021-07-30 7:18:03 - NOTICE --> Parameters sent; array (
+  'action' => 'AUTH',
+  'referenceNum' => '000000077',
+  'Amount' => '39.00',
+  'Currency' => 'USD',
+  'pluginName' => 'Magento PayFabric Gateway',
+  'pluginVersion' => '1.0.0',
+  'shippingCity' => 'San Francisco',
+  'shippingCountry' => 'US',
+  'customerId' => 'guest_000000077',
+  'shippingEmail' => NULL,
+  'shippingAddress1' => '600 Ellis Street',
+  'shippingPhone' => '12345',
+  'shippingPostalCode' => '94109',
+  'billingFirstName' => 'jack',
+  'billingLastName' => 'zhang',
+  'billingAddress1' => '600 Ellis Street',
+  'billingCity' => 'San Francisco',
+  'billingState' => 'CA',
+  'billingPostalCode' => '94109',
+  'billingCountry' => 'US',
+  'billingEmail' => 'Jack.Zhang@nodus.com',
+  'billingPhone' => '12345',
+  'allowOriginUrl' => 'http://localmagento.com',
+  'merchantNotificationUrl' => 'http://localmagento.com/index.php/eservice/hosted/callback/orderid/000000077/',
+  'paymentSolutionId' => '',
+  'brandId' => '1762590000',
+  'language' => 'en',
+)
+2021-07-30 7:18:03 - DEBUG --> Setting endpoint to "https://dev-us2.payfabric.com/payment/api/transaction/create"
+2021-07-30 7:18:03 - INFO --> _data has been generated
+2021-07-30 7:18:03 - DEBUG -->  ; '{"Type":"Authorization","TrxUserDefine1":"000000077","Amount":"39.00","Currency":"USD","Customer":"guest_000000077","Document":{"DefaultBillTo":{"City":"San Francisco","Country":"US","Customer":"guest_000000077","Email":"Jack.Zhang@nodus.com","Line1":"600 Ellis Street","Phone":"12345","State":"CA","Zip":"94109"},"Head":[{"Name":"InvoiceNumber","Value":"000000077"},{"Name":"FreightAmount","Value":""},{"Name":"TaxAmount","Value":""}],"Lines":[],"UserDefined":[{"Name":"PluginName","Value":"Magento PayFabric Gateway"},{"Name":"PluginVersion","Value":"1.0.0"}]},"Shipto":{"City":"San Francisco","Country":"US","Customer":"guest_000000077","Line1":"600 Ellis Street","Phone":"12345","Zip":"94109"}}'
+2021-07-30 7:18:04 - INFO --> Sending data to https://dev-us2.payfabric.com/payment/api/transaction/create
+2021-07-30 7:18:04 - INFO --> Response received
+2021-07-30 7:18:04 - DEBUG -->  ; '{"Key":"21073000740521"}'
+2021-07-30 7:18:04 - INFO --> Starting transaction log
+2021-07-30 7:18:04 - DEBUG --> PLEASE DO NOT USE "DEBUG" LOGGING MODE IN PRODUCTION
+2021-07-30 7:18:04 - NOTICE --> Setting credentials "1:aae54723-18fe-67c6-314b-7afd62df0ff1" and "Wustzdd1234!@#$qwer"
+2021-07-30 7:18:04 - NOTICE --> Setting enviroment to "sandbox"
+2021-07-30 7:18:04 - NOTICE --> Calling method PayFabric\Payment\Helper\sdk\lib\payments::token
+2021-07-30 7:18:04 - NOTICE --> Parameters sent; array (
+  'Audience' => 'PaymentPage',
+  'Subject' => '21073000740521',
+)
+2021-07-30 7:18:04 - DEBUG --> Setting endpoint to "https://dev-us2.payfabric.com/payment/api/jwt/create"
+2021-07-30 7:18:04 - INFO --> _data has been generated
+2021-07-30 7:18:04 - DEBUG -->  ; '{"Audience":"PaymentPage","Subject":"21073000740521"}'
+2021-07-30 7:18:05 - INFO --> Sending data to https://dev-us2.payfabric.com/payment/api/jwt/create
+2021-07-30 7:18:05 - INFO --> Response received
+2021-07-30 7:18:05 - DEBUG -->  ; '{"Message":"","Payload":{"aud":"PaymentPage","dcn":"1","device":"7e243d6c-765d-4f78-92a3-b23919573b97","exp":"1627630385","iat":"1627629485","inst":"a0de262f-67bb-417e-b282-72b83b8db5fc","iss":"PayFabric_V3","sub":"21073000740521","supportedPaymentMethods":[{"attributes":null,"src":"URL","type":"CreditCard"}]},"Token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJQYXlGYWJyaWNfVjMiLCJpYXQiOiIxNjI3NjI5NDg1IiwiZXhwIjoiMTYyNzYzMDM4NSIsImF1ZCI6IlBheW1lbnRQYWdlIiwic3ViIjoiMjEwNzMwMDA3NDA1MjEiLCJpbnN0IjoiYTBkZTI2MmYtNjdiYi00MTdlLWIyODItNzJiODNiOGRiNWZjIiwiZGV2aWNlIjoiN2UyNDNkNmMtNzY1ZC00Zjc4LTkyYTMtYjIzOTE5NTczYjk3IiwiZGNuIjoiMSIsInN1cHBvcnRlZFBheW1lbnRNZXRob2RzIjpbeyJ0eXBlIjoiQ3JlZGl0Q2FyZCIsInNyYyI6IlVSTCIsImF0dHJpYnV0ZXMiOm51bGx9XX0.5BkK64i1caaBR14k2lClgg6nCzTVfzygSLbsmEHQagc"}'
+2021-07-30 7:19:24 - INFO --> Starting transaction log
+2021-07-30 7:19:24 - DEBUG --> PLEASE DO NOT USE "DEBUG" LOGGING MODE IN PRODUCTION
+2021-07-30 7:19:24 - NOTICE --> Setting credentials "1:aae54723-18fe-67c6-314b-7afd62df0ff1" and "Wustzdd1234!@#$qwer"
+2021-07-30 7:19:24 - NOTICE --> Setting enviroment to "sandbox"
+2021-07-30 7:19:24 - NOTICE --> Calling method PayFabric\Payment\Helper\sdk\lib\payments::creditCardAuth
+2021-07-30 7:19:24 - NOTICE --> Parameters sent; array (
+  'action' => 'AUTH',
+  'referenceNum' => '000000077',
+  'Amount' => '39.00',
+  'Currency' => 'USD',
+  'pluginName' => 'Magento PayFabric Gateway',
+  'pluginVersion' => '1.0.0',
+  'shippingCity' => 'San Francisco',
+  'shippingCountry' => 'US',
+  'customerId' => 'guest_000000077',
+  'shippingEmail' => NULL,
+  'shippingAddress1' => '600 Ellis Street',
+  'shippingPhone' => '12345',
+  'shippingPostalCode' => '94109',
+  'billingFirstName' => 'jack',
+  'billingLastName' => 'zhang',
+  'billingAddress1' => '600 Ellis Street',
+  'billingCity' => 'San Francisco',
+  'billingState' => 'CA',
+  'billingPostalCode' => '94109',
+  'billingCountry' => 'US',
+  'billingEmail' => 'Jack.Zhang@nodus.com',
+  'billingPhone' => '12345',
+  'allowOriginUrl' => 'http://localmagento.com',
+  'merchantNotificationUrl' => 'http://localmagento.com/index.php/eservice/hosted/callback/orderid/000000077/',
+  'paymentSolutionId' => '',
+  'brandId' => '1762590000',
+  'language' => 'en',
+)
+2021-07-30 7:19:24 - DEBUG --> Setting endpoint to "https://dev-us2.payfabric.com/payment/api/transaction/create"
+2021-07-30 7:19:24 - INFO --> _data has been generated
+2021-07-30 7:19:24 - DEBUG -->  ; '{"Type":"Authorization","TrxUserDefine1":"000000077","Amount":"39.00","Currency":"USD","Customer":"guest_000000077","Document":{"DefaultBillTo":{"City":"San Francisco","Country":"US","Customer":"guest_000000077","Email":"Jack.Zhang@nodus.com","Line1":"600 Ellis Street","Phone":"12345","State":"CA","Zip":"94109"},"Head":[{"Name":"InvoiceNumber","Value":"000000077"},{"Name":"FreightAmount","Value":""},{"Name":"TaxAmount","Value":""}],"Lines":[],"UserDefined":[{"Name":"PluginName","Value":"Magento PayFabric Gateway"},{"Name":"PluginVersion","Value":"1.0.0"}]},"Shipto":{"City":"San Francisco","Country":"US","Customer":"guest_000000077","Line1":"600 Ellis Street","Phone":"12345","Zip":"94109"}}'
+2021-07-30 7:19:25 - INFO --> Sending data to https://dev-us2.payfabric.com/payment/api/transaction/create
+2021-07-30 7:19:25 - INFO --> Response received
+2021-07-30 7:19:25 - DEBUG -->  ; '{"Key":"21073000740522"}'
+2021-07-30 7:19:25 - INFO --> Starting transaction log
+2021-07-30 7:19:25 - DEBUG --> PLEASE DO NOT USE "DEBUG" LOGGING MODE IN PRODUCTION
+2021-07-30 7:19:25 - NOTICE --> Setting credentials "1:aae54723-18fe-67c6-314b-7afd62df0ff1" and "Wustzdd1234!@#$qwer"
+2021-07-30 7:19:25 - NOTICE --> Setting enviroment to "sandbox"
+2021-07-30 7:19:25 - NOTICE --> Calling method PayFabric\Payment\Helper\sdk\lib\payments::token
+2021-07-30 7:19:25 - NOTICE --> Parameters sent; array (
+  'Audience' => 'PaymentPage',
+  'Subject' => '21073000740522',
+)
+2021-07-30 7:19:25 - DEBUG --> Setting endpoint to "https://dev-us2.payfabric.com/payment/api/jwt/create"
+2021-07-30 7:19:25 - INFO --> _data has been generated
+2021-07-30 7:19:25 - DEBUG -->  ; '{"Audience":"PaymentPage","Subject":"21073000740522"}'
+2021-07-30 7:19:26 - INFO --> Sending data to https://dev-us2.payfabric.com/payment/api/jwt/create
+2021-07-30 7:19:26 - INFO --> Response received
+2021-07-30 7:19:26 - DEBUG -->  ; '{"Message":"","Payload":{"aud":"PaymentPage","dcn":"1","device":"7e243d6c-765d-4f78-92a3-b23919573b97","exp":"1627630466","iat":"1627629566","inst":"a0de262f-67bb-417e-b282-72b83b8db5fc","iss":"PayFabric_V3","sub":"21073000740522","supportedPaymentMethods":[{"attributes":null,"src":"URL","type":"CreditCard"}]},"Token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJQYXlGYWJyaWNfVjMiLCJpYXQiOiIxNjI3NjI5NTY2IiwiZXhwIjoiMTYyNzYzMDQ2NiIsImF1ZCI6IlBheW1lbnRQYWdlIiwic3ViIjoiMjEwNzMwMDA3NDA1MjIiLCJpbnN0IjoiYTBkZTI2MmYtNjdiYi00MTdlLWIyODItNzJiODNiOGRiNWZjIiwiZGV2aWNlIjoiN2UyNDNkNmMtNzY1ZC00Zjc4LTkyYTMtYjIzOTE5NTczYjk3IiwiZGNuIjoiMSIsInN1cHBvcnRlZFBheW1lbnRNZXRob2RzIjpbeyJ0eXBlIjoiQ3JlZGl0Q2FyZCIsInNyYyI6IlVSTCIsImF0dHJpYnV0ZXMiOm51bGx9XX0.iDW6u3365vuBp61fw4RuR8mxfi4dyszWhNX6Gl6S96g"}'
