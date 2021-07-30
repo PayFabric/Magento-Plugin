@@ -346,7 +346,7 @@ class Helper extends AbstractHelper
             throw new \Magento\Framework\Exception\LocalizedException(__('miss merchant configuration info'));
         }
 
-        $maxiPago = new payments();
+        $maxiPago = new Payments();
         $maxiPago->setLogger(PayFabric_LOG_DIR,PayFabric_LOG_SEVERITY);
         $maxiPago->setCredentials($this->getConfigData('merchant_id') , $this->getConfigData('merchant_password'));
         $maxiPago->setDebug(PayFabric_DEBUG);

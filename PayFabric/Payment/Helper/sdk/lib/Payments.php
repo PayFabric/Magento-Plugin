@@ -1,6 +1,6 @@
 <?php
 namespace PayFabric\Payment\Helper\sdk\lib;
-class payments extends payFabric_ResponseBase {
+class Payments extends payFabric_ResponseBase {
 
     private $request;
     public $response;
