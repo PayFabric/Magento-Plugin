@@ -304,13 +304,22 @@ class PaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod impleme
         if (empty($responseToken->Token)) {
             throw new \Magento\Framework\Validator\Exception(__(json_encode($responseToken)));
         }
-        $formFields = array(
-            'environment' => $this->_helper->isSandboxMode() ? (stripos(TESTGATEWAY,'DEV-US2')===FALSE ? (stripos(TESTGATEWAY,'QA')===FALSE ? 'SANDBOX' : 'QA') : 'DEV-US2') : 'LIVE',
-            'target' => 'cashierDiv',
-            'displayMethod' => 'IN_PLACE',
-            'session' => $responseToken->Token,
-            'disableCancel' => true
-        );
+        $displayMode = $this->getConfigData('display_mode');
+        if ($displayMode === DisplayMode::DISPLAY_MODE_IFRAME) {
+            $formFields = array(
+                'environment' => $this->_helper->isSandboxMode() ? (stripos(TESTGATEWAY,'DEV-US2')===FALSE ? (stripos(TESTGATEWAY,'QA')===FALSE ? 'SANDBOX' : 'QA') : 'DEV-US2') : 'LIVE',
+                'target' => 'cashierDiv',
+                'displayMethod' => 'IN_PLACE',
+                'session' => $responseToken->Token,
+                'disableCancel' => true
+            );
+        } else {
+            $formFields = array(
+                'token' => $responseToken->Token,
+                'successUrl' => $this->getMerchantLandingPageUrl()
+            );
+        }
+
         return $formFields;
     }
 

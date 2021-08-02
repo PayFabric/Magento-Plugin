@@ -87,46 +87,18 @@ class Response extends Action implements CsrfAwareActionInterface
     {
         $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
         $request = $objectManager->get('\Magento\Framework\App\Request\Http');
-        $requestPostPayload = $request->getParams();
         $urlInterface = $objectManager->get('\Magento\Framework\UrlInterface');
 
-        $checkoutSession = $objectManager->get('\Magento\Checkout\Model\Session');
-
-        $redirectUrl = $this->_url->getUrl('checkout/onepage/failure/');
-        if (isset($checkoutSession)) {
-            $orderId = $checkoutSession->getOrderId();
-            if (!isset($orderId)) {
-                $orderId = $request->getParam('orderid');
-            }
-        } else {
-            $orderId = $request->getParam('orderid');
-        }
-        if (!isset($orderId)) {
-            $redirectUrl = $urlInterface->getUrl('checkout/onepage/failure/');
-            $this->_redirect($redirectUrl);
-            return;
-        }
-        $orders = $objectManager->get('Magento\Sales\Model\Order');
-        $order = $orders->loadByIncrementId($orderId);
-        if (false && isset($requestPostPayload) && isset($requestPostPayload['result'])) {
-            if ($requestPostPayload['result'] == 'success') {
-                $redirectUrl = $urlInterface->getUrl('checkout/onepage/success/');
-            } else {
-                $redirectUrl = $urlInterface->getUrl('checkout/onepage/failure/');
-            }
-        }
-        $payment = $order->getPayment();
         try {
-			$params = array(
-				"allowOriginUrl" => $urlInterface->getBaseUrl(),
-				"merchantTxId" => $order->getRealOrderId(),
-                'transactionKey' => $request->getParam('merchantTxId')
-			);
-            $result = $this->_helper->executeGatewayTransaction("GET_STATUS", $params);
+            $result = $this->_helper->executeGatewayTransaction("GET_STATUS", array('TrxKey' => $request->getParam('TrxKey')));
         } catch (\Exception $e) {
             $this->_redirect($urlInterface->getUrl('checkout/onepage/failure/'));
             return;
         }
+        $orderId = isset($result->TrxUserDefine1) ? $result->TrxUserDefine1 : $request->getParam('orderid');
+        $orders = $objectManager->get('Magento\Sales\Model\Order');
+        $order = $orders->loadByIncrementId($orderId);
+
         $status = strtolower($result->TrxResponse->Status);
         if ($status == "approved") {
             $transactionState = strtolower($result->TransactionState);

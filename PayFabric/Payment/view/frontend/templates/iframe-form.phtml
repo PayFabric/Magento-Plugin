@@ -3,7 +3,7 @@
 </head>
 <body>
 <form id="paymentForm" action="<?php echo $block->getMerchantLandingPageUrl(); ?>" method="get">
-<input type="hidden" id="merchantTxId" name="merchantTxId" value=""/>
+<input type="hidden" id="TrxKey" name="TrxKey" value=""/>
 </form>
 <div id="cashierDiv" style="max-width: 600px; margin: 0 auto;"></div>
 <script type="text/javascript" src="<?php echo $block->getJsUrl(); ?>"></script>
@@ -15,7 +15,7 @@ foreach ($block->getFormFields() as $field => $value) {
 ?>successCallback:handleResult,failureCallback:handleResult});
 function handleResult(data) {console.log(data);
     if(data.RespStatus == "Approved"){
-        document.getElementById("merchantTxId").value = data.TrxKey;;
+        document.getElementById("TrxKey").value = data.TrxKey;;
         document.getElementById("paymentForm").submit();
     }else{
         setTimeout(function(){location.reload();}, 3000);

@@ -376,7 +376,7 @@ class Helper extends AbstractHelper
                 $maxiPago->creditCardVoid($params['originalMerchantTxId']);
                 break;
             case "GET_STATUS":
-                $maxiPago->retrieveTransaction($params['transactionKey']);
+                $maxiPago->retrieveTransaction($params['TrxKey']);
                 break;
         }
         return json_decode($maxiPago->response);
