@@ -1,6 +1,6 @@
 <?php
 namespace PayFabric\Payment\Helper\sdk\lib;
-class payFabric_ServiceBase {
+class ServiceBase {
     
     protected $credentials = array();
     protected $host;
@@ -16,14 +16,14 @@ class payFabric_ServiceBase {
         try {
             $this->credentials["merchantId"] = $mid;
             $this->credentials["merchantKey"] = $key;
-            if (is_object(payFabric_RequestBase::$logger)) {
-                payFabric_RequestBase::$logger->logNotice('Setting credentials "'.$mid.'" and "'.payFabric_RequestBase::clearForLog($key).'"');
+            if (is_object(RequestBase::$logger)) {
+                RequestBase::$logger->logNotice('Setting credentials "'.$mid.'" and "'.RequestBase::clearForLog($key).'"');
             }
 
             else { throw new \InvalidArgumentException('[PayFabric Class error] Invalid credentials.', 401); }
         }
         catch (Exception $e) {
-            if (is_object(payFabric_RequestBase::$logger)) { payFabric_RequestBase::$logger->logFatal($e->getMessage()." in ".$e->getFile()." on line ".$e->getLine()); }
+            if (is_object(RequestBase::$logger)) { RequestBase::$logger->logFatal($e->getMessage()." in ".$e->getFile()." on line ".$e->getLine()); }
             throw $e;
         }
     }
@@ -35,22 +35,22 @@ class payFabric_ServiceBase {
     public function setEnvironment($param=null) {
         try {
             if (strtoupper($param) == 'TEST' || $param) {
-            	payFabric_RequestBase::setSslVerify(false);
+            	RequestBase::setSslVerify(false);
             	$this->host = TESTGATEWAY;
             }
             elseif (strtoupper($param) == 'LIVE' || !$param) {
             	$this->host = LIVEGATEWAY;
             }
             else { throw new \BadMethodCallException('[PayFabric Class error] Invalid environment. '.__METHOD__.' accepts either "TEST" or "LIVE"', 400); }
-            if (is_object(payFabric_RequestBase::$logger)) {
-            	payFabric_RequestBase::$logger->logNotice('Setting enviroment to "'.$param.'"');
+            if (is_object(RequestBase::$logger)) {
+            	RequestBase::$logger->logNotice('Setting enviroment to "'.$param.'"');
             }
             $this->cashierUrl = $this->host. '/payment/web/transaction/ResponsiveProcess';
             $this->jsUrl = $this->host. '/Payment/WebGate/Content/bundles/payfabricpayments.bundle.js';
         }
         catch (Exception $e) {
-            if (is_object(payFabric_RequestBase::$logger)) {
-            	payFabric_RequestBase::$logger->logCrit($e->getMessage()." in ".$e->getFile()." on line ".$e->getLine()); }
+            if (is_object(RequestBase::$logger)) {
+            	RequestBase::$logger->logCrit($e->getMessage()." in ".$e->getFile()." on line ".$e->getLine()); }
             throw $e;
         }
     }
@@ -61,9 +61,9 @@ class payFabric_ServiceBase {
      */
     public function setDebug($param=false) {
         if (($param == true) || ($param == "1")) { 
-            payFabric_RequestBase::$debug = true;
-            if (is_object(payFabric_RequestBase::$logger)) {
-            	payFabric_RequestBase::$logger->logDebug('Enabling on-screen debug ouput');
+            RequestBase::$debug = true;
+            if (is_object(RequestBase::$logger)) {
+            	RequestBase::$logger->logDebug('Enabling on-screen debug ouput');
             }
         }
     }
@@ -78,10 +78,10 @@ class payFabric_ServiceBase {
         if (!isset($path)) { 
         	throw new \Exception('Logger path '.$path.' is required');
         }
-        payFabric_RequestBase::setLogger($path, $severity);
-        if (is_object(payFabric_RequestBase::$logger)) {
-          payFabric_RequestBase::$logger->logInfo('Starting transaction log');
-          payFabric_RequestBase::$logger->logDebug('PLEASE DO NOT USE "DEBUG" LOGGING MODE IN PRODUCTION');
+        RequestBase::setLogger($path, $severity);
+        if (is_object(RequestBase::$logger)) {
+          RequestBase::$logger->logInfo('Starting transaction log');
+          RequestBase::$logger->logDebug('PLEASE DO NOT USE "DEBUG" LOGGING MODE IN PRODUCTION');
         }
     }
     

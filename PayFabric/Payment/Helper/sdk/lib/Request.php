@@ -1,9 +1,9 @@
 <?php
 namespace PayFabric\Payment\Helper\sdk\lib;
-class payFabric_Request extends payFabric_Builder {
+class Request extends Builder {
 
     protected function sendXml() {
-        if (is_object(payFabric_RequestBase::$logger)) {
+        if (is_object(RequestBase::$logger)) {
             self::$logger->logInfo('_data has been generated');
             self::$logger->logDebug(' ', json_encode($this->_data));
         }
@@ -22,16 +22,16 @@ class payFabric_Request extends payFabric_Builder {
         }
         curl_setopt_array($curl, $opt);
         $this->xmlResponse = curl_exec($curl);
-        if (is_object(payFabric_RequestBase::$logger)) {
+        if (is_object(RequestBase::$logger)) {
         	self::$logger->logInfo('Sending data to '.$this->endpoint);
         }
         $curlInfo = curl_getinfo($curl);
         curl_close($curl);
-        if (payFabric_RequestBase::$debug == true) {
+        if (RequestBase::$debug == true) {
         	$this->printDebug($curlInfo); 
         }
         if ($this->xmlResponse) {
-            if (is_object(payFabric_RequestBase::$logger)) {
+            if (is_object(RequestBase::$logger)) {
                 self::$logger->logInfo('Response received');
                 self::$logger->logDebug(' ', $this->xmlResponse);
             }

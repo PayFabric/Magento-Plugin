@@ -34,19 +34,6 @@ class Helper extends AbstractHelper
         parent::__construct($context);
         $this->_storeManager = $storeManager;
         $this->_encryptor = $encryptor;
-
-        /*Define live and test gateway host */
-        !defined('LIVEGATEWAY') && define('LIVEGATEWAY' , 'https://www.payfabric.com');
-        !defined('TESTGATEWAY') && define('TESTGATEWAY' , 'https://dev-us2.payfabric.com');
-
-        /*
-        * Define log dir, severity level of logging mode and whether enable on-screen debug ouput.
-        * PLEASE DO NOT USE "DEBUG" LOGGING MODE IN PRODUCTION
-        */
-//        !defined('PayFabric_LOG_SEVERITY') && define('PayFabric_LOG_SEVERITY' , 'INFO');
-        !defined('PayFabric_LOG_SEVERITY') && define('PayFabric_LOG_SEVERITY' , 'DEBUG');
-        !defined('PayFabric_LOG_DIR') && define('PayFabric_LOG_DIR' , dirname(__FILE__).'/logs');
-        !defined('PayFabric_DEBUG') && define('PayFabric_DEBUG' , false);
     }
 
     public static function log()

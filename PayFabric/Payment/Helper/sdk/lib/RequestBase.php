@@ -1,7 +1,7 @@
 <?php
 namespace PayFabric\Payment\Helper\sdk\lib;
 require_once 'KLogger.php';
-class payFabric_RequestBase {
+class RequestBase {
     
     protected $version = '1.0.0';
     protected $timeout = 60;
@@ -17,8 +17,8 @@ class payFabric_RequestBase {
             	throw new \BadMethodCallException('[PayFabric Class] INTERNAL ERROR on '.__METHOD__.' method: no Endpoint defined');
             }
             $this->endpoint = $param;
-            if (is_object(payFabric_RequestBase::$logger)) {
-            	payFabric_RequestBase::$logger->logDebug('Setting endpoint to "'.$param.'"');
+            if (is_object(RequestBase::$logger)) {
+            	RequestBase::$logger->logDebug('Setting endpoint to "'.$param.'"');
             }
         }
         catch (Exception $e) {
@@ -114,7 +114,7 @@ class payFabric_RequestBase {
         elseif (is_array($text)) {
             isset($text["cvvNumber"]) && @$text["cvvNumber"] = str_ireplace($text["cvvNumber"], str_repeat("*", strlen($text["cvvNumber"])), $text["cvvNumber"]);
             isset($text["shippingEmail"]) && @$text["shippingEmail"] = str_ireplace($text["shippingEmail"], substr_replace($text["shippingEmail"], str_repeat("*", 3), 1, 3), $text["shippingEmail"]);
-            if (isset($text["number"]) && payFabric_ServiceBase::checkCreditCard(@$text["number"])) {
+            if (isset($text["number"]) && ServiceBase::checkCreditCard(@$text["number"])) {
             	@$text["number"] = str_ireplace($text["number"], substr_replace($text["number"], str_repeat('*',strlen($text["number"])-4),'4'), $text["number"]); 
             }
             return $text;

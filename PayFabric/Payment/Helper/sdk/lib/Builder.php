@@ -1,6 +1,6 @@
 <?php
 namespace PayFabric\Payment\Helper\sdk\lib;
-class payFabric_Builder extends payFabric_RequestBase {
+class Builder extends RequestBase {
 
     public $_data = array();
 
