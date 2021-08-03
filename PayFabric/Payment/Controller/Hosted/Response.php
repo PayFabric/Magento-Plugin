@@ -111,13 +111,11 @@ class Response extends Action implements CsrfAwareActionInterface
                     ->addStatusHistoryComment(__('Order payment authorized'))
                     ->setIsCustomerNotified(true);
                 $order->save();
+
                 $payment = $order->getPayment();
                 $payment->setIsTransactionClosed(false);
-
-
                 $payment->resetTransactionAdditionalInfo()
-                    ->setTransactionId($request->getParam('merchantTxId'));
-
+                    ->setTransactionId($request->getParam('TrxKey'));
                 $transaction = $payment->addTransaction(Transaction::TYPE_AUTH, null, true);
                 $transaction->setIsClosed(0);
                 $transaction->save();
@@ -128,13 +126,22 @@ class Response extends Action implements CsrfAwareActionInterface
                     if($order->getState() == 'processing'){
                         return false;
                     }
-                    $order->setState("processing")
-                        ->setStatus("processing")
-                        ->addStatusHistoryComment(__('Payment completed successfully.'))
-                        ->setIsCustomerNotified(true);
-                    $order->save();
+//                    $order->setState("processing")
+//                        ->setStatus("processing")
+//                        ->addStatusHistoryComment(__('Payment completed successfully.'))
+//                        ->setIsCustomerNotified(true);
+//                    $order->save();
+
+                    $payment = $order->getPayment();
+                    $payment->setIsTransactionClosed(false);
+                    $payment->resetTransactionAdditionalInfo()
+                        ->setTransactionId($request->getParam('TrxKey'));
+                    $payment->save();
                     try {
                         $this->_helper->generateInvoice($order, $this->invoiceService, $this->_transaction);
+                        $transaction = $payment->addTransaction(Transaction::TYPE_ORDER, null, true);
+                        $transaction->setIsClosed(0);
+                        $transaction->save();
                     } catch (\Exception $e) {
                         //log
                     }
@@ -151,7 +158,6 @@ class Response extends Action implements CsrfAwareActionInterface
             $redirectUrl = $urlInterface->getUrl('checkout/onepage/failure/');
         }
         $params['redirectUrl'] = $redirectUrl;
-
         $this->registry->register(\PayFabric\Payment\Block\Response::REGISTRY_PARAMS_KEY, $params);
 
         $this->_view->loadLayout();

@@ -520,6 +520,8 @@ class PaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod impleme
     }
     public function getMerchantNotificationUrl(){
         // merchant notification URL: server-to-server, URL to which the Transaction Result Call will be sent
+        $payment = $this->getInfoInstance();
+        $order = $payment->getOrder();
         $merchantNotificationUrl = $this->_urlBuilder->getUrl($this->_helper->getNotificationRoute($order->getRealOrderId()));
         return $merchantNotificationUrl;
 
@@ -545,6 +547,7 @@ class PaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod impleme
      */
     public function capture(\Magento\Payment\Model\InfoInterface $payment, $amount)
     {
+        if(!$payment->getParentTransactionId())    return $this;
         parent::capture($payment, $amount);
         $params = array(
             "amount" => $amount,

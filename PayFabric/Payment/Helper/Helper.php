@@ -446,7 +446,7 @@ class Helper extends AbstractHelper
             $invoice->save();
             $invoice->getOrder()->setCustomerNoteNotify(false);
             $invoice->getOrder()->setIsInProcess(true);
-            $order->addStatusHistoryComment(__('Automatically INVOICED'), true);
+//            $order->addStatusHistoryComment(__('Automatically INVOICED'), true);
             $transactionSave = $transaction->addObject($invoice)->addObject($invoice->getOrder());
             $transactionSave->save();
         } catch (\Exception $e) {
