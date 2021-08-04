@@ -26,7 +26,7 @@ class Success extends \Magento\Framework\View\Element\Template
             return '';
         }
         if ($order->getId()) {
-            if ($order->getPayment()->getMethodInstance()->getCode() == 'eservice_payment') {
+            if ($order->getPayment()->getMethodInstance()->getCode() == 'payfabric_payment') {
                 $this->addData(
                     [
                     'is_eservice' => true

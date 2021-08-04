@@ -11,7 +11,7 @@ class EServiceConfigProvider implements ConfigProviderInterface
     private $_paymentHelper;
     private $_helper;
     protected $_methodCodes = [
-        'eservice_payment',
+        'payfabric_payment',
     ];
 
     private $methods = [];
@@ -33,7 +33,7 @@ class EServiceConfigProvider implements ConfigProviderInterface
     {
         $config = [
             'payment' => [
-                'eservice_payment' => [
+                'payfabric_payment' => [
                 ],
             ],
         ];

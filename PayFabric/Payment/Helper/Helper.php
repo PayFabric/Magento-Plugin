@@ -12,7 +12,7 @@ use PayFabric\Payment\Model\Config\Source\Environment;
  */
 class Helper extends AbstractHelper
 {
-    const METHOD_CODE = 'eservice_payment';
+    const METHOD_CODE = 'payfabric_payment';
     const CUSTOMER_ID = 'customer';
 
     /**

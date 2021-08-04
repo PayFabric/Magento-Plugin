@@ -10,7 +10,7 @@ define(
         'use strict';
         rendererList.push(
             {
-                type: 'eservice_payment',
+                type: 'payfabric_payment',
                 component: 'PayFabric_Payment/js/view/payment/method-renderer/payment-method'
             }
         );

@@ -13,7 +13,7 @@ use Magento\Sales\Model\Order\Payment\Transaction;
 
 class PaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod implements GatewayInterface
 {
-    const METHOD_CODE = 'eservice_payment';
+    const METHOD_CODE = 'payfabric_payment';
     const NOT_AVAILABLE = 'N/A';
 
     /**
