@@ -3,7 +3,7 @@
         xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
     <system>
         <section id="payment">
-            <group id="eservice_payment_section" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
+            <group id="payfabric_payment_section" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>PayFabric Gateway</label>
                 <comment>
                     <![CDATA[]]>
@@ -13,7 +13,7 @@
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <config_path>payment/payfabric_payment/active</config_path>
                 </field>
-                    <group id="eservice_payment_general" translate="label" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <group id="payfabric_payment_general" translate="label" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                         <label>General Settings</label>
                         <attribute type="expanded">1</attribute>
                         <frontend_model>Magento\Config\Block\System\Config\Form\Fieldset</frontend_model>
@@ -31,7 +31,7 @@
                             <config_path>payment/payfabric_payment/merchant_password</config_path>
                         </field>
                     </group>
-                    <group id="eservice_payment_advanced" translate="label" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <group id="payfabric_payment_advanced" translate="label" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
                         <comment>
                             <![CDATA[Advanced configuration]]>
                         </comment>
@@ -70,7 +70,7 @@
                             <source_model>PayFabric\Payment\Model\Config\Source\Environment</source_model>
                             <config_path>payment/payfabric_payment/environment</config_path>
                         </field>
-                        <group id="eservice_payment_advanced_prod" translate="label" sortOrder="70" showInDefault="0" showInWebsite="1" showInStore="0" >
+                        <group id="payfabric_payment_advanced_prod" translate="label" sortOrder="70" showInDefault="0" showInWebsite="1" showInStore="0" >
                             <comment>
                                 <![CDATA[Production URLs]]>
                             </comment>
@@ -94,7 +94,7 @@
                                 <config_path>payment/payfabric_payment/js_url_production</config_path>
                             </field>
                         </group>
-                        <group id="eservice_payment_advanced_sandbox" translate="label" sortOrder="80" showInDefault="0" showInWebsite="1" showInStore="0" >
+                        <group id="payfabric_payment_advanced_sandbox" translate="label" sortOrder="80" showInDefault="0" showInWebsite="1" showInStore="0" >
                             <comment>
                                 <![CDATA[Sandbox URLs]]>
                             </comment>
