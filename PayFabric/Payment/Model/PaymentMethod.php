@@ -236,9 +236,9 @@ class PaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod impleme
     {
         $displayMode = $this->getConfigData('display_mode');
        if ($displayMode === DisplayMode::DISPLAY_MODE_IFRAME) {
-           $redirectUrl = 'eservice/hosted/iframe';
+           $redirectUrl = 'payfabric/hosted/iframe';
         } else {
-            $redirectUrl = 'eservice/hosted/redirect';
+            $redirectUrl = 'payfabric/hosted/redirect';
         }
         return $this->_urlBuilder->getUrl(
             $redirectUrl

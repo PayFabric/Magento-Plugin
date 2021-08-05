@@ -84,12 +84,12 @@ class Helper extends AbstractHelper
 
     public function getNotificationRoute($orderId)
     {
-        return 'eservice/hosted/callback/orderid/' . $orderId;
+        return 'payfabric/hosted/callback/orderid/' . $orderId;
     }
 
     public function getLandingPageOnReturnAfterRedirect($orderId)
     {
-        return 'eservice/hosted/response/orderid/' . $orderId;
+        return 'payfabric/hosted/response/orderid/' . $orderId;
     }
 
     /**

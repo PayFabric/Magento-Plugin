@@ -21,7 +21,7 @@
                                                             <!-- merge payment method renders here -->
                                                             <item name="children" xsi:type="array">
                                                                 <item name="payfabric_payment" xsi:type="array">
-                                                                    <item name="component" xsi:type="string">PayFabric_Payment/js/view/payment/eservice-payment-methods</item>
+                                                                    <item name="component" xsi:type="string">PayFabric_Payment/js/view/payment/payfabric-payment-methods</item>
                                                                     <item name="methods" xsi:type="array">
                                                                         <item name="payfabric_payment" xsi:type="array">
                                                                             <item name="isBillingAddressRequired" xsi:type="boolean">true</item>
