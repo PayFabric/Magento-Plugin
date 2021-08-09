@@ -4,7 +4,7 @@
 <body>
 
 
-    <form id="eservice_payment_form" method="<?php echo $block->escapeHtml($block->getFormMethod()) ?>" action="<?php echo $block->escapeHtml($block->getFormUrl()) ?>" name="eservice_payment_form">
+    <form id="payfabric_payment_form" method="<?php echo $block->escapeHtml($block->getFormMethod()) ?>" action="<?php echo $block->escapeHtml($block->getFormUrl()) ?>" name="payfabric_payment_form">
 
         <?php
         foreach ($block->getFormFields() as $field => $value) {
@@ -15,7 +15,7 @@
         ?>
     </form>
     <script type="text/javascript">
-         document.getElementById('eservice_payment_form').submit();
+         document.getElementById('payfabric_payment_form').submit();
     </script>
 
 </body>

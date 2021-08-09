@@ -4,7 +4,7 @@ namespace PayFabric\Payment\Block;
 
 class Response extends \Magento\Framework\View\Element\Template
 {
-    const REGISTRY_PARAMS_KEY = 'eservice_payment_params';
+    const REGISTRY_PARAMS_KEY = 'payfabric_payment_params';
 
     /**
      * Registry
