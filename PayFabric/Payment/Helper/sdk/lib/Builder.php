@@ -92,6 +92,9 @@ class Builder extends RequestBase {
         if (strlen($this->billingAddress2) > 0) {
             $this->_data['Document']["DefaultBillTo"]["Line2"] = $this->billingAddress2;
         }
+        if (strlen($this->billingAddress3) > 0) {
+            $this->_data['Document']["DefaultBillTo"]["Line3"] = $this->billingAddress3;
+        }
         if (strlen($this->billingPhone) > 0) {
             $this->_data['Document']["DefaultBillTo"]["Phone"] = $this->billingPhone;
         }
@@ -119,6 +122,9 @@ class Builder extends RequestBase {
         }
         if (strlen($this->shippingAddress2) > 0) {
             $this->_data["Shipto"]["Line2"] = $this->shippingAddress2;
+        }
+        if (strlen($this->shippingAddress3) > 0) {
+            $this->_data["Shipto"]["Line3"] = $this->shippingAddress3;
         }
         if (strlen($this->shippingPhone) > 0) {
             $this->_data["Shipto"]["Phone"] = $this->shippingPhone;

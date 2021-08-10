@@ -342,7 +342,7 @@ class PaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod impleme
         $orderCurrencyCode = $order->getBaseCurrencyCode();
         // amount
         $amount = $this->formatAmount($order->getBaseGrandTotal());
-        // merchant transaction id or order id
+        // order id
         $orderId = $order->getRealOrderId();
         if(strlen($orderId) > 50) {
             $orderId = substr($orderId, -50);
@@ -356,44 +356,6 @@ class PaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod impleme
             $customerId = substr($customerId, -20);
         }
 
-        // billing address
-        $billingAddress = $order->getBillingAddress();
-        if ($billingAddress) {
-            if (is_array($billingAddress->getStreet(1))) {
-                $street_arr = $billingAddress->getStreet(1);
-                $billingAddressStreet = substr($street_arr[0], 0, 50);
-            } else {
-                $billingAddressStreet = $billingAddress->getStreet(1);
-            }
-            $billingAddressCity = $billingAddress->getCity();
-            $billingAddressCountry = $billingAddress->getcountryId();
-            $billingAddressPostalCode = $billingAddress->getPostcode();
-            $billingAddressPhone = $billingAddress->getTelephone();
-        }
-
-        // shipping address
-        $shippingAddress = $order->getShippingAddress();
-        if ($shippingAddress) {
-            if (is_array($shippingAddress->getStreet(1))) {
-                $street_arr1 = $billingAddress->getStreet(1);
-                $shippingAddressStreet = substr($street_arr1[0], 0, 40);
-            } else {
-                $shippingAddressStreet = $billingAddress->getStreet(1);
-            }
-            $shippingAddressCity = $shippingAddress->getCity();
-            $shippingAddressCountry = $shippingAddress->getcountryId();
-            $shippingAddressPostalCode = $shippingAddress->getPostcode();
-            $shippingAddressPhone = $shippingAddress->getTelephone();
-        }
-
-        if ($billingAddress) {
-            if ($billingAddressCountry == '') {
-                if ($shippingAddress) {
-                    $billingAddressCountry = $shippingAddressCountry;
-                }
-            }
-        }
-
         // merchant notification URL: server-to-server, URL to which the Transaction Result Call will be sent
         $merchantNotificationUrl = $this->_urlBuilder->getUrl($this->_helper->getNotificationRoute($order->getRealOrderId()));
         // The URL to which the customer’s browser is redirected after the payment
@@ -402,78 +364,66 @@ class PaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod impleme
         if ($this->_session->getOrderId()) {
             $this->_session->unsOrderId();
         }
-        $this->_session->setOrderId($order->getRealOrderId());
+        $this->_session->setOrderId($orderId);
 
-        // merchant reference
-        $merchantReference = $order->getRealOrderId();
-
-        // customer data
-        $customerFirstName = $billingAddress->getFirstname();
-        $customerLastName = $billingAddress->getLastname();
-        $customerEmail = $billingAddress->getEmail();
-        $customerPhone = $billingAddress->getTelephone();
-        $customerAddressCountry = $billingAddressCountry;
-        $customerAddressCity = $billingAddressCity;
-        $customerAddressStreet = $billingAddressStreet;
-        $customerAddressPostalCode = $billingAddress->getPostcode();
-        $customerAddressState = $billingAddress->getRegionCode();
-
-        $sessionTokenData = array(
+        $shipping = $order->getShippingAddress();
+        $billing = $order->getBillingAddress();
+        return  array(
             "action" => $apiOperation,
-            "referenceNum" => $merchantReference, // REQUIRED - Merchant internal order number //
+            "referenceNum" => $orderId, // REQUIRED - Merchant internal order number //
             "Amount" => $amount, // REQUIRED - Transaction amount in US format //
-            "Currency" => 'USD', // Optional - Valid only for ChasePaymentech multi-currecy setup. Please see full documentation for more info
+            "Currency" => $orderCurrencyCode, // Optional - Valid only for ChasePaymentech multi-currecy setup. Please see full documentation for more info
             "pluginName" => "Magento PayFabric Gateway",
             "pluginVersion" => "1.0.0",
             //Shipping Information
-            "shippingCity" => $shippingAddressCity, // Optional - Customer city //
-            "shippingCountry" => $shippingAddressCountry, // Optional - Customer country code per ISO 3166-2 //
+            "shippingCity" => (string)$shipping->getCity() ?? '', // Optional - Customer city //
+            "shippingCountry" => (string)$shipping->getCountryId() ?? '', // Optional - Customer country code per ISO 3166-2 //
             "customerId" => $customerId,
-            "shippingEmail" => $order->get_billing_email(), // Optional - Customer email address, use the billing email as shipping email because there is no shipping email//
-            "shippingAddress1" => $shippingAddressStreet, // Optional - Customer address //
-//            "shippingAddress2" => $order->get_shipping_address_2(), // Optional - Customer address //
-            "shippingPhone" => $shippingAddressPhone, // Optional - Customer phone number, use the billing phone as shipping phone because there is no shipping phone //
-//            "shippingState" => $order->get_shipping_state(), // Optional - Customer state with 2 characters //
-            "shippingPostalCode" => $shippingAddressPostalCode, // Optional - Customer zip code //
+            "shippingEmail" => (string)$shipping->getEmail() ?? '', // Optional - Customer email address, use the billing email as shipping email because there is no shipping email//
+            "shippingAddress1" => (string)$shipping->getStreetLine(1) ?? '', // Optional - Customer address //
+            "shippingAddress2" => (string)$shipping->getStreetLine(2) ?? '', // Optional - Customer address //
+            "shippingAddress3" => (string)$shipping->getStreetLine(3) ?? '', // Optional - Customer address //
+            "shippingPhone" => (string)$shipping->getTelephone() ?? '', // Optional - Customer phone number, use the billing phone as shipping phone because there is no shipping phone //
+            "shippingState" => (string)$shipping->getRegionCode() ?? '', // Optional - Customer state with 2 characters //
+            "shippingPostalCode" => (string)$shipping->getPostcode() ?? '', // Optional - Customer zip code //
             //Billing Information
-            'billingFirstName' => $customerFirstName,
-            'billingLastName'  => $customerLastName,
-//            'billingCompany'    => $order->get_billing_company(),
-            'billingAddress1'  => $customerAddressStreet,
-//            'billingAddress2'  => $order->get_billing_address_2(),
-            'billingCity'       => $customerAddressCity,
-            'billingState'      => $customerAddressState,
-            'billingPostalCode'   => $customerAddressPostalCode,
-            'billingCountry'    => $customerAddressCountry,
-            'billingEmail'      => $customerEmail,
-            'billingPhone'      => $customerPhone,
+            'billingFirstName' => (string)$billing->getFirstname() ?? '',
+            'billingLastName'  => (string)$billing->getLastname() ?? '',
+            'billingCompany'    => (string)$billing->getCompany() ?? '',
+            'billingAddress1'  => (string)$billing->getStreetLine(1) ?? '',
+            'billingAddress2'  => (string)$billing->getStreetLine(2) ?? '',
+            'billingAddress3'  => (string)$billing->getStreetLine(3) ?? '',
+            'billingCity'       => (string)$billing->getCity() ?? '',
+            'billingState'      => (string)$billing->getRegionCode() ?? '',
+            'billingPostalCode'   => (string)$billing->getPostcode() ?? '',
+            'billingCountry'    => (string)$billing->getCountryId() ?? '',
+            'billingEmail'      => (string)$billing->getEmail() ?? '',
+            'billingPhone'      => (string)$billing->getTelephone() ?? '',
             //level2/3
-//            'freightAmount'    => $order->get_shipping_total(),
-//            'taxAmount' => $order->get_total_tax(),
-//            'lineItems' => $level3_data,
+            'freightAmount'    => $this->formatAmount($order->getBaseShippingAmount()),
+            'taxAmount' => $this->formatAmount($order->getBaseTaxAmount()),
+            'lineItems' => $this->get_level3_data_from_order($order),
             //Optional
             'allowOriginUrl' => $allowOriginUrl,
             "merchantNotificationUrl" => $merchantNotificationUrl,
-//            "userAgent" => $order->get_customer_user_agent(),
-//            "customerIPAddress" => $ip
         );
+    }
 
-        $sessionTokenData["paymentSolutionId"] = '';
-        // brand id
-        $brandId = $this->_helper->getConfigData('merchant_brandid');
-        if (trim($brandId) != '') {
-            $sessionTokenData['brandId'] = trim($brandId);
+    public function get_level3_data_from_order($order)
+    {
+        $items = array();
+        foreach ($order->getAllVisibleItems() as $item) {
+            $items[] = array(
+                'product_code'                  => $item->getSku() ? $item->getSku() : $item->getProductId(),
+                'product_description'           => $item->getDescription() ? $item->getDescription() : $item->getName(),
+                'unit_cost'                     => $this->formatAmount($item->getPrice()/$item->getQtyOrdered()),
+                'quantity'                      => (int)$item->getQtyOrdered(),
+                'discount_amount'               => $this->formatAmount($item->getDiscountAmount()),
+                'tax_amount'                    => $this->formatAmount($item->getTaxAmount()),
+                'item_amount'                   => $this->formatAmount($item->getPrice())
+            );
         }
-
-        // language
-        $locale = $this->_resolver->getLocale();
-        if ($locale != '') {
-            $language = \Locale::getPrimaryLanguage($locale);
-            //$country = \Locale::getRegion($locale);
-            $sessionTokenData["language"] = $language;
-        }
-
-        return $sessionTokenData;
+        return $items;
     }
 
     public function formatAmount($amount, $asFloat = false)
