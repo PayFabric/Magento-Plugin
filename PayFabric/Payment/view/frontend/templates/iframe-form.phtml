@@ -7,13 +7,19 @@
 </form>
 <div id="cashierDiv" style="max-width: 600px; margin: 0 auto;"></div>
 <script type="text/javascript" src="<?php echo $block->getJsUrl(); ?>"></script>
+<?php
+$fields = $block->getFormFields();
+if(!empty($fields['status']) && 'error' == $fields['status']) {
+    echo "<script type='text/javascript'>window.alert('".$fields['message']."'); </script>";
+}
+?>
 <script type="text/javascript">
 new payfabricpayments({<?php
-foreach ($block->getFormFields() as $field => $value) {
+foreach ($fields as $field => $value) {
     echo $field.':"'.$value.'",';
 }
 ?>successCallback:handleResult,failureCallback:handleResult});
-function handleResult(data) {console.log(data);
+function handleResult(data) {
     if(data.RespStatus == "Approved"){
         document.getElementById("TrxKey").value = data.TrxKey;;
         document.getElementById("paymentForm").submit();

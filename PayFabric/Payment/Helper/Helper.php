@@ -342,25 +342,22 @@ class Helper extends AbstractHelper
         switch ($action){
             case "TOKEN":
                 $maxiPago->token($params);
+                if(empty(json_decode($maxiPago->response)->Token)){
+                    return  $maxiPago->response;
+                }
                 break;
             case "AUTH":
                 $maxiPago->creditCardAuth($params);
                 $responseTran = json_decode($maxiPago->response);
-                if(!$responseTran->Key){
-                    if (is_object(\payFabric_RequestBase::$logger)) {
-                        \payFabric_RequestBase::$logger->logCrit($maxiPago->response);
-                    }
-                    throw new \UnexpectedValueException($maxiPago->response, 503);
+                if(empty($responseTran->Key)){
+                    return  $maxiPago->response;
                 }
                 return $this->executeGatewayTransaction("TOKEN", array("Audience" => "PaymentPage" , "Subject" => $responseTran->Key));
             case "PURCHASE":
                 $maxiPago->creditCardSale($params);
                 $responseTran = json_decode($maxiPago->response);
-                if(!$responseTran->Key){
-                    if (is_object(\payFabric_RequestBase::$logger)) {
-                        \payFabric_RequestBase::$logger->logCrit($maxiPago->response);
-                    }
-                    throw new \UnexpectedValueException($maxiPago->response, 503);
+                if(empty($responseTran->Key)){
+                    return  $maxiPago->response;
                 }
                 return $this->executeGatewayTransaction("TOKEN", array("Audience" => "PaymentPage" , "Subject" => $responseTran->Key));
             case "CAPTURE":

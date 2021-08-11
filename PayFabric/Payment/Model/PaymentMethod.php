@@ -302,7 +302,7 @@ class PaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod impleme
         $sessionTokenData = $this->getTokenHostedData($apiOperation);
         $responseToken = $this->_helper->executeGatewayTransaction($sessionTokenData['action'],$sessionTokenData);
         if (empty($responseToken->Token)) {
-            throw new \Magento\Framework\Validator\Exception(__(json_encode($responseToken)));
+            return  array('status' => 'error', 'message' => $responseToken);
         }
         $displayMode = $this->getConfigData('display_mode');
         if ($displayMode === DisplayMode::DISPLAY_MODE_IFRAME) {
