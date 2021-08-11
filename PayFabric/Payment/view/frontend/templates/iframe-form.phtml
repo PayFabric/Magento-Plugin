@@ -10,7 +10,7 @@
 <?php
 $fields = $block->getFormFields();
 if(!empty($fields['status']) && 'error' == $fields['status']) {
-    echo "<script type='text/javascript'>window.alert('".$fields['message']."'); </script>";
+    echo "<script type='text/javascript'>window.alert('".$fields['message']."'); window.history.back();</script>";
 }
 ?>
 <script type="text/javascript">
