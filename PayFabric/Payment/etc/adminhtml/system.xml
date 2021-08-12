@@ -30,6 +30,12 @@
                             <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
                             <config_path>payment/payfabric_payment/merchant_password</config_path>
                         </field>
+                        <field id="environment" translate="label" type="select" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1">
+                            <label>Environment</label>
+                            <source_model>PayFabric\Payment\Model\Config\Source\Environment</source_model>
+                            <config_path>payment/payfabric_payment/environment</config_path>
+                            <backend_model>PayFabric\Payment\Model\Config\Backend\Gateway</backend_model>
+                        </field>
                     </group>
                     <group id="payfabric_payment_advanced" translate="label" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
                         <comment>
@@ -64,11 +70,6 @@
                             <label>Enable debug logging</label>
                             <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                             <config_path>payment/payfabric_payment/debug_log</config_path>
-                        </field>
-                        <field id="environment" translate="label" type="select" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1">
-                            <label>Environment</label>
-                            <source_model>PayFabric\Payment\Model\Config\Source\Environment</source_model>
-                            <config_path>payment/payfabric_payment/environment</config_path>
                         </field>
                         <group id="payfabric_payment_advanced_prod" translate="label" sortOrder="70" showInDefault="0" showInWebsite="1" showInStore="0" >
                             <comment>
