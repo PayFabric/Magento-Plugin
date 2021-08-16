@@ -111,20 +111,6 @@ class Helper extends AbstractHelper
         }
     }
 
-    /**
-     * @desc Get remote api url
-     *
-     * @return string
-     */
-    public function getRemoteApiUrl()
-    {
-        if ($this->isSandboxMode()) {
-            return $this->getConfigData('sandbox_api_url');
-        }
-
-        return $this->getConfigData('live_api_url');
-    }
-
     public function logDebug($message)
     {
         if ($this->getConfigData('debug_log') == '1') {
