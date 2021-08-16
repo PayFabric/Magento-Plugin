@@ -111,27 +111,6 @@ class Helper extends AbstractHelper
         }
     }
 
-    public function getIntegrationMode()
-    {
-        $displayMode = $this->getConfigData('display_mode');
-        $brand = $this->getConfigData('title');
-        if ($displayMode === DisplayMode::DISPLAY_MODE_REDIRECT) {
-            /*if ( $brand == 'evo_pl' || $brand == 'eservice') {
-                return 'hostedPayPage';
-            }*/
-            return "standalone";
-        } else if ($displayMode === DisplayMode::DISPLAY_MODE_HOSTEDPAY) {
-                return 'hostedPayPage';
-        } else if ($displayMode === DisplayMode::DISPLAY_MODE_EMBEDDED) {
-
-        } else if ($displayMode === DisplayMode::DISPLAY_MODE_IFRAME) {
-            return "iframe";
-        } else {
-            $this->logDebug("Display mode not valid: " . $displayMode);
-            return '';
-        }
-    }
-
     /**
      * @desc Get remote api url
      *
