@@ -253,17 +253,6 @@ class Helper extends AbstractHelper
         return $configurable;
     }
 
-    public function getMagentoTransactionType($action)
-    {
-        switch ($action){
-            case Configurable::ACTION_AUTH:
-                return \Magento\Sales\Model\Order\Payment\Transaction::TYPE_AUTH;
-            case Configurable::ACTION_PURCHASE:
-                return \Magento\Sales\Model\Order\Payment\Transaction::TYPE_CAPTURE;
-        }
-        return null;
-    }
-
     public function executeGatewayTransaction($action, $params = array()) {
         if(!$this->getConfigData('merchant_id') || !$this->getConfigData('merchant_password')){
             throw new \Magento\Framework\Exception\LocalizedException(__('miss merchant configuration info'));
