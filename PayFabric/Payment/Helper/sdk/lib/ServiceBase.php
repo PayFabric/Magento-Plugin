@@ -34,11 +34,11 @@ class ServiceBase {
      */
     public function setEnvironment($param=null) {
         try {
-            if (strtoupper($param) == 'TEST' || $param) {
+            if (strtoupper($param) == 'TEST' || $param == true) {
             	RequestBase::setSslVerify(false);
             	$this->host = TESTGATEWAY;
             }
-            elseif (strtoupper($param) == 'LIVE' || !$param) {
+            elseif (strtoupper($param) == 'LIVE' || $param == false) {
             	$this->host = LIVEGATEWAY;
             }
             else { throw new \BadMethodCallException('[PayFabric Class error] Invalid environment. '.__METHOD__.' accepts either "TEST" or "LIVE"', 400); }

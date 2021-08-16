@@ -33,11 +33,11 @@ class Gateway extends \Magento\Framework\App\Config\Value
         \Magento\Framework\App\Cache\TypeListInterface $cacheTypeList,
         \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
-        \Magento\Framework\Encryption\EncryptorInterface $encryptor,
+        \Magento\Store\Model\StoreManagerInterface $storeManager,
         array $data = []
     ) {
         parent::__construct($context, $registry, $config, $cacheTypeList, $resource, $resourceCollection, $data);
-        $this->_encryptor = $encryptor;
+        $this->_storeManager = $storeManager;
     }
 
     /**
@@ -58,7 +58,7 @@ class Gateway extends \Magento\Framework\App\Config\Value
         $maxiPago->setEnvironment($sandbox);
         $data = array(
             'Amount' => '0.01',
-            'Currency' => 'USD'
+            'Currency' => $this->_storeManager->getStore()->getBaseCurrencyCode()
         );
         $maxiPago->creditCardSale($data);
 

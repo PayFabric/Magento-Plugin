@@ -258,16 +258,6 @@ class PaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod impleme
     }
 
     /**
-     * @desc Get form url
-     *
-     * @return string
-     */
-    public function getFormUrl()
-    {
-        return $this->_helper->getFormUrl();
-    }
-
-    /**
      * @desc Get form method
      *
      * @return string

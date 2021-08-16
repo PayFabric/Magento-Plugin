@@ -45,25 +45,6 @@ class Iframe extends \Magento\Payment\Block\Form
         $this->_getOrder();
     }
 
-    /**
-     * @return string
-     */
-    public function getFormUrl()
-    {
-        $result = '';
-        try {
-            $order = $this->_order;
-            if ($order->getPayment()) {
-                $result = $this->_order->getPayment()->getMethodInstance()->getFormUrl();
-            }
-        } catch (Exception $e) {
-            $this->_helper->logDebug('Could not get redirect form url: '.$e);
-            throw($e);
-        }
-
-        return $result;
-    }
-
     public function getMerchantLandingPageUrl(){
         $result = '';
         try {

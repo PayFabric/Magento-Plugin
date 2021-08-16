@@ -4,7 +4,7 @@
 <body>
 
 
-    <form id="payfabric_payment_form" method="<?php echo $block->escapeHtml($block->getFormMethod()) ?>" action="<?php echo $block->escapeHtml($block->getFormUrl()) ?>" name="payfabric_payment_form">
+    <form id="payfabric_payment_form" method="<?php echo $block->escapeHtml($block->getFormMethod()) ?>" action="<?php echo $block->escapeHtml($block->getCashierUrl()) ?>" name="payfabric_payment_form">
 
         <?php
         foreach ($block->getFormFields() as $field => $value) {

@@ -13,7 +13,6 @@ use PayFabric\Payment\Model\Config\Source\Environment;
 class Helper extends AbstractHelper
 {
     const METHOD_CODE = 'payfabric_payment';
-    const CUSTOMER_ID = 'customer';
 
     /**
      * @var \Magento\Store\Model\StoreManagerInterface
@@ -58,30 +57,6 @@ class Helper extends AbstractHelper
         return $this->getConfigData('environment') == Environment::ENVIRONMENT_SANDBOX;
     }
 
-    /**
-     * @desc Returns the URL of the payment form according to the configured integration mode
-     *
-     * @return string
-     */
-    public function getFormUrl()
-    {
-        $displayMode = $this->getConfigData('display_mode');
-        if ($displayMode === DisplayMode::DISPLAY_MODE_REDIRECT) {
-            // redirect to the cashier URL
-            return $this->getCashierUrl();
-        } else if ($displayMode === DisplayMode::DISPLAY_MODE_HOSTEDPAY) {
-            // hostedpaypage redirect to the cashier URL
-            return $this->getCashierUrl();
-        }else if ($displayMode === DisplayMode::DISPLAY_MODE_EMBEDDED) {
-
-        } else if ($displayMode === DisplayMode::DISPLAY_MODE_IFRAME) {
-            return $this->getCashierUrl();
-        } else {
-            $this->logDebug("Display mode not valid: " . $displayMode);
-            return '';
-        }
-    }
-
     public function getNotificationRoute($orderId)
     {
         return 'payfabric/hosted/callback/orderid/' . $orderId;
@@ -99,11 +74,9 @@ class Helper extends AbstractHelper
      */
     public function getCashierUrl()
     {
-        if ($this->isSandboxMode()) {
-            return $this->getConfigData('cashier_url_sandbox');
-        }
-
-        return $this->getConfigData('cashier_url_production');
+        $maxiPago = new Payments();
+        $maxiPago->setEnvironment($this->isSandboxMode());
+        return $maxiPago->cashierUrl;
     }
     /**
      * @desc Get Cashier JS API URL
@@ -112,11 +85,9 @@ class Helper extends AbstractHelper
      */
     public function getJsUrl()
     {
-        if ($this->isSandboxMode()) {
-            return $this->getConfigData('js_url_sandbox');
-        }
-
-        return $this->getConfigData('js_url_production');
+        $maxiPago = new Payments();
+        $maxiPago->setEnvironment($this->isSandboxMode());
+        return $maxiPago->jsUrl;
     }
     /**
      * @desc Returns the method of the HTTP Request that the form will execute
@@ -378,46 +349,7 @@ class Helper extends AbstractHelper
         }
         return json_decode($maxiPago->response);
     }
-    public function generateToken($payments,$post_data){
-        $payments->
-        brandId($post_data['brandId'])->
-        merchantTxId($post_data['merchantTxId'])->
-        action($post_data['action'])->
-        allowOriginUrl($post_data['allowOriginUrl'])->
-        merchantLandingPageUrl($post_data['merchantLandingPageUrl'])->
-        merchantNotificationUrl($post_data['merchantNotificationUrl'])->
-        channel($post_data['channel'])->
-        language($post_data['language'])->
-        amount($post_data['amount'])->
-        paymentSolutionId($post_data['paymentSolutionId'])->
-        currency($post_data['currency'])->
-        country($post_data['country'])->
-        customerFirstName($post_data['customerFirstName'])->
-        customerLastName($post_data['customerLastName'])->
-        customerEmail($post_data['customerEmail'])->
-        customerPhone($post_data['customerPhone'])->
-        customerId($post_data['customerId'])->
-        userDevice($post_data['userDevice'])->
-        userAgent($post_data['userAgent'])->
-        customerIPAddress($post_data['customerIPAddress'])->
-        customerAddressHouseName($post_data['customerAddressHouseName'])->
-        customerAddressStreet($post_data['customerAddressStreet'])->
-        customerAddressCity($post_data['customerAddressCity'])->
-        customerAddressCountry($post_data['customerAddressCountry'])->
-        merchantChallengeInd($post_data['merchantChallengeInd'])->
-        merchantDecReqInd($post_data['merchantDecReqInd'])->
-        merchantLandingPageRedirectMethod($post_data['merchantLandingPageRedirectMethod']);
-        if($post_data['customerAddressPostalCode']){
-            //customerAddressPostalCode is not a mandatory field for Magento2, will not send this parameter if the customer did not fill it
-            $payments->customerAddressPostalCode($post_data['customerAddressPostalCode']);
-        }
-        if($post_data['customerAddressState']){
-            //customerAddressState is not a mandatory field for Magento2, will not send this parameter if the customer did not fill it
-            $payments->customerAddressState(substr($post_data['customerAddressState'],0,3));
-        }
-        $response = $payments->token();
-        return $response;
-    }
+
     public function generateInvoice($order, $invoiceService, $transaction){
         try {
             if (!$order->getId()) {
