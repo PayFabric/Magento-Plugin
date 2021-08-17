@@ -421,30 +421,6 @@ class PaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod impleme
         return number_format((float)$amount, 2, '.', '');
     }
 
-    /**
-     * Gets the session token
-     *
-     * @param array $tokenData
-     * @return PaymentMethod $array
-     * @throws \Magento\Framework\Validator\Exception
-     */
-    private function getToken($tokenData = array())
-    {
-        try {
-            $tokenRequest = RequestFactory::newTokenRequest($tokenData['action'], $tokenData);
-            // this sets static fields of config
-            $tokenRequest = $this->_helper->setCommonParams($tokenRequest);
- /*           foreach($tokenData as $key => $value) {
-                call_user_func_array(array($tokenRequest, $key), array($value));
-            }*/
-            $token = $tokenRequest->execute();
-            return $token;
-
-        } catch (\Exception $e) {
-            throw new \Magento\Framework\Validator\Exception(__($e->getMessage()));
-        }
-    }
-
     private function toAPIOperation($paymentAction) {
         switch ($paymentAction) {
             case NewOrderPaymentActions::PAYMENT_ACTION_AUTH: {

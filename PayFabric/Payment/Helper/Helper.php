@@ -2,7 +2,6 @@
 
 namespace PayFabric\Payment\Helper;
 
-use PayFabric\Payment\Helper\sdk\lib\Configurable;
 use PayFabric\Payment\Helper\sdk\lib\Payments;
 use PayFabric\Payment\Model\Config\Source\DisplayMode;
 use Magento\Framework\App\Helper\AbstractHelper;
@@ -19,11 +18,6 @@ class Helper extends AbstractHelper
      */
     private $_storeManager;
     private $_encryptor;
-    /**
-     * parameters to initiate the SDK payment.
-     *
-     */
-    protected $environment_params;
 
     public function __construct(
         \Magento\Framework\App\Helper\Context $context,
@@ -33,18 +27,6 @@ class Helper extends AbstractHelper
         parent::__construct($context);
         $this->_storeManager = $storeManager;
         $this->_encryptor = $encryptor;
-    }
-
-    public static function log()
-    {
-        $writer = new \Zend\Log\Writer\Stream(BP . '/var/log/eservice.log');
-        $logger = new \Zend\Log\Logger();
-        $logger->addWriter($writer);
-        $str = '';
-        foreach (func_get_args() as $arg){
-            $str .= print_r($arg,true);
-        }
-        $logger->info($str);
     }
 
     /**
@@ -118,29 +100,6 @@ class Helper extends AbstractHelper
         }
     }
 
-    /**
- * @desc Cancels the order
- *
- * @param \Magento\Sales\Mode\Order $order
- */
-    public function cancelOrder($order)
-    {
-        $orderStatus = $this->getConfigData('payment_cancelled');
-        $order->setActionFlag($orderStatus, true);
-        $order->cancel()->save();
-    }
-
-    /**
-     * @desc Sets the order to pending
-     *
-     * @param \Magento\Sales\Mode\Order $order
-     */
-    public function setPendingOrder($order)
-    {
-        $order->setState("pending_payment")->setStatus("pending_payment")->addStatusHistoryComment('Payment is pending')->setIsCustomerNotified(true);
-        $order->save();
-    }
-
     public function getConfigData($field, $storeId = null)
     {
         $fieldData = $this->getConfig($field, self::METHOD_CODE, $storeId);
@@ -179,78 +138,11 @@ class Helper extends AbstractHelper
         if (null === $storeId) {
             $storeId = $this->_storeManager->getStore();
         }
-
         if (!$flag) {
             return $this->scopeConfig->getValue($path, \Magento\Store\Model\ScopeInterface::SCOPE_STORE, $storeId);
         } else {
             return $this->scopeConfig->isSetFlag($path, \Magento\Store\Model\ScopeInterface::SCOPE_STORE, $storeId);
         }
-    }
-
-    /**
-     * Construct IPG payment gateway
-     * @param Configurable $configurable
-     * @param array $params
-     * @return Configurable|Payments
-     */
-    public function constructIPG(Configurable $configurable = null, $params = array())
-    {
-        $baseParams = array();
-        if ($this->isSandboxMode()) {
-            $baseParams["tokenURL"] = $this->getConfigData('token_url_sandbox');
-            $baseParams["cashierURL"] = $this->getConfigData('cashier_url_sandbox');
-            $baseParams["paymentsURL"] = $this->getConfigData('payments_url_sandbox');
-        } else {
-            //return (new Payments())->productionEnvironment($params);
-        }
-        if (!isset($configurable)) {
-            $configurable = new Payments($params);
-        }
-        $configurable->environmentUrls($baseParams);
-        $baseParams =  array(
-            "merchantId" => $this->getConfigData('merchant_id'),
-            "password" => $this->getConfigData('merchant_password'),
-            "timestamp" => time() * 1000,
-            "channel" => 'ECOM',
-
-        );
-        foreach($baseParams as $key => $value) {
-            call_user_func_array(array($configurable, $key), array($value));
-        }
-        /*foreach($params as $key => $value) {
-            call_user_func_array(array($configurable, $key), array($value));
-        }*/
-		//throw new \Magento\Framework\Validator\Exception(__(json_encode($configurable->_data)));
-        return $configurable;
-    }
-
-    public function setCommonParams($configurable)
-    {
-        $baseParams = array();
-        if ($this->isSandboxMode()) {
-            $baseParams["tokenURL"] = $this->getConfigData('token_url_sandbox');
-            $baseParams["cashierURL"] = $this->getConfigData('cashier_url_sandbox');
-            $baseParams["paymentsURL"] = $this->getConfigData('payments_url_sandbox');
-        } else {
-            $baseParams["tokenURL"] = $this->getConfigData('token_url_production');
-            $baseParams["cashierURL"] = $this->getConfigData('cashier_url_production');
-            $baseParams["paymentsURL"] = $this->getConfigData('payments_url_production');
-        }
-
-        $configurable->environmentUrls($baseParams);
-        $baseParams =  array(
-            "merchantId" => $this->getConfigData('merchant_id'),
-            "password" => $this->getConfigData('merchant_password'),
-            "timestamp" => time() * 1000,
-            "channel" => 'ECOM',
-
-        );
-        foreach($baseParams as $key => $value) {
-            call_user_func_array(array($configurable, $key), array($value));
-        }
-
-        //throw new \Magento\Framework\Validator\Exception(__(json_encode($configurable->_data)));
-        return $configurable;
     }
 
     public function executeGatewayTransaction($action, $params = array()) {
