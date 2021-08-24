@@ -126,11 +126,11 @@ class Response extends Action implements CsrfAwareActionInterface
                     if($order->getState() == 'processing'){
                         return false;
                     }
-//                    $order->setState("processing")
-//                        ->setStatus("processing")
-//                        ->addStatusHistoryComment(__('Payment completed successfully.'))
-//                        ->setIsCustomerNotified(true);
-//                    $order->save();
+                    $order->setState("processing")
+                        ->setStatus("processing")
+                        ->addStatusHistoryComment(__('Payment completed successfully.'))
+                        ->setIsCustomerNotified(true);
+                    $order->save();
 
                     $payment = $order->getPayment();
                     $payment->setIsTransactionClosed(false);
