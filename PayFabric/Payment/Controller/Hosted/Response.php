@@ -10,6 +10,7 @@ use Magento\Framework\App\Action\Action;
 use Magento\Framework\App\CsrfAwareActionInterface;
 use Magento\Framework\App\Request\InvalidRequestException;
 use Magento\Framework\App\RequestInterface;
+use Magento\Sales\Model\Order\Email\Sender\OrderSender;
 
 class Response extends Action implements CsrfAwareActionInterface
 {
@@ -31,6 +32,11 @@ class Response extends Action implements CsrfAwareActionInterface
     protected $_transaction;
 
     /**
+     * @var OrderSender
+     */
+    protected $orderSender;
+
+    /**
      * @var \PayFabric\Payment\Helper\Helper
      */
     private $_helper;
@@ -49,13 +55,15 @@ class Response extends Action implements CsrfAwareActionInterface
         \Magento\Framework\Registry $registry,
         Helper $helper,
         \Magento\Sales\Model\Service\InvoiceService $invoiceService,
-        \Magento\Framework\DB\Transaction $transaction
+        \Magento\Framework\DB\Transaction $transaction,
+        OrderSender $orderSender
     ) {
         parent::__construct($context);
         $this->registry = $registry;
         $this->invoiceService = $invoiceService;
         $this->_transaction = $transaction;
         $this->_helper = $helper;
+        $this->orderSender = $orderSender;
     }
 
     /**
@@ -101,6 +109,10 @@ class Response extends Action implements CsrfAwareActionInterface
 
         $status = strtolower($result->TrxResponse->Status);
         if ($status == "approved") {
+            // notify customer with the email
+            if (!$order->getEmailSent()) {
+                $this->orderSender->send($order);
+            }
             $transactionState = strtolower($result->TransactionState);
             if($transactionState == "pending capture") { //Auth transaction
                 if($order->getState() == 'pending_payment'){
