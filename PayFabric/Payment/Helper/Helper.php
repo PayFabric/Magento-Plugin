@@ -146,10 +146,6 @@ class Helper extends AbstractHelper
     }
 
     public function executeGatewayTransaction($action, $params = array()) {
-        if(!$this->getConfigData('merchant_id') || !$this->getConfigData('merchant_password')){
-            throw new \Magento\Framework\Exception\LocalizedException(__('miss merchant configuration info'));
-        }
-
         $maxiPago = new Payments();
         $maxiPago->setLogger(PayFabric_LOG_DIR,PayFabric_LOG_SEVERITY);
         $maxiPago->setCredentials($this->getConfigData('merchant_id') , $this->getConfigData('merchant_password'));

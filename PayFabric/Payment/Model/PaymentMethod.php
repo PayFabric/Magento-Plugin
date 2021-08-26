@@ -9,7 +9,6 @@ use Magento\Framework\DataObject;
 use Magento\Payment\Model\InfoInterface;
 use Magento\Payment\Model\Method\ConfigInterface;
 use Magento\Payment\Model\Method\Online\GatewayInterface;
-use Magento\Sales\Model\Order\Payment\Transaction;
 
 class PaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod implements GatewayInterface
 {
@@ -88,8 +87,6 @@ class PaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod impleme
      * @var \Magento\Framework\Module\ResourceInterface
      */
     protected $_resourceInterface;
-
-    protected  $invoiceService;
 
     /**
      * @var \PayFabric\Payment\Helper\Helper
@@ -189,7 +186,6 @@ class PaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod impleme
         $this->_resourceInterface = $resourceInterface;
         $this->_session = $session;
         $this->_customerRepository = $customerRepository;
-        //$this->invoiceService = $invoiceService;
     }
 
     /**

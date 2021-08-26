@@ -96,10 +96,12 @@ class Response extends Action implements CsrfAwareActionInterface
         $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
         $request = $objectManager->get('\Magento\Framework\App\Request\Http');
         $urlInterface = $objectManager->get('\Magento\Framework\UrlInterface');
+        $checkoutSession = $objectManager->get('\Magento\Checkout\Model\Session');
 
         try {
             $result = $this->_helper->executeGatewayTransaction("GET_STATUS", array('TrxKey' => $request->getParam('TrxKey')));
         } catch (\Exception $e) {
+            $checkoutSession->setErrorMessage($e->getMessage());
             $this->_redirect($urlInterface->getUrl('checkout/onepage/failure/'));
             return;
         }
@@ -165,7 +167,7 @@ class Response extends Action implements CsrfAwareActionInterface
         } else {
             $order->setState("canceled")
                 ->setStatus("canceled")
-                ->addStatusHistoryComment('Order cancelled due to failed transaction: ' . $params['transactionKey'] . '(Order ID:' . $params['merchantTxId'] . ')' )->setIsCustomerNotified(true);
+                ->addStatusHistoryComment('Order cancelled due to failed transaction: ' . $request->getParam('TrxKey') . '(Order ID:' . $orderId . ')' )->setIsCustomerNotified(true);
             $order->save();
             $redirectUrl = $urlInterface->getUrl('checkout/onepage/failure/');
         }
