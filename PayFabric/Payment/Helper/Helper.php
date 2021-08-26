@@ -81,12 +81,8 @@ class Helper extends AbstractHelper
         $displayMode = $this->getConfigData('display_mode');
         if ($displayMode === DisplayMode::DISPLAY_MODE_REDIRECT) {
             return "GET";
-        } else if ($displayMode === DisplayMode::DISPLAY_MODE_HOSTEDPAY) {
-            return "GET";
-        }else if ($displayMode === DisplayMode::DISPLAY_MODE_EMBEDDED) {
-
         } else if ($displayMode === DisplayMode::DISPLAY_MODE_IFRAME) {
-            return "POST";
+            return "GET";
         } else {
             $this->logDebug("Display mode not valid: " . $displayMode);
             return '';

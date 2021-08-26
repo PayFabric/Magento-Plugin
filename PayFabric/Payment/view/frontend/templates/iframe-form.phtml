@@ -2,7 +2,7 @@
 <head>
 </head>
 <body>
-<form id="paymentForm" action="<?php echo $block->getMerchantLandingPageUrl(); ?>" method="get">
+<form id="paymentForm" action="<?php echo $block->getMerchantLandingPageUrl(); ?>" method=<?php echo $block->escapeHtml($block->getFormMethod()) ?>>
 <input type="hidden" id="TrxKey" name="TrxKey" value=""/>
 </form>
 <div id="cashierDiv" style="max-width: 600px; margin: 0 auto;"></div>
