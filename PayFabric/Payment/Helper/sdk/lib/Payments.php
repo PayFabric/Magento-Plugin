@@ -16,7 +16,7 @@ class Payments extends ResponseBase {
         */
 //        !defined('PayFabric_LOG_SEVERITY') && define('PayFabric_LOG_SEVERITY' , 'INFO');
         !defined('PayFabric_LOG_SEVERITY') && define('PayFabric_LOG_SEVERITY' , 'DEBUG');
-        !defined('PayFabric_LOG_DIR') && define('PayFabric_LOG_DIR' , dirname(__FILE__).'/logs');
+        !defined('PayFabric_LOG_DIR') && define('PayFabric_LOG_DIR' , BP . '/var/log');
         !defined('PayFabric_DEBUG') && define('PayFabric_DEBUG' , false);
     }
 
