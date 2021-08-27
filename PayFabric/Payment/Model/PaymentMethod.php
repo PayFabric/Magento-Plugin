@@ -491,7 +491,7 @@ class PaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod impleme
 
         $params = array(
             "amount" => $amount,
-            "originalMerchantTxId" => $payment->getParentTransactionId()
+            "originalMerchantTxId" => $payment->getRefundTransactionId()
         );
         $result = $this->_helper->executeGatewayTransaction("REFUND", $params);
         if(strtolower($result->Status) == 'approved') {
