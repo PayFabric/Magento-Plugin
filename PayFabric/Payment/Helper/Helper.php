@@ -6,9 +6,7 @@ use PayFabric\Payment\Helper\sdk\lib\Payments;
 use PayFabric\Payment\Model\Config\Source\DisplayMode;
 use Magento\Framework\App\Helper\AbstractHelper;
 use PayFabric\Payment\Model\Config\Source\Environment;
-/**
- * @SuppressWarnings(PHPMD.LongVariable)
- */
+
 class Helper extends AbstractHelper
 {
     const METHOD_CODE = 'payfabric_payment';
@@ -30,7 +28,7 @@ class Helper extends AbstractHelper
     }
 
     /**
-     * @desc Returns true if integration is in sandbox mode
+     * @desc Return true if sandbox mode
      *
      * @return bool
      */
@@ -39,18 +37,28 @@ class Helper extends AbstractHelper
         return $this->getConfigData('environment') == Environment::ENVIRONMENT_SANDBOX;
     }
 
+    /**
+     * @desc Return asynchronous notification url as an alternative
+     *
+     * @return string
+     */
     public function getNotificationRoute($orderId)
     {
         return 'payfabric/hosted/callback/orderid/' . $orderId;
     }
 
+    /**
+     * @desc Return synchronous notification url
+     *
+     * @return string
+     */
     public function getLandingPageOnReturnAfterRedirect($orderId)
     {
         return 'payfabric/hosted/response/orderid/' . $orderId;
     }
 
     /**
-     * @desc Get Cashier URL
+     * @desc Return Cashier URL
      *
      * @return string
      */
@@ -60,8 +68,9 @@ class Helper extends AbstractHelper
         $maxiPago->setEnvironment($this->isSandboxMode());
         return $maxiPago->cashierUrl;
     }
+
     /**
-     * @desc Get Cashier JS API URL
+     * @desc Return Cashier JS API URL
      *
      * @return string
      */
@@ -71,8 +80,9 @@ class Helper extends AbstractHelper
         $maxiPago->setEnvironment($this->isSandboxMode());
         return $maxiPago->jsUrl;
     }
+
     /**
-     * @desc Returns the method of the HTTP Request that the form will execute
+     * @desc Return the method of the HTTP Request that the form executes
      *
      * @return string
      */
@@ -89,6 +99,11 @@ class Helper extends AbstractHelper
         }
     }
 
+    /**
+     * @desc Log runtime debug log in var/log/debug.log
+     *
+     * @return string
+     */
     public function logDebug($message)
     {
         if ($this->getConfigData('debug_log') == '1') {
@@ -96,6 +111,14 @@ class Helper extends AbstractHelper
         }
     }
 
+    /**
+     * @desc Read the values in etc/config.xml
+     *
+     * @param $field
+     * @param $storeId
+     *
+     * @return bool|mixed
+     */
     public function getConfigData($field, $storeId = null)
     {
         $fieldData = $this->getConfig($field, self::METHOD_CODE, $storeId);
@@ -106,7 +129,7 @@ class Helper extends AbstractHelper
     }
 
     /**
-     * @desc Gives back configuration values as flag
+     * @desc If it's a yes/no flag and you want to get a true/false value you can do it like this:
      *
      * @param $field
      * @param null $storeId
@@ -119,7 +142,7 @@ class Helper extends AbstractHelper
     }
 
     /**
-     * @desc Retrieve information from payment configuration
+     * @desc Magento\Framework\App\Config implements \Magento\Framework\App\Config\ScopeConfigInterface
      *
      * @param $field
      * @param $paymentMethodCode
@@ -141,7 +164,16 @@ class Helper extends AbstractHelper
         }
     }
 
-    public function executeGatewayTransaction($action, $params = array()) {
+    /**
+     * @desc Execute the gateway transaction
+     *
+     * @param $action
+     * @param $params
+     *
+     * @return string|object
+     */
+    public function executeGatewayTransaction($action, $params = array())
+    {
         $maxiPago = new Payments();
         $maxiPago->setLogger(PayFabric_LOG_DIR,PayFabric_LOG_SEVERITY);
         $maxiPago->setCredentials($this->getConfigData('merchant_id') , $this->getConfigData('merchant_password'));
@@ -188,7 +220,16 @@ class Helper extends AbstractHelper
         return json_decode($maxiPago->response);
     }
 
-    public function generateInvoice($order, $invoiceService, $transaction){
+    /**
+     * @desc Generate invoice with capture
+     *
+     * @param $action
+     * @param $params
+     *
+     * @return string|object
+     */
+    public function generateInvoice($order, $invoiceService, $transaction)
+    {
         try {
             if (!$order->getId()) {
                 throw new \Magento\Framework\Exception\LocalizedException(__('The order no longer exists.'));

@@ -273,19 +273,7 @@ class PaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod impleme
     public function getFormFields()
     {
         $paymentAction = $this->_helper->getConfigData('payment_action');
-        $formFields = $this->getAPIParametersForRedirect($this->toAPIOperation($paymentAction));
-
-        return $formFields;
-    }
-
-    /**
-     * @param $apiOperation
-     * @throws \Magento\Framework\Exception\LocalizedException
-     * @throws \Magento\Framework\Validator\Exception
-     */
-    private function getAPIParametersForRedirect($apiOperation)
-    {
-        $sessionTokenData = $this->getTokenHostedData($apiOperation);
+        $sessionTokenData = $this->getTokenHostedData($this->toAPIOperation($paymentAction));
         $responseToken = $this->_helper->executeGatewayTransaction($sessionTokenData['action'],$sessionTokenData);
         if (empty($responseToken->Token)) {
             return  array('status' => 'error', 'message' => $responseToken);
@@ -395,7 +383,7 @@ class PaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod impleme
         );
     }
 
-    public function get_level3_data_from_order($order)
+    private function get_level3_data_from_order($order)
     {
         $items = array();
         foreach ($order->getAllVisibleItems() as $item) {
@@ -417,7 +405,8 @@ class PaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod impleme
         return number_format((float)$amount, 2, '.', '');
     }
 
-    private function toAPIOperation($paymentAction) {
+    private function toAPIOperation($paymentAction)
+    {
         switch ($paymentAction) {
             case NewOrderPaymentActions::PAYMENT_ACTION_AUTH: {
                 return "AUTH";
@@ -430,7 +419,9 @@ class PaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod impleme
             }
         }
     }
-    public function getMerchantNotificationUrl(){
+
+    public function getMerchantNotificationUrl()
+    {
         // merchant notification URL: server-to-server, URL to which the Transaction Result Call will be sent
         $payment = $this->getInfoInstance();
         $order = $payment->getOrder();
@@ -438,7 +429,9 @@ class PaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod impleme
         return $merchantNotificationUrl;
 
     }
-    public function getMerchantLandingPageUrl(){
+
+    public function getMerchantLandingPageUrl()
+    {
         $payment = $this->getInfoInstance();
         $order = $payment->getOrder();
         // The URL to which the customer’s browser is redirected after the payment
