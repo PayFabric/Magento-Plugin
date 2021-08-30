@@ -5,7 +5,7 @@ namespace PayFabric\Payment\Model\ConfigProvider;
 use Magento\Checkout\Model\ConfigProviderInterface;
 use Magento\Payment\Helper\Data as PaymentHelper;
 
-class EServiceConfigProvider implements ConfigProviderInterface
+class PayFabricConfigProvider implements ConfigProviderInterface
 {
 
     private $_paymentHelper;
