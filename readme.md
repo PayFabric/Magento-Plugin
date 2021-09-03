@@ -27,9 +27,9 @@ Before installing please take a full backup of your website.
 ![image](ScreenShots/cache_admin.png)
 
 ## Capture
-For authorized transactions you can create capture directly in Magento. Go to the “invoice” of an order and click on “view” invoice.
+For authorized transactions you can create capture directly in Magento. To do this open an order and click on Invoice button at the top right side.
 
-![image](ScreenShots/invoice_admin.png)
+![image](ScreenShots/invoice_create_admin.png)
 
 On the invoice page, scroll down to the bottom, choose "Capture Online" dropdown menu and click on "Submit Invoice" button.
 
