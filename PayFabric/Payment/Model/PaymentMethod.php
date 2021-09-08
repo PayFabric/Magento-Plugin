@@ -340,39 +340,49 @@ class PaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod impleme
         }
         $this->_session->setOrderId($orderId);
 
+        $shippingAddress = $billingAddress = array();
         $shipping = $order->getShippingAddress();
+        if(!empty($shipping)){
+            $shippingAddress = array(
+                //Shipping Information
+                "shippingCity" => (string)$shipping->getCity() ?? '', // Optional - Customer city
+                "shippingCountry" => (string)$shipping->getCountryId() ?? '', // Optional - Customer country code per ISO 3166-2
+                "shippingEmail" => (string)$shipping->getEmail() ?? '', // Optional - Customer email address
+                "shippingAddress1" => (string)$shipping->getStreetLine(1) ?? '', // Optional - Customer address
+                "shippingAddress2" => (string)$shipping->getStreetLine(2) ?? '', // Optional - Customer address
+                "shippingAddress3" => (string)$shipping->getStreetLine(3) ?? '', // Optional - Customer address
+                "shippingPhone" => (string)$shipping->getTelephone() ?? '', // Optional - Customer phone number
+                "shippingState" => (string)$shipping->getRegionCode() ?? '', // Optional - Customer state with 2 characters
+                "shippingPostalCode" => (string)$shipping->getPostcode() ?? '', // Optional - Customer zip code
+            );
+        }
         $billing = $order->getBillingAddress();
-        return  array(
+        if(!empty($billing)){
+            $billingAddress = array(
+                //Billing Information
+                'billingFirstName' => (string)$billing->getFirstname() ?? '',
+                'billingLastName'  => (string)$billing->getLastname() ?? '',
+                'billingCompany'    => (string)$billing->getCompany() ?? '',
+                'billingAddress1'  => (string)$billing->getStreetLine(1) ?? '',
+                'billingAddress2'  => (string)$billing->getStreetLine(2) ?? '',
+                'billingAddress3'  => (string)$billing->getStreetLine(3) ?? '',
+                'billingCity'       => (string)$billing->getCity() ?? '',
+                'billingState'      => (string)$billing->getRegionCode() ?? '',
+                'billingPostalCode'   => (string)$billing->getPostcode() ?? '',
+                'billingCountry'    => (string)$billing->getCountryId() ?? '',
+                'billingEmail'      => (string)$billing->getEmail() ?? '',
+                'billingPhone'      => (string)$billing->getTelephone() ?? '',
+            );
+        }
+
+        return  array_merge(array(
             "action" => $apiOperation,
             "referenceNum" => $orderId, // REQUIRED - Merchant internal order number //
             "Amount" => $amount, // REQUIRED - Transaction amount in US format //
             "Currency" => $orderCurrencyCode, // Optional - Valid only for ChasePaymentech multi-currecy setup. Please see full documentation for more info
             "pluginName" => "Magento PayFabric Gateway",
             "pluginVersion" => "1.0.0",
-            //Shipping Information
-            "shippingCity" => (string)$shipping->getCity() ?? '', // Optional - Customer city //
-            "shippingCountry" => (string)$shipping->getCountryId() ?? '', // Optional - Customer country code per ISO 3166-2 //
             "customerId" => $customerId,
-            "shippingEmail" => (string)$shipping->getEmail() ?? '', // Optional - Customer email address, use the billing email as shipping email because there is no shipping email//
-            "shippingAddress1" => (string)$shipping->getStreetLine(1) ?? '', // Optional - Customer address //
-            "shippingAddress2" => (string)$shipping->getStreetLine(2) ?? '', // Optional - Customer address //
-            "shippingAddress3" => (string)$shipping->getStreetLine(3) ?? '', // Optional - Customer address //
-            "shippingPhone" => (string)$shipping->getTelephone() ?? '', // Optional - Customer phone number, use the billing phone as shipping phone because there is no shipping phone //
-            "shippingState" => (string)$shipping->getRegionCode() ?? '', // Optional - Customer state with 2 characters //
-            "shippingPostalCode" => (string)$shipping->getPostcode() ?? '', // Optional - Customer zip code //
-            //Billing Information
-            'billingFirstName' => (string)$billing->getFirstname() ?? '',
-            'billingLastName'  => (string)$billing->getLastname() ?? '',
-            'billingCompany'    => (string)$billing->getCompany() ?? '',
-            'billingAddress1'  => (string)$billing->getStreetLine(1) ?? '',
-            'billingAddress2'  => (string)$billing->getStreetLine(2) ?? '',
-            'billingAddress3'  => (string)$billing->getStreetLine(3) ?? '',
-            'billingCity'       => (string)$billing->getCity() ?? '',
-            'billingState'      => (string)$billing->getRegionCode() ?? '',
-            'billingPostalCode'   => (string)$billing->getPostcode() ?? '',
-            'billingCountry'    => (string)$billing->getCountryId() ?? '',
-            'billingEmail'      => (string)$billing->getEmail() ?? '',
-            'billingPhone'      => (string)$billing->getTelephone() ?? '',
             //level2/3
             'freightAmount'    => $this->formatAmount($order->getBaseShippingAmount()),
             'taxAmount' => $this->formatAmount($order->getBaseTaxAmount()),
@@ -380,7 +390,7 @@ class PaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod impleme
             //Optional
             'allowOriginUrl' => $allowOriginUrl,
             "merchantNotificationUrl" => $merchantNotificationUrl,
-        );
+        ), $shippingAddress, $billingAddress);
     }
 
     private function get_level3_data_from_order($order)
