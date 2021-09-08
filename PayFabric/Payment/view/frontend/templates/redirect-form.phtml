@@ -2,12 +2,16 @@
 <head>
 </head>
 <body>
-
-
+    <?php
+        $fields = $block->getFormFields();
+        if(!empty($fields['status']) && 'error' == $fields['status']) {
+            echo "<script type='text/javascript'>window.alert('".$fields['message']."'); window.history.back();</script>";
+        }
+    ?>
     <form id="payfabric_payment_form" method="<?php echo $block->escapeHtml($block->getFormMethod()) ?>" action="<?php echo $block->escapeHtml($block->getCashierUrl()) ?>" name="payfabric_payment_form">
 
         <?php
-        foreach ($block->getFormFields() as $field => $value) {
+        foreach ($fields as $field => $value) {
             echo '<input type="hidden" name="'.
                 $block->escapeHtml(htmlspecialchars($field, ENT_COMPAT | ENT_HTML401, 'UTF-8')).
                 '" value="'.$block->escapeHtml(htmlspecialchars($value, ENT_COMPAT | ENT_HTML401, 'UTF-8')).'" />';
