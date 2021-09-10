@@ -8,12 +8,12 @@ class Builder extends RequestBase {
         if (strlen($array["merchantId"]) > 0) {
             $this->merchantId = $array["merchantId"];
         }else{
-            throw new \InvalidArgumentException("[PayFabric Class] Field 'merchantId' cannot be null.");
+            throw new \InvalidArgumentException("Device ID or Password can not be blank");
         }
         if (strlen($array["merchantKey"]) > 0) {
             $this->merchantKey = $array["merchantKey"];
         }else{
-            throw new \InvalidArgumentException("[PayFabric Class] Field 'merchantKey' cannot be null.");
+            throw new \InvalidArgumentException("Device ID or Password can not be blank");
         }
     }
 
