@@ -402,11 +402,11 @@ class PaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod impleme
             $items[] = array(
                 'product_code'                  => $item->getSku() ? $item->getSku() : $item->getProductId(),
                 'product_description'           => $item->getDescription() ? $item->getDescription() : $item->getName(),
-                'unit_cost'                     => $this->formatAmount($item->getPrice()/$item->getQtyOrdered()),
+                'unit_cost'                     => $this->formatAmount($item->getPrice()),
                 'quantity'                      => (int)$item->getQtyOrdered(),
                 'discount_amount'               => $this->formatAmount($item->getDiscountAmount()),
                 'tax_amount'                    => $this->formatAmount($item->getTaxAmount()),
-                'item_amount'                   => $this->formatAmount($item->getPrice())
+                'item_amount'                   => $this->formatAmount($item->getRowTotal())
             );
         }
         return $items;
