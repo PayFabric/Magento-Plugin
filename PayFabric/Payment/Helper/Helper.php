@@ -174,50 +174,54 @@ class Helper extends AbstractHelper
      */
     public function executeGatewayTransaction($action, $params = array())
     {
-        $maxiPago = new Payments();
-        $maxiPago->setLogger(PayFabric_LOG_DIR,PayFabric_LOG_SEVERITY);
-        $maxiPago->setCredentials($this->getConfigData('merchant_id') , $this->getConfigData('merchant_password'));
-        $maxiPago->setDebug(PayFabric_DEBUG);
-        $maxiPago->setEnvironment($this->getConfigData('environment'));
+        try {
+            $maxiPago = new Payments();
+            $maxiPago->setLogger(PayFabric_LOG_DIR,PayFabric_LOG_SEVERITY);
+            $maxiPago->setCredentials($this->getConfigData('merchant_id') , $this->getConfigData('merchant_password'));
+            $maxiPago->setDebug(PayFabric_DEBUG);
+            $maxiPago->setEnvironment($this->getConfigData('environment'));
 
-        switch ($action){
-            case "TOKEN":
-                $maxiPago->token($params);
-                if(empty(json_decode($maxiPago->response)->Token)){
-                    return  $maxiPago->response;
-                }
-                break;
-            case "AUTH":
-                $maxiPago->creditCardAuth($params);
-                $responseTran = json_decode($maxiPago->response);
-                if(empty($responseTran->Key)){
-                    return  $maxiPago->response;
-                }
-                return $this->executeGatewayTransaction("TOKEN", array("Audience" => "PaymentPage" , "Subject" => $responseTran->Key));
-            case "PURCHASE":
-                $maxiPago->creditCardSale($params);
-                $responseTran = json_decode($maxiPago->response);
-                if(empty($responseTran->Key)){
-                    return  $maxiPago->response;
-                }
-                return $this->executeGatewayTransaction("TOKEN", array("Audience" => "PaymentPage" , "Subject" => $responseTran->Key));
-            case "CAPTURE":
-                $maxiPago->creditCardCapture($params['originalMerchantTxId']);
-                break;
-            case "REFUND":
-                $maxiPago->creditCardRefund(array(
-                    'Amount'=>$params['amount'],
-                    'ReferenceKey'=>$params['originalMerchantTxId']
-                ));
-                break;
-            case "VOID":
-                $maxiPago->creditCardVoid($params['originalMerchantTxId']);
-                break;
-            case "GET_STATUS":
-                $maxiPago->retrieveTransaction($params['TrxKey']);
-                break;
+            switch ($action){
+                case "TOKEN":
+                    $maxiPago->token($params);
+                    if(empty(json_decode($maxiPago->response)->Token)){
+                        throw new \UnexpectedValueException($maxiPago->response, 503);
+                    }
+                    break;
+                case "AUTH":
+                    $maxiPago->creditCardAuth($params);
+                    $responseTran = json_decode($maxiPago->response);
+                    if(empty($responseTran->Key)){
+                        throw new \UnexpectedValueException($maxiPago->response, 503);
+                    }
+                    return $this->executeGatewayTransaction("TOKEN", array("Audience" => "PaymentPage" , "Subject" => $responseTran->Key));
+                case "PURCHASE":
+                    $maxiPago->creditCardSale($params);
+                    $responseTran = json_decode($maxiPago->response);
+                    if(empty($responseTran->Key)){
+                        throw new \UnexpectedValueException($maxiPago->response, 503);
+                    }
+                    return $this->executeGatewayTransaction("TOKEN", array("Audience" => "PaymentPage" , "Subject" => $responseTran->Key));
+                case "CAPTURE":
+                    $maxiPago->creditCardCapture($params['originalMerchantTxId']);
+                    break;
+                case "REFUND":
+                    $maxiPago->creditCardRefund(array(
+                        'Amount'=>$params['amount'],
+                        'ReferenceKey'=>$params['originalMerchantTxId']
+                    ));
+                    break;
+                case "VOID":
+                    $maxiPago->creditCardVoid($params['originalMerchantTxId']);
+                    break;
+                case "GET_STATUS":
+                    $maxiPago->retrieveTransaction($params['TrxKey']);
+                    break;
+            }
+            return json_decode($maxiPago->response);
+        }catch (\Exception $e){
+            throw $e;
         }
-        return json_decode($maxiPago->response);
     }
 
     /**

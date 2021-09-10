@@ -22,7 +22,7 @@ class ServiceBase {
 
             else { throw new \InvalidArgumentException('[PayFabric Class error] Invalid credentials.', 401); }
         }
-        catch (Exception $e) {
+        catch (\Exception $e) {
             if (is_object(RequestBase::$logger)) { RequestBase::$logger->logFatal($e->getMessage()." in ".$e->getFile()." on line ".$e->getLine()); }
             throw $e;
         }
@@ -48,7 +48,7 @@ class ServiceBase {
             $this->cashierUrl = $this->host. '/payment/web/transaction/ResponsiveProcess';
             $this->jsUrl = $this->host. '/Payment/WebGate/Content/bundles/payfabricpayments.bundle.js';
         }
-        catch (Exception $e) {
+        catch (\Exception $e) {
             if (is_object(RequestBase::$logger)) {
             	RequestBase::$logger->logCrit($e->getMessage()." in ".$e->getFile()." on line ".$e->getLine()); }
             throw $e;

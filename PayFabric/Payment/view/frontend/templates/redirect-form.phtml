@@ -5,8 +5,8 @@
     <?php
         $fields = $block->getFormFields();
         if(!empty($fields['status']) && 'error' == $fields['status']) {
-            echo "<script type='text/javascript'>window.alert('".$fields['message']."'); window.history.back();</script>";
-        }
+            echo "<script type='text/javascript'>window.alert('".$fields['message']."'); window.location = '".$block->getUrl('checkout/cart')."'</script>";
+        }else{
     ?>
     <form id="payfabric_payment_form" method="<?php echo $block->escapeHtml($block->getFormMethod()) ?>" action="<?php echo $block->escapeHtml($block->getCashierUrl()) ?>" name="payfabric_payment_form">
 
@@ -21,6 +21,6 @@
     <script type="text/javascript">
          document.getElementById('payfabric_payment_form').submit();
     </script>
-
+    <?php } ?>
 </body>
 </html>

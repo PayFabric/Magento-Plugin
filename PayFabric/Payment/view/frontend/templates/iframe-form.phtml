@@ -10,8 +10,8 @@
 <?php
 $fields = $block->getFormFields();
 if(!empty($fields['status']) && 'error' == $fields['status']) {
-    echo "<script type='text/javascript'>window.alert('".$fields['message']."'); window.history.back();</script>";
-}
+    echo "<script type='text/javascript'>window.alert('".$fields['message']."'); window.location = '".$block->getUrl('checkout/cart')."'</script>";
+}else{
 ?>
 <script type="text/javascript">
 new payfabricpayments({<?php
@@ -28,5 +28,6 @@ function handleResult(data) {
     }
 }
  </script>
+<?php } ?>
 </body>
 </html>

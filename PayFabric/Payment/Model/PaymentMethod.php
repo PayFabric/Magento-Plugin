@@ -2,6 +2,7 @@
 
 namespace PayFabric\Payment\Model;
 
+use mysql_xdevapi\Exception;
 use PayFabric\Payment\Helper\Helper;
 use PayFabric\Payment\Model\Config\Source\NewOrderPaymentActions;
 use PayFabric\Payment\Model\Config\Source\DisplayMode;
@@ -274,9 +275,10 @@ class PaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod impleme
     {
         $paymentAction = $this->_helper->getConfigData('payment_action');
         $sessionTokenData = $this->getTokenHostedData($this->toAPIOperation($paymentAction));
-        $responseToken = $this->_helper->executeGatewayTransaction($sessionTokenData['action'],$sessionTokenData);
-        if (empty($responseToken->Token)) {
-            return  array('status' => 'error', 'message' => $responseToken);
+        try {
+            $responseToken = $this->_helper->executeGatewayTransaction($sessionTokenData['action'], $sessionTokenData);
+        }catch (\Exception $e){
+            return  array('status' => 'error', 'message' => $e->getMessage());
         }
         $displayMode = $this->getConfigData('display_mode');
         if ($displayMode === DisplayMode::DISPLAY_MODE_IFRAME) {

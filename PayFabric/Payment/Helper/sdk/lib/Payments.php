@@ -43,10 +43,7 @@ class Payments extends ResponseBase {
             $req->setTransactionType("Authorization");
             $this->response = $req->processRequest();
         }
-        catch (Exception $e) {
-            if (is_object(RequestBase::$logger)) {
-            	RequestBase::$logger->logCrit($e->getMessage()." in ".$e->getFile()." on line ".$e->getLine());
-            }
+        catch (\Exception $e) {
             throw $e;
         }
     }
@@ -72,10 +69,7 @@ class Payments extends ResponseBase {
             $req->setEndpoint($this->host.'/payment/api/reference/' .$key. '?trxtype=Ship');
             $this->response = $req->processRequest();
         }
-        catch (Exception $e) {
-            if (is_object(RequestBase::$logger)) {
-            	RequestBase::$logger->logCrit($e->getMessage()." in ".$e->getFile()." on line ".$e->getLine());
-            }
+        catch (\Exception $e) {
             throw $e;
         }
     }
@@ -107,10 +101,7 @@ class Payments extends ResponseBase {
             $req->setTransactionType("Sale");
             $this->response = $req->processRequest();
         }
-        catch (Exception $e) {
-            if (is_object(RequestBase::$logger)) {
-            	RequestBase::$logger->logCrit($e->getMessage()." in ".$e->getFile()." on line ".$e->getLine());
-            }
+        catch (\Exception $e) {
             throw $e;
         }
     }
@@ -135,10 +126,7 @@ class Payments extends ResponseBase {
             $req->setTransactionType("Token");
             $this->response = $req->processRequest();
         }
-        catch (Exception $e) {
-            if (is_object(RequestBase::$logger)) {
-                RequestBase::$logger->logCrit($e->getMessage()." in ".$e->getFile()." on line ".$e->getLine());
-            }
+        catch (\Exception $e) {
             throw $e;
         }
     }
@@ -158,10 +146,7 @@ class Payments extends ResponseBase {
             $req->setEndpoint($this->host.'/payment/api/transaction/'.$key);
             $this->response = $req->processRequest();
         }
-        catch (Exception $e) {
-            if (is_object(RequestBase::$logger)) {
-                RequestBase::$logger->logCrit($e->getMessage()." in ".$e->getFile()." on line ".$e->getLine());
-            }
+        catch (\Exception $e) {
             throw $e;
         }
     }
@@ -188,10 +173,7 @@ class Payments extends ResponseBase {
             $req->setEndpoint($this->host.'/payment/api/reference/' .$key. '?trxtype=Void');
             $this->response = $req->processRequest();
         }
-        catch (Exception $e) {
-            if (is_object(RequestBase::$logger)) {
-            	RequestBase::$logger->logCrit($e->getMessage()." in ".$e->getFile()." on line ".$e->getLine());
-            }
+        catch (\Exception $e) {
             throw $e;
         }
     }
@@ -223,10 +205,7 @@ class Payments extends ResponseBase {
             $req->setTransactionType("Refund");
             $this->response = $req->processRequest();
         }
-        catch (Exception $e) {
-            if (is_object(RequestBase::$logger)) {
-            	RequestBase::$logger->logCrit($e->getMessage()." in ".$e->getFile()." on line ".$e->getLine());
-            }
+        catch (\Exception $e) {
             throw $e;
         }
     }

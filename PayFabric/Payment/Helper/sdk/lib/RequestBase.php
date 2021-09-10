@@ -1,6 +1,5 @@
 <?php
 namespace PayFabric\Payment\Helper\sdk\lib;
-require_once 'KLogger.php';
 class RequestBase {
     
     protected $version = '1.0.0';
@@ -21,7 +20,7 @@ class RequestBase {
             	RequestBase::$logger->logDebug('Setting endpoint to "'.$param.'"');
             }
         }
-        catch (Exception $e) {
+        catch (\Exception $e) {
             if (is_object(self::$logger)) { 
             	self::$logger->logCrit($e->getMessage()." in ".$e->getFile()." on line ".$e->getLine()); 
             }
@@ -36,7 +35,7 @@ class RequestBase {
             }
             $this->type = $param;
         }
-        catch (Exception $e) {
+        catch (\Exception $e) {
         	if (is_object(self::$logger)) { 
         		self::$logger->logCrit($e->getMessage()." in ".$e->getFile()." on line ".$e->getLine()); 
         	}
@@ -59,7 +58,7 @@ class RequestBase {
                 self::$logger->logNotice('Parameters sent', $array);
             }
         }
-        catch (Exception $e) {
+        catch (\Exception $e) {
         	if (is_object(self::$logger)) { 
         		self::$logger->logCrit($e->getMessage()." in ".$e->getFile()." on line ".$e->getLine()); 
         	}
@@ -147,7 +146,7 @@ class RequestBase {
             }
             return $this->sendXml();
         }
-        catch (Exception $e) {
+        catch (\Exception $e) {
         	if (is_object(self::$logger)) { self::$logger->logCrit($e->getMessage()." in ".$e->getFile()." on line ".$e->getLine()); }
             throw $e;
         }
