@@ -65,7 +65,7 @@ class Helper extends AbstractHelper
     public function getCashierUrl()
     {
         $maxiPago = new Payments();
-        $maxiPago->setEnvironment($this->isSandboxMode());
+        $maxiPago->setEnvironment($this->getConfigData('environment'));
         return $maxiPago->cashierUrl;
     }
 
@@ -77,7 +77,7 @@ class Helper extends AbstractHelper
     public function getJsUrl()
     {
         $maxiPago = new Payments();
-        $maxiPago->setEnvironment($this->isSandboxMode());
+        $maxiPago->setEnvironment($this->getConfigData('environment'));
         return $maxiPago->jsUrl;
     }
 

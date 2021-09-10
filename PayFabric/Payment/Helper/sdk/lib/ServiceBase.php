@@ -34,14 +34,14 @@ class ServiceBase {
      */
     public function setEnvironment($param=null) {
         try {
-            if (strtoupper($param) == 'TEST' || $param == true) {
+            if (strtoupper($param) == 'TEST' || strtoupper($param) == 'SANDBOX') {
             	RequestBase::setSslVerify(false);
             	$this->host = TESTGATEWAY;
             }
-            elseif (strtoupper($param) == 'LIVE' || $param == false) {
+            elseif (strtoupper($param) == 'LIVE' || strtoupper($param) == 'PRODUCTION') {
             	$this->host = LIVEGATEWAY;
             }
-            else { throw new \BadMethodCallException('[PayFabric Class error] Invalid environment. '.__METHOD__.' accepts either "TEST" or "LIVE"', 400); }
+            else { throw new \BadMethodCallException('[PayFabric Class error] Invalid environment. '.__METHOD__.' accepts "TEST", "SANDBOX", "LIVE" or "PRODUCTION"', 400); }
             if (is_object(RequestBase::$logger)) {
             	RequestBase::$logger->logNotice('Setting enviroment to "'.$param.'"');
             }
