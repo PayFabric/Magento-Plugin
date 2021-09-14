@@ -43,29 +43,27 @@ class Gateway extends \Magento\Framework\App\Config\Value
      */
     public function beforeSave()
     {
-        if($this->getFieldsetDataValue('active')){
-            $api_merchant_id = $this->getFieldsetDataValue('merchant_id');
-            $api_password = $this->getFieldsetDataValue('merchant_password');
-            $sandbox = $this->getFieldsetDataValue('environment');
-            $payment_action = $this->getFieldsetDataValue('payment_action');
-            $maxiPago = new Payments();
-            $maxiPago->setLogger(PayFabric_LOG_DIR,PayFabric_LOG_SEVERITY);
+        $api_merchant_id = $this->getFieldsetDataValue('merchant_id');
+        $api_password = $this->getFieldsetDataValue('merchant_password');
+        $sandbox = $this->getFieldsetDataValue('environment');
+        $payment_action = $this->getFieldsetDataValue('payment_action');
+        $maxiPago = new Payments();
+        $maxiPago->setLogger(PayFabric_LOG_DIR,PayFabric_LOG_SEVERITY);
 
-            // Set your credentials before any other transaction methods
-            $maxiPago->setCredentials($api_merchant_id, $api_password);
+        // Set your credentials before any other transaction methods
+        $maxiPago->setCredentials($api_merchant_id, $api_password);
 
-            $maxiPago->setDebug(PayFabric_DEBUG);
-            $maxiPago->setEnvironment($sandbox);
-            $data = array(
-                'Amount' => '0.01',
-                'Currency' => $this->_storeManager->getStore()->getBaseCurrencyCode()
-            );
-            $payment_action == NewOrderPaymentActions::PAYMENT_ACTION_AUTH ? $maxiPago->creditCardAuth($data) : $maxiPago->creditCardSale($data);
+        $maxiPago->setDebug(PayFabric_DEBUG);
+        $maxiPago->setEnvironment($sandbox);
+        $data = array(
+            'Amount' => '0.01',
+            'Currency' => $this->_storeManager->getStore()->getBaseCurrencyCode()
+        );
+        $payment_action == NewOrderPaymentActions::PAYMENT_ACTION_AUTH ? $maxiPago->creditCardAuth($data) : $maxiPago->creditCardSale($data);
 
-            $responseTran = json_decode($maxiPago->response);
-            if(empty($responseTran->Key)){
-                throw new \UnexpectedValueException($maxiPago->response, 503);
-            }
+        $responseTran = json_decode($maxiPago->response);
+        if(empty($responseTran->Key)){
+            throw new \UnexpectedValueException($maxiPago->response, 503);
         }
         parent::beforeSave();
         return $this;
