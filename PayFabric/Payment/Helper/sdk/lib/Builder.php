@@ -30,7 +30,7 @@ class Builder extends RequestBase {
         }
     }
 
-    protected function setRefund(){
+    protected function setType(){
         if (strlen($this->type) > 0) {
             $this->_data["Type"] = $this->type;
         }else{

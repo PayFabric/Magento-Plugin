@@ -56,17 +56,20 @@ class Payments extends ResponseBase {
      * @param string $key
      * @throws BadMethodCallException
      */
-    public function creditCardCapture($key) {
+    public function creditCardCapture($array) {
         try {
-            if (empty($key)) {
+            if (!is_array($array)) {
             	throw new \BadMethodCallException('[PayFabric Class] Method '.__METHOD__.' must receive array as input');
             }
             if (is_object(RequestBase::$logger)) {
             	RequestBase::$logger->logNotice('Calling method '.__METHOD__);
             }
 
+            $this->request = $array;
             $req = new Request($this->credentials);
-            $req->setEndpoint($this->host.'/payment/api/reference/' .$key. '?trxtype=Ship');
+            $req->setVars($this->request);
+            $req->setEndpoint($this->host.'/payment/api/transaction/process');
+            $req->setTransactionType("Capture");
             $this->response = $req->processRequest();
         }
         catch (\Exception $e) {

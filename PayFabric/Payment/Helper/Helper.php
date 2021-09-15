@@ -203,7 +203,10 @@ class Helper extends AbstractHelper
                     }
                     return $this->executeGatewayTransaction("TOKEN", array("Audience" => "PaymentPage" , "Subject" => $responseTran->Key));
                 case "CAPTURE":
-                    $maxiPago->creditCardCapture($params['originalMerchantTxId']);
+                    $maxiPago->creditCardCapture(array(
+                        'Amount'=>$params['amount'],
+                        'ReferenceKey'=>$params['originalMerchantTxId']
+                    ));
                     break;
                 case "REFUND":
                     $maxiPago->creditCardRefund(array(
