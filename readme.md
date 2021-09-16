@@ -27,7 +27,7 @@ Before installing please take a full backup of your website.
 ![image](ScreenShots/cache_admin.png)
 
 ## Capture
-For authorized transactions you can create capture directly in Magento. To do this open an order and click on Invoice button at the top right side.
+For authorized transactions you can create capture directly in Magento, the authorized transaction order status is "On Hold", so please click on "Unhold" button before next actions, then click on "Invoice" button at the top right side.
 
 ![image](ScreenShots/invoice_create_admin.png)
 

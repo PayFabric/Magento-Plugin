@@ -117,11 +117,11 @@ class Response extends Action implements CsrfAwareActionInterface
             }
             $transactionState = strtolower($result->TransactionState);
             if($transactionState == "pending capture") { //Auth transaction
-                if($order->getState() == 'pending_payment'){
+                if($order->getState() == 'holded'){
                     return false;
                 }
-                $order->setState('pending_payment')
-                    ->setStatus("pending_payment")
+                $order->setState('holded')
+                    ->setStatus("holded")
                     ->addStatusHistoryComment(__('Order payment authorized'))
                     ->setIsCustomerNotified(true);
                 $order->save();
