@@ -2,7 +2,6 @@
 
 namespace PayFabric\Payment\Model;
 
-use mysql_xdevapi\Exception;
 use PayFabric\Payment\Helper\Helper;
 use PayFabric\Payment\Model\Config\Source\NewOrderPaymentActions;
 use PayFabric\Payment\Model\Config\Source\DisplayMode;
@@ -10,6 +9,7 @@ use Magento\Framework\DataObject;
 use Magento\Payment\Model\InfoInterface;
 use Magento\Payment\Model\Method\ConfigInterface;
 use Magento\Payment\Model\Method\Online\GatewayInterface;
+use Magento\Sales\Model\Order\Payment\Transaction;
 
 class PaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod implements GatewayInterface
 {
@@ -558,14 +558,14 @@ class PaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod impleme
         if(strtolower($result->Status) == 'approved') {
             $payment->setTransactionId($result->TrxKey)
                 ->setTransactionAdditionalInfo(\Magento\Sales\Model\Order\Payment\Transaction::RAW_DETAILS, json_encode($result));
-//            $order = $payment->getOrder();
-//            $order->setState("canceled")
-//                ->setStatus("canceled")
-//                ->addStatusHistoryComment(__('Payment voided'));
-//            $transaction = $payment->addTransaction(Transaction::TYPE_VOID, null, true);
-//            $transaction->setIsClosed(1);
-//            $transaction->save();
-//            $order->save();
+            $order = $payment->getOrder();
+            $order->setState("canceled")
+                ->setStatus("canceled")
+                ->addStatusHistoryComment(__('Payment voided'));
+            $transaction = $payment->addTransaction(Transaction::TYPE_VOID, null, true);
+            $transaction->setIsClosed(1);
+            $transaction->save();
+            $order->save();
         } else {
             throw new \Magento\Framework\Validator\Exception(isset($result->Message) ? __($result->Message) : __( 'Void error!' ));
         }
