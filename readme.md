@@ -27,7 +27,7 @@ Before installing please take a full backup of your website.
 ![image](ScreenShots/cache_admin.png)
 
 ## Capture
-For authorized transactions you can create capture directly in Magento, the authorized transaction order status is "On Hold", so please click on "Unhold" button before next actions, then click on "Invoice" button at the top right side.
+For authorized transactions you can create capture directly in Magento, the authorized transaction order status is "On Hold", so please open the order and click on "Unhold" button before the next step, then click on "Invoice" button at the top right side.
 
 ![image](ScreenShots/invoice_create_admin.png)
 
@@ -36,7 +36,7 @@ On the invoice page, scroll down to the bottom, choose "Capture Online" dropdown
 ![image](ScreenShots/capture_admin.png)
 
 ## Void
-For authorized transactions you can void directly in Magento. To do this open an order and click on "Void" or "Cancel" button at the top right side.
+For authorized transactions you can void directly in Magento, the authorized transaction order status is "On Hold", so please open the order and click on "Unhold" button before the next step, then click on "Void" or "Cancel" button at the top right side.
 
 ![image](ScreenShots/void_admin.png)
 
