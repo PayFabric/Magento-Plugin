@@ -14,8 +14,8 @@ class Payments extends ResponseBase {
         * Define log dir, severity level of logging mode and whether enable on-screen debug ouput.
         * PLEASE DO NOT USE "DEBUG" LOGGING MODE IN PRODUCTION
         */
-//        !defined('PayFabric_LOG_SEVERITY') && define('PayFabric_LOG_SEVERITY' , 'INFO');
-        !defined('PayFabric_LOG_SEVERITY') && define('PayFabric_LOG_SEVERITY' , 'DEBUG');
+        !defined('PayFabric_LOG_SEVERITY') && define('PayFabric_LOG_SEVERITY' , 'INFO');
+//        !defined('PayFabric_LOG_SEVERITY') && define('PayFabric_LOG_SEVERITY' , 'DEBUG');
         !defined('PayFabric_LOG_DIR') && define('PayFabric_LOG_DIR' , BP . '/var/log');
         !defined('PayFabric_DEBUG') && define('PayFabric_DEBUG' , false);
     }
