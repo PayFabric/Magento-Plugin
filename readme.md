@@ -1,8 +1,8 @@
-## PayFabric gateway plugin for Magento 2.3+
-Requires Magento version 2.3+
+## PayFabric gateway plugin for Magento 2.3
+Requires Magento version 2.3
 
 ## Description 
-PayFabric gateway extension allows you to add payment processing capabilities into Magento2.3+ without any custom coding.
+PayFabric gateway extension allows you to add payment processing capabilities into Magento2.3 without any custom coding.
 
 ## Installation 
 Before installing please take a full backup of your website.
