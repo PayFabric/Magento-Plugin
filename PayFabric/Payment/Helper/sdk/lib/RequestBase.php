@@ -128,7 +128,7 @@ class RequestBase {
         elseif (strlen($text) >= 8) { 
         	return substr_replace($text, str_repeat('*',strlen($text)-4),'4'); 
         }
-        else { 
+        elseif ((strlen($text) >= 2)) { 
         	return substr_replace($text, str_repeat('*', strlen($text)-2),'2'); 
         }
     }
