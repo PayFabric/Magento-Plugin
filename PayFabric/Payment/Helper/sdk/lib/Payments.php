@@ -8,7 +8,7 @@ class Payments extends ResponseBase {
     public function __construct(){
         /*Define live and test gateway host */
         !defined('LIVEGATEWAY') && define('LIVEGATEWAY' , 'https://www.payfabric.com');
-        !defined('TESTGATEWAY') && define('TESTGATEWAY' , 'https://dev-us2.payfabric.com');
+        !defined('TESTGATEWAY') && define('TESTGATEWAY' , 'https://sandbox.payfabric.com');
 
         /*
         * Define log dir, severity level of logging mode and whether enable on-screen debug ouput.
