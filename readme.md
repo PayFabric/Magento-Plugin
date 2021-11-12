@@ -18,6 +18,12 @@ Before installing please take a full backup of your website.
     bin/magento cache:flush
 
 ## Configuration
+Please prepare a device with a default gateway configured in PayFabric Portal.
+1. Go to Settings > Dev Central > Device Management to create a device to obtain the Device ID and Password.
+2. Go to Settings > Gateway Account Configuration, click '+ New Gateway Account' if the payment gateway account is not associated to an existing PayFabric account, and then set the default gateway under Default Gateway Settings.
+Please refer to user guide in [PayFabric](https://github.com/PayFabric/Portal/blob/master/PayFabric/README.md "PayFabric").
+
+
 * Go to STORES > Configuration > Sales > Payment Methods to set your gateway and save config.
 
 ![image](ScreenShots/setting_admin.png)
