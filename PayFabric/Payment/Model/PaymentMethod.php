@@ -11,6 +11,7 @@ use Magento\Payment\Model\Method\ConfigInterface;
 use Magento\Payment\Model\Method\Online\GatewayInterface;
 use Magento\Sales\Model\Order\Payment\Transaction;
 
+
 class PaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod implements GatewayInterface
 {
     const METHOD_CODE = 'payfabric_payment';
@@ -231,15 +232,7 @@ class PaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod impleme
      */
     public function getCheckoutRedirectUrl()
     {
-        $displayMode = $this->getConfigData('display_mode');
-       if ($displayMode === DisplayMode::DISPLAY_MODE_IFRAME) {
-           $redirectUrl = 'payfabric/hosted/iframe';
-        } else {
-            $redirectUrl = 'payfabric/hosted/redirect';
-        }
-        return $this->_urlBuilder->getUrl(
-            $redirectUrl
-        );
+        return $this->_urlBuilder->getUrl('payfabric/hosted/request');
     }
 
     /**
@@ -285,7 +278,7 @@ class PaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod impleme
             $formFields = array(
                 'environment' => $this->_helper->isSandboxMode() ? (stripos(TESTGATEWAY,'DEV-US2')===FALSE ? (stripos(TESTGATEWAY,'QA')===FALSE ? 'SANDBOX' : 'QA') : 'DEV-US2') : 'LIVE',
                 'target' => 'cashierDiv',
-                'displayMethod' => 'IN_PLACE',
+                'displayMethod' => 'dialog',
                 'session' => $responseToken->Token,
                 'disableCancel' => true
             );
@@ -417,7 +410,7 @@ class PaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod impleme
         return number_format((float)$amount, 2, '.', '');
     }
 
-    private function toAPIOperation($paymentAction)
+    public function toAPIOperation($paymentAction)
     {
         switch ($paymentAction) {
             case NewOrderPaymentActions::PAYMENT_ACTION_AUTH: {
@@ -473,7 +466,7 @@ class PaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod impleme
 		$result = $this->_helper->executeGatewayTransaction("CAPTURE", $params);
         if(strtolower($result->Status) == 'approved') {
             $payment->setTransactionId($result->TrxKey)
-                ->setTransactionAdditionalInfo(\Magento\Sales\Model\Order\Payment\Transaction::RAW_DETAILS, json_encode($result));
+                ->setTransactionAdditionalInfo(\Magento\Sales\Model\Order\Payment\Transaction::RAW_DETAILS, json_decode(json_encode($result),true));
 //            $order = $payment->getOrder();
 //            $order->setState("processing")
 //                ->setStatus("processing")
@@ -508,7 +501,7 @@ class PaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod impleme
         $result = $this->_helper->executeGatewayTransaction("REFUND", $params);
         if(strtolower($result->Status) == 'approved') {
             $payment->setTransactionId($result->TrxKey)
-                ->setTransactionAdditionalInfo(\Magento\Sales\Model\Order\Payment\Transaction::RAW_DETAILS, json_encode($result));
+                ->setTransactionAdditionalInfo(\Magento\Sales\Model\Order\Payment\Transaction::RAW_DETAILS, json_decode(json_encode($result), true));
 //            $order = $payment->getOrder();
 //            $order->setState("processing")
 //                ->setStatus("processing")
@@ -557,7 +550,7 @@ class PaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod impleme
         $result = $this->_helper->executeGatewayTransaction("VOID", $params);
         if(strtolower($result->Status) == 'approved') {
             $payment->setTransactionId($result->TrxKey)
-                ->setTransactionAdditionalInfo(\Magento\Sales\Model\Order\Payment\Transaction::RAW_DETAILS, json_encode($result));
+                ->setTransactionAdditionalInfo(\Magento\Sales\Model\Order\Payment\Transaction::RAW_DETAILS, json_decode(json_encode($result), true));
             $order = $payment->getOrder();
             $order->setState("canceled")
                 ->setStatus("canceled")
@@ -581,5 +574,10 @@ class PaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod impleme
     protected function _getRequest()
     {
         return $this->_request;
+    }
+
+    public function getUrlBuilder()
+    {
+        return $this->_urlBuilder;
     }
 }

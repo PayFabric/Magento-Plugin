@@ -21,7 +21,7 @@ class DisplayMode implements \Magento\Framework\Option\ArrayInterface
             ],
             [
                 'value' => self::DISPLAY_MODE_IFRAME,
-                'label' => 'Iframe',
+                'label' => 'Dialog',
             ],
         ];
     }
