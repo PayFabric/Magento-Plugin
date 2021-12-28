@@ -10,14 +10,14 @@ define(
         'Magento_Checkout/js/model/quote',
         'Magento_Checkout/js/model/payment/additional-validators',
         'Magento_Checkout/js/model/full-screen-loader',
-        'Magento_Checkout/js/model/error-processor'
+        'Magento_Checkout/js/model/error-processor',
+        'axios'
     ],
     function(ko, $, Component, setBillingAddressAction, setPaymentMethodAction, quote,
-             additionalValidators, fullScreenLoader, errorProcessor) {
+             additionalValidators, fullScreenLoader, errorProcessor, axios) {
         'use strict';
         var paymentMethod = ko.observable(null);
-        require(["axios","payfabric"],function(axios){window.axios = axios;});
-
+        window.axios = axios;
         return Component.extend({
             self: this,
             defaults: {
@@ -47,11 +47,25 @@ define(
                                             if (typeof response.result.session === "undefined") {
                                                 $.mage.redirect(response.result);
                                             }else{
-                                                new payfabricpayments($.extend(response.result, {
-                                                    successCallback:function(data){},
-                                                    failureCallback:function(data){alert('Payment has failed for: ' + JSON.stringify(data, Object.getOwnPropertyNames(data)));},
-                                                    cancelCallback: function(){document.getElementById(response.result.target).innerHTML = '';}
-                                                }));
+                                                var script = document.createElement('script');
+                                                script.src = 'https://www.payfabric.com/Payment/WebGate/Content/bundles/payfabricpayments.bundle.js';
+                                                script.async = false;
+                                                document.getElementById("cashierDiv").append(script);
+                                                script.onload = function () {
+                                                    new payfabricpayments($.extend(response.result, {
+                                                        successCallback: function (data) {
+                                                        },
+                                                        failureCallback: function (data) {
+                                                            //alert('Payment has failed for: ' + JSON.stringify(data, Object.getOwnPropertyNames(data)));
+                                                            setTimeout(function(){location.reload();}, 3000);
+
+                                                        },
+                                                        cancelCallback: function () {
+                                                            location.reload();;
+                                                        }
+                                                    }));
+                                                    fullScreenLoader.stopLoader();
+                                                }
                                             }
                                         } else if(response.status === "error"){
                                             alert(response.message);
@@ -61,7 +75,7 @@ define(
                                         alert('An error occurred. Try again!');
                                     },
                                     complete: function (response) {
-                                        fullScreenLoader.stopLoader();
+
                                     }
                                 });
                             }
