@@ -19,5 +19,14 @@
                 <specific_currencies></specific_currencies>
             </payfabric_payment>
         </payment>
+        <csp>
+            <policies>
+                <storefront>
+                    <frame-ancestors>
+                        <inline>0</inline>
+                    </frame-ancestors>
+                </storefront>
+            </policies>
+        </csp>
     </default>
 </config>
