@@ -168,6 +168,13 @@ class Builder extends RequestBase {
         }
     }
 
+    protected function setCaptureComplete(){
+        //Set CaptureComplete
+        $this->_data['Document']['Head'] = array(
+            array('Name' => 'CaptureComplete', 'Value' => false)
+        );
+    }
+
     public function __get($name){
         return '';
     }

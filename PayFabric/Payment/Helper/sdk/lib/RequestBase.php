@@ -146,8 +146,11 @@ class RequestBase {
                     $this->setItens();
                     break;
                 case "refund":
+                    $this->setType();
+                    break;
                 case "capture":
                     $this->setType();
+                    $this->setCaptureComplete();
                     break;
                 default:
                     break;
