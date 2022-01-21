@@ -343,8 +343,8 @@ class Helper extends AbstractHelper
         if ($displayMode === DisplayMode::DISPLAY_MODE_IFRAME) {
             $result = array(
                 'environment' => $this->isSandboxMode() ? (stripos(TESTGATEWAY,'DEV-US2')===FALSE ? (stripos(TESTGATEWAY,'QA')===FALSE ? 'SANDBOX' : 'QA') : 'DEV-US2') : 'LIVE',
-                'target' => 'cashierDiv',
-                'displayMethod' => 'dialog',
+                'target' => 'payment_form_'.self::METHOD_CODE,
+                'displayMethod' => 'IN_PLACE',
                 'session' => $responseToken->Token,
                 'successUrl' => $this->getUrl($this->getNotificationRoute($quote->getReservedOrderId()))
             );
