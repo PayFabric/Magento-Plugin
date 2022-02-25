@@ -16,7 +16,7 @@ define(
         'payfabricpayments'
     ],
     function(ko, $, Component, setBillingAddressAction, setPaymentMethodAction, quote,
-             additionalValidators, fullScreenLoader, errorProcessor, axios, iframeResizer, payfabricpayments) {this.axios = axios;this.iframeResizer = axios;this.payfabricpayments = payfabricpayments;
+             additionalValidators, fullScreenLoader, errorProcessor, axios, iframeResizer, payfabricpayments) {this.axios = axios;this.iframeResizer = iframeResizer;this.payfabricpayments = payfabricpayments;
         'use strict';
         var paymentMethod = ko.observable(null);
         return Component.extend({
@@ -26,9 +26,13 @@ define(
             },
             initialize: function() {
                 this._super();
+                if(window.checkoutConfig.payment['payfabric_payment'].displayMode == 'in_place') {
+                    this.initIframe();
+                }
             },
             initIframe: function() {
                 console.log('initIframe');
+                fullScreenLoader.startLoader();
                 $.ajax({
                     url: window.checkoutConfig.payment['payfabric_payment'].redirectUrl,
                     type: 'post',
@@ -40,11 +44,6 @@ define(
                             if (typeof response.result.session === "undefined") {
                                 $.mage.redirect(response.result);
                             }else{
-                                // var script = document.createElement('script');
-                                // script.src = 'http://10.124.64.158/static/version1640673938/frontend/Magento/luma/en_US/PayFabric_Payment/js/payfabricpayments.bundle.js';
-                                // script.async = false;
-                                // document.getElementById("payment_form_"+quote.paymentMethod().method).append(script);
-                                // script.onload = function () {
                                 new payfabricpayments($.extend(response.result, {
                                     successCallback: function (data) {
                                     },
@@ -57,9 +56,13 @@ define(
                                         location.reload();
                                     }
                                 }));
+                                if(window.checkoutConfig.payment['payfabric_payment'].displayMode == 'in_place') {
+                                    setInterval(function () {
+                                        window.frames['payfabric-sdk-iframe'].postMessage('hide', '*');
+                                    }, 1000);
+                                }
                                 fullScreenLoader.stopLoader();
                             }
-                            // }
                         } else if(response.status === "error"){
                             alert(response.message);
                         }
@@ -68,7 +71,7 @@ define(
                         alert('An error occurred. Try again!');
                     },
                     complete: function (response) {
-
+                        console.log('complete initIframe');
                     }
                 });
 
@@ -80,7 +83,33 @@ define(
                 fullScreenLoader.startLoader();
                 if (this.validate() && additionalValidators.validate()) {
                     var self = this;
-                    self.initIframe();
+                    setBillingAddressAction().done(function() {
+                        if (window.checkoutConfig.payment['payfabric_payment'].displayMode == 'in_place') {
+                            //If a in_place mode, needs to update with latest transaction
+                            $.ajax({
+                                url: window.checkoutConfig.payment['payfabric_payment'].redirectUrl,
+                                type: 'post',
+                                data: {isAjax: 1, email: quote.guestEmail},
+                                dataType: 'json',
+                                success: function (response) {
+                                    window.frames['payfabric-sdk-iframe'].postMessage('pay', '*');
+                                },
+                                error: function (response, data) {
+                                    alert('An update error occurred. Try again!');
+                                },
+                                complete: function (response) {
+                                    console.log('complete!');
+                                }
+                            });
+
+                        } else {
+                            self.initIframe();
+                        }
+                    }).fail(
+                        function(response) {
+                            errorProcessor.process(response);
+                            fullScreenLoader.stopLoader();
+                        });
 
                     return false;
                 }

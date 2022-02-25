@@ -340,12 +340,27 @@ class Helper extends AbstractHelper
             return  array('status' => 'error', 'message' => $e->getMessage());
         }
         $displayMode = $paymentMethod->getConfigData('display_mode');
-        if ($displayMode === DisplayMode::DISPLAY_MODE_IFRAME) {
+        switch ($displayMode) {
+            case DisplayMode::DISPLAY_MODE_IFRAME:
+                $displayMethod = 'dialog';
+                $disableCancel = false;
+                break;
+            case DisplayMode::DISPLAY_MODE_IN_PLACE:
+                $displayMethod = 'in_place';
+                $disableCancel = true;
+                break;
+            default:
+                $displayMethod = '';
+                $disableCancel = false;
+                break;
+        }
+        if ($displayMethod) {
             $result = array(
                 'environment' => $this->isSandboxMode() ? (stripos(TESTGATEWAY,'DEV-US2')===FALSE ? (stripos(TESTGATEWAY,'QA')===FALSE ? 'SANDBOX' : 'QA') : 'DEV-US2') : 'LIVE',
                 'target' => 'payment_form_'.self::METHOD_CODE,
-                'displayMethod' => 'IN_PLACE',
+                'displayMethod' => $displayMethod,
                 'session' => $responseToken->Token,
+                'disableCancel' => $disableCancel,
                 'successUrl' => $this->getUrl($this->getNotificationRoute($quote->getReservedOrderId()))
             );
         } else {

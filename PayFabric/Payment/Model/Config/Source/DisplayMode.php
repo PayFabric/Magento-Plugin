@@ -6,6 +6,7 @@ class DisplayMode implements \Magento\Framework\Option\ArrayInterface
 {
     const DISPLAY_MODE_REDIRECT = 'redirect';
     const DISPLAY_MODE_IFRAME = 'iframe';
+    const DISPLAY_MODE_IN_PLACE = 'in_place';
 
     /**
      * Possible display modes.
@@ -22,6 +23,10 @@ class DisplayMode implements \Magento\Framework\Option\ArrayInterface
             [
                 'value' => self::DISPLAY_MODE_IFRAME,
                 'label' => 'Dialog',
+            ],
+            [
+                'value' => self::DISPLAY_MODE_IN_PLACE,
+                'label' => 'Iframe',
             ],
         ];
     }
