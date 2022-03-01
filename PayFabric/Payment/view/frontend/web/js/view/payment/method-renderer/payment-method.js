@@ -39,7 +39,7 @@ define(
                     data: {isAjax: 1,email: quote.guestEmail},
                     dataType: 'json',
                     success: function (response) {
-                        fullScreenLoader.stopLoader();
+                        //fullScreenLoader.stopLoader();
                         if (response.status === "ok") {
                             if (typeof response.result.session === "undefined") {
                                 $.mage.redirect(response.result);
@@ -58,10 +58,10 @@ define(
                                 }));
                                 if(window.checkoutConfig.payment['payfabric_payment'].displayMode == 'in_place') {
                                     setInterval(function () {
-                                        window.frames['payfabric-sdk-iframe'].postMessage('hide', '*');
+                                        window.frames['payfabric-sdk-iframe'].postMessage(JSON.stringify({action: "hide"}), '*');
                                     }, 1000);
                                 }
-                                fullScreenLoader.stopLoader();
+                                setTimeout(function(){fullScreenLoader.stopLoader();}, 3000);
                             }
                         } else if(response.status === "error"){
                             alert(response.message);
@@ -83,16 +83,26 @@ define(
                 fullScreenLoader.startLoader();
                 if (this.validate() && additionalValidators.validate()) {
                     var self = this;
+                    var billingAddress = quote.billingAddress();
                     setBillingAddressAction().done(function() {
                         if (window.checkoutConfig.payment['payfabric_payment'].displayMode == 'in_place') {
                             //If a in_place mode, needs to update with latest transaction
                             $.ajax({
                                 url: window.checkoutConfig.payment['payfabric_payment'].redirectUrl,
                                 type: 'post',
-                                data: {isAjax: 1, email: quote.guestEmail},
+                                data: {isAjax: 1, email: quote.guestEmail, action: 'update'},
                                 dataType: 'json',
                                 success: function (response) {
-                                    window.frames['payfabric-sdk-iframe'].postMessage('pay', '*');
+                                    var message = {
+                                        action: "pay",
+                                        BillCountryCode:billingAddress.countryId,
+                                        BillAddressLine1:billingAddress.street[0],
+                                        BillAddressLine2:billingAddress.street[1],
+                                        BillCityCode:billingAddress.city,
+                                        BillStateCode:billingAddress.regionCode,
+                                        BillZipCode:billingAddress.postcode,
+                                    };
+                                    window.frames['payfabric-sdk-iframe'].postMessage(JSON.stringify(message), '*');
                                 },
                                 error: function (response, data) {
                                     alert('An update error occurred. Try again!');

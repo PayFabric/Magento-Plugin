@@ -152,6 +152,9 @@ class RequestBase {
                     $this->setType();
                     $this->setCaptureComplete();
                     break;
+                case "update":
+                    $this->setUpdate();
+                    break;
                 default:
                     break;
             }

@@ -20,6 +20,12 @@ class Request extends \PayFabric\Payment\Controller\Checkout
         $quote         = $this->getQuote();
         $email         = $this->getRequest()->getParam( 'email' );
         $paymentMethod = $this->getPaymentMethod();
+        //Update payment
+        if ($this->getRequest()->getParam( 'action' ) == 'update') {
+            $result = $this->getCheckoutHelper()->updatePayment( $paymentMethod, $quote );
+            die(json_encode($result));
+        }
+
         $quote->setCustomerEmail( $email );
         $quote->reserveOrderId();
         if ( $this->getCustomerSession()->isLoggedIn() ) {

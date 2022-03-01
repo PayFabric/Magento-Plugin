@@ -175,6 +175,24 @@ class Builder extends RequestBase {
         );
     }
 
+    protected function setUpdate() {
+        if (strlen($this->Key) > 0) {
+            $this->_data["Key"] = $this->Key;
+        }else{
+            throw new \InvalidArgumentException("[PayFabric Class] Field 'Key' cannot be null.");
+        }
+        if (isset($this->Amount) && is_numeric($this->Amount)) {
+            $this->_data["Amount"] = $this->Amount;
+        }
+        if (strlen($this->Currency) > 0 ) {
+            $this->_data["Currency"] = $this->Currency;
+        }
+        if (strlen($this->customerId) > 0) {
+            $this->_data["Customer"] = $this->customerId;
+        }
+        $this->setAddress();
+    }
+
     public function __get($name){
         return '';
     }

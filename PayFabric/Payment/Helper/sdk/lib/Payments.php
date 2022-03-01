@@ -212,5 +212,32 @@ class Payments extends ResponseBase {
             throw $e;
         }
     }
+
+    /**
+     * Update transaction before pay
+     *
+     * @param array $array
+     * @throws BadMethodCallException
+     */
+    public function updateTransaction($array) {
+        try {
+            if (!is_array($array)) {
+                throw new \BadMethodCallException('[PayFabric Class] Method '.__METHOD__.' must receive array as input');
+            }
+            if (is_object(RequestBase::$logger)) {
+                RequestBase::$logger->logNotice('Calling method '.__METHOD__);
+            }
+
+            $this->request = $array;
+            $req = new Request($this->credentials);
+            $req->setVars($this->request);
+            $req->setEndpoint($this->host.'/payment/api/transaction/update');
+            $req->setTransactionType("Update");
+            $this->response = $req->processRequest();
+        }
+        catch (\Exception $e) {
+            throw $e;
+        }
+    }
     
 }
