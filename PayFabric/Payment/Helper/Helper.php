@@ -379,14 +379,17 @@ class Helper extends AbstractHelper
             case DisplayMode::DISPLAY_MODE_IFRAME:
                 $displayMethod = 'dialog';
                 $disableCancel = false;
+                $acceptedPaymentMethods = [];
                 break;
             case DisplayMode::DISPLAY_MODE_IN_PLACE:
                 $displayMethod = 'in_place';
                 $disableCancel = true;
+                $acceptedPaymentMethods = ['CreditCard', 'ECheck'];
                 break;
             default:
                 $displayMethod = '';
                 $disableCancel = false;
+                $acceptedPaymentMethods = [];
                 break;
         }
         if ($displayMethod) {
@@ -396,7 +399,8 @@ class Helper extends AbstractHelper
                 'displayMethod' => $displayMethod,
                 'session' => $responseToken->Token,
                 'disableCancel' => $disableCancel,
-                'successUrl' => $this->getUrl($this->getNotificationRoute($quote->getReservedOrderId()))
+                'successUrl' => $this->getUrl($this->getNotificationRoute($quote->getReservedOrderId())),
+                'acceptedPaymentMethods' => $acceptedPaymentMethods
             );
         } else {
             $result = $this->getCashierUrl() . "?" . http_build_query(array(
