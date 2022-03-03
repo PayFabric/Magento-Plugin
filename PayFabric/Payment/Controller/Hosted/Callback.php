@@ -91,8 +91,9 @@ class Callback extends \PayFabric\Payment\Controller\Checkout
 		    $invoiceService = $this->getCheckoutHelper()->getInvoiceService();
 		    $transaction =  $this->getCheckoutHelper()->getTransaction();
 
-		    $this->postProcessing($order, $params, $invoiceService, $transaction, $result);
-		    $returnUrl = $this->getCheckoutHelper()->getUrl('checkout/onepage/success');
+		    if($this->postProcessing($order, $params, $invoiceService, $transaction, $result)){
+                $returnUrl = $this->getCheckoutHelper()->getUrl('checkout/onepage/success');
+            }
 	    }
 	    $this->getResponse()->setRedirect($returnUrl);
     }
@@ -106,11 +107,11 @@ class Callback extends \PayFabric\Payment\Controller\Checkout
             $transactionId = ( isset( $response['TrxKey'] ) ) ? $response['TrxKey'] : $response['trxKey'];
             $transactionState = strtolower($result->TransactionState);
             if($transactionState == "pending capture") { //Auth transaction
-                if($order->getState() == 'holded'){
+                if($order->getState() == 'processing'){
                     return false;
                 }
-                $order->setState('holded')
-                    ->setStatus("holded")
+                $order->setState('processing')
+                    ->setStatus("processing")
                     ->addStatusHistoryComment(__('Order payment authorized'))
                     ->setIsCustomerNotified(true);
                 $order->save();
