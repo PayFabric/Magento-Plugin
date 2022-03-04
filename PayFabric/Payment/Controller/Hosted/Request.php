@@ -21,8 +21,8 @@ class Request extends \PayFabric\Payment\Controller\Checkout
         $email         = $this->getRequest()->getParam( 'email' );
         $paymentMethod = $this->getPaymentMethod();
         //Update payment
-        if ($this->getRequest()->getParam( 'action' ) == 'update') {
-            $result = $this->getCheckoutHelper()->updatePayment( $paymentMethod, $quote );
+        if ($this->getRequest()->getParam( 'action' ) == 'update' && $this->getRequest()->getParam( 'paymentTrx' )) {
+            $result = $this->getCheckoutHelper()->updatePayment( $this->getRequest()->getParam( 'paymentTrx' ), $quote );
             die(json_encode($result));
         }
 

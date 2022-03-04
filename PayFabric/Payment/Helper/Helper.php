@@ -27,8 +27,7 @@ class Helper extends AbstractHelper
         \Magento\Sales\Model\Service\InvoiceService $invoiceService,
         \Magento\Framework\DB\Transaction $transaction,
         \Magento\Sales\Model\Order\Payment\Transaction\BuilderInterface $transactionBuilder,
-        \Magento\Sales\Api\OrderRepositoryInterface $orderRepo,
-        \Magento\Checkout\Model\Session $session
+        \Magento\Sales\Api\OrderRepositoryInterface $orderRepo
     ) {
         parent::__construct($context);
         $this->_storeManager = $storeManager;
@@ -40,7 +39,6 @@ class Helper extends AbstractHelper
         $this->_transaction    = $transaction;
         $this->_transactionBuilder    = $transactionBuilder;
         $this->_orderRepo          = $orderRepo;
-        $this->_session = $session;
     }
 
     /**
@@ -202,15 +200,15 @@ class Helper extends AbstractHelper
                     $maxiPago->token($params);
                     if(empty(json_decode($maxiPago->response)->Token)){
                         throw new \UnexpectedValueException($maxiPago->response, 503);
+                    }else{
+                        return array('token' => json_decode($maxiPago->response)->Token, 'paymentTrx' => $params['Subject']);
                     }
-                    break;
                 case "AUTH":
                     $maxiPago->creditCardAuth($params);
                     $responseTran = json_decode($maxiPago->response);
                     if(empty($responseTran->Key)){
                         throw new \UnexpectedValueException($maxiPago->response, 503);
                     }
-                    $this->_session->setTransactionKey($responseTran->Key);
                     return $this->executeGatewayTransaction("TOKEN", array("Audience" => "PaymentPage" , "Subject" => $responseTran->Key));
                 case "PURCHASE":
                     $maxiPago->creditCardSale($params);
@@ -218,7 +216,6 @@ class Helper extends AbstractHelper
                     if(empty($responseTran->Key)){
                         throw new \UnexpectedValueException($maxiPago->response, 503);
                     }
-                    $this->_session->setTransactionKey($responseTran->Key);
                     return $this->executeGatewayTransaction("TOKEN", array("Audience" => "PaymentPage" , "Subject" => $responseTran->Key));
                 case "CAPTURE":
                     $maxiPago->creditCardCapture(array(
@@ -299,12 +296,12 @@ class Helper extends AbstractHelper
      * @return array
      * @throws Exception
      */
-    public function updatePayment( $paymentMethod, $quote ) {
+    public function updatePayment( $paymentTrx, $quote ) {
         $billingAddress  = $quote->getBillingAddress();
         $billingArray    = $this->getBillingArray( $billingAddress );
         $updateData = array_merge(array(
             "action" => 'UPDATE',
-            "Key" => $this->_session->getTransactionKey(),
+            "Key" => $paymentTrx,
             "Amount" => $this->formatAmount($quote->getGrandTotal())
         ),$billingArray);
         try {
@@ -368,7 +365,7 @@ class Helper extends AbstractHelper
         ), $shippingArray, $billingArray);
 
         try {
-            $responseToken = $this->executeGatewayTransaction($sessionTokenData['action'], $sessionTokenData);
+            $response = $this->executeGatewayTransaction($sessionTokenData['action'], $sessionTokenData);
         }catch (\Exception $e){
             $this->_logger->critical( sprintf( 'There was an error in the api response, last known error was "%s", in file %s, at line %s. Error message: %s',
                 json_last_error(), __FILE__, __LINE__, $e->getMessage() ) );
@@ -394,17 +391,20 @@ class Helper extends AbstractHelper
         }
         if ($displayMethod) {
             $result = array(
-                'environment' => $this->isSandboxMode() ? (stripos(TESTGATEWAY,'DEV-US2')===FALSE ? (stripos(TESTGATEWAY,'QA')===FALSE ? 'SANDBOX' : 'QA') : 'DEV-US2') : 'LIVE',
-                'target' => 'payment_form_'.self::METHOD_CODE,
-                'displayMethod' => $displayMethod,
-                'session' => $responseToken->Token,
-                'disableCancel' => $disableCancel,
-                'successUrl' => $this->getUrl($this->getNotificationRoute($quote->getReservedOrderId())),
-                'acceptedPaymentMethods' => $acceptedPaymentMethods
+                'option' => array(
+                    'environment' => $this->isSandboxMode() ? (stripos(TESTGATEWAY,'DEV-US2')===FALSE ? (stripos(TESTGATEWAY,'QA')===FALSE ? 'SANDBOX' : 'QA') : 'DEV-US2') : 'LIVE',
+                    'target' => 'payment_form_'.self::METHOD_CODE,
+                    'displayMethod' => $displayMethod,
+                    'session' => $response['token'],
+                    'disableCancel' => $disableCancel,
+                    'successUrl' => $this->getUrl($this->getNotificationRoute($quote->getReservedOrderId())),
+                    'acceptedPaymentMethods' => $acceptedPaymentMethods
+                ),
+                'paymentTrx' => $response['paymentTrx']
             );
         } else {
             $result = $this->getCashierUrl() . "?" . http_build_query(array(
-                'token' => $responseToken->Token,
+                'token' => $response['token'],
                 'successUrl' => $this->getUrl($this->getNotificationRoute($quote->getReservedOrderId()))
             ));
         }

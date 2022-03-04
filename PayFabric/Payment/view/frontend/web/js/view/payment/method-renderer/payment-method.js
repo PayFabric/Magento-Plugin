@@ -21,6 +21,7 @@ define(
         var paymentMethod = ko.observable(null);
         return Component.extend({
             self: this,
+            paymentTrx: '',
             defaults: {
                 template: 'PayFabric_Payment/payment/payment-form'
             },
@@ -32,6 +33,7 @@ define(
             },
             initIframe: function() {
                 console.log('initIframe');
+                var self = this;
                 fullScreenLoader.startLoader();
                 $.ajax({
                     url: window.checkoutConfig.payment['payfabric_payment'].redirectUrl,
@@ -41,10 +43,10 @@ define(
                     success: function (response) {
                         //fullScreenLoader.stopLoader();
                         if (response.status === "ok") {
-                            if (typeof response.result.session === "undefined") {
+                            if (typeof response.result.option === "undefined") {
                                 $.mage.redirect(response.result);
                             }else{
-                                new payfabricpayments($.extend(response.result, {
+                                new payfabricpayments($.extend(response.result.option, {
                                     successCallback: function (data) {
                                     },
                                     failureCallback: function (data) {
@@ -56,6 +58,7 @@ define(
                                         location.reload();
                                     }
                                 }));
+                                self.setPaymentTrx(response.result.paymentTrx);
                                 if(window.checkoutConfig.payment['payfabric_payment'].displayMode == 'in_place') {
                                     setInterval(function () {
                                         window.frames['payfabric-sdk-iframe'].postMessage(JSON.stringify({action: "hide"}), '*');
@@ -90,7 +93,7 @@ define(
                             $.ajax({
                                 url: window.checkoutConfig.payment['payfabric_payment'].redirectUrl,
                                 type: 'post',
-                                data: {isAjax: 1, email: quote.guestEmail, action: 'update'},
+                                data: {isAjax: 1, email: quote.guestEmail, action: 'update', paymentTrx: self.getPaymentTrx()},
                                 dataType: 'json',
                                 success: function (response) {
                                     var message = {
@@ -126,7 +129,13 @@ define(
             },
             validate: function() {
                 return true;
-            }
+            },
+            getPaymentTrx: function() {
+                return this.paymentTrx;
+            },
+            setPaymentTrx: function(paymentTrx) {
+                this.paymentTrx = paymentTrx;
+            },
         });
     }
 );
