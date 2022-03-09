@@ -59,12 +59,7 @@ define(
                                     }
                                 }));
                                 self.setPaymentTrx(response.result.paymentTrx);
-                                if(window.checkoutConfig.payment['payfabric_payment'].displayMode == 'in_place') {
-                                    setInterval(function () {
-                                        window.frames['payfabric-sdk-iframe'].postMessage(JSON.stringify({action: "hide"}), '*');
-                                    }, 1000);
-                                }
-                                setTimeout(function(){fullScreenLoader.stopLoader();}, 3000);
+                                fullScreenLoader.stopLoader();
                             }
                         } else if(response.status === "error"){
                             alert(response.message);
