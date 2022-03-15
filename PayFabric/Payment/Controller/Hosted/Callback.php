@@ -1,9 +1,11 @@
 <?php
 
 namespace PayFabric\Payment\Controller\Hosted;
-use Magento\Framework\Controller\ResultFactory;
+use Magento\Framework\App\CsrfAwareActionInterface;
+use Magento\Framework\App\Request\InvalidRequestException;
+use Magento\Framework\App\RequestInterface;
 
-class Callback extends \PayFabric\Payment\Controller\Checkout
+class Callback extends \PayFabric\Payment\Controller\Checkout implements CsrfAwareActionInterface
 {
 
 	/**
@@ -15,8 +17,15 @@ class Callback extends \PayFabric\Payment\Controller\Checkout
     {
         $returnUrl = $this->getCheckoutHelper()->getUrl('checkout');
 
-        // Get params from response
-	    $params = $this->getRequest()->getParams();
+        if ($_SERVER['REQUEST_METHOD'] == 'GET') {
+            // Get callback
+            $params = $this->getRequest()->getParams();
+        } else if ($raw_post = file_get_contents('php://input')) {
+            //Post callback
+            $parts = parse_url($raw_post);
+            parse_str($parts['path'], $params);
+            return $this->postCallback($params);
+        }
 	    $paymentMethod = $this->getPaymentMethod();
 
         try {
@@ -32,7 +41,7 @@ class Callback extends \PayFabric\Payment\Controller\Checkout
 
         // Get payment method code
         $code = $paymentMethod->getCode();
-        $refNo = isset($result->TrxUserDefine1) ? $result->TrxUserDefine1 : $params['OrderId'];
+        $refNo = isset($result->TrxUserDefine1) ? $result->TrxUserDefine1 : '';
         $order = $this->getCheckoutHelper()->getOrderByIncrementId($refNo, $transactionId);
 
 	    $quoteId = $this->getQuote()->getId();
@@ -61,7 +70,7 @@ class Callback extends \PayFabric\Payment\Controller\Checkout
 		    $this->_quoteRepository->save($quote);
 	    }
 
-	    if (!$order) {
+	    if (!$order = $this->getCheckoutHelper()->getOrderByIncrementId($refNo, $transactionId)) {
 		    try {
 			    $this->_cartManagement->placeOrder(
 				    $quote->getId(),
@@ -82,6 +91,7 @@ class Callback extends \PayFabric\Payment\Controller\Checkout
 		         ->setLastRealOrderId($order->getIncrementId())
 		         ->setLastOrderId($order->getId())
 		         ->setLastOrderStatus($order->getStatus());
+            $returnUrl = $this->getCheckoutHelper()->getUrl('checkout/onepage/success');
 	    }
 
 	    if ($order) {
@@ -106,11 +116,11 @@ class Callback extends \PayFabric\Payment\Controller\Checkout
             $transactionId = ( isset( $response['TrxKey'] ) ) ? $response['TrxKey'] : $response['trxKey'];
             $transactionState = strtolower($result->TransactionState);
             if($transactionState == "pending capture") { //Auth transaction
-                if($order->getState() == 'holded'){
+                if($order->getState() == 'processing'){
                     return false;
                 }
-                $order->setState('holded')
-                    ->setStatus("holded")
+                $order->setState('processing')
+                    ->setStatus("processing")
                     ->addStatusHistoryComment(__('Order payment authorized'))
                     ->setIsCustomerNotified(true);
                 $order->save();
@@ -162,4 +172,60 @@ class Callback extends \PayFabric\Payment\Controller\Checkout
         }
     }
 
+    public function postCallback($params){
+        sleep(3);
+        $paymentMethod = $this->getPaymentMethod();
+        try {
+            $transactionId = $params['TrxKey'];
+            $result = $this->getCheckoutHelper()->executeGatewayTransaction("GET_STATUS", array('TrxKey' => $transactionId));
+        } catch (\Exception $e) {
+            throw new \Exception( sprintf( 'Error post callback to get the result: "%s"', $e->getMessage() ) );
+        }
+        // Get payment method code
+        $code = $paymentMethod->getCode();
+        $refNo = isset($result->TrxUserDefine1) ? $result->TrxUserDefine1 : '';
+        $order = $this->getCheckoutHelper()->getOrderByIncrementId($refNo, $transactionId);
+        $quote = $this->getCheckoutHelper()->getQuoteByIncrementId($refNo);
+
+        if (!$order && !$quote) {
+            die(json_encode(__('Missing order and quote data!')));
+        }
+
+        if ($quote && !$order) {
+            $quote->setPaymentMethod($code);
+            $quote->getPayment()->importData(['method' => $code]);
+            $this->_quoteRepository->save($quote);
+        }
+
+        if (!$order = $this->getCheckoutHelper()->getOrderByIncrementId($refNo, $transactionId)) {
+            try {
+                $this->_cartManagement->placeOrder(
+                    $quote->getId(),
+                    $quote->getPayment()
+                );
+                $order = $this->getOrder();
+                $order->addStatusHistoryComment(__('Order created by post callback.'));
+                $order->setExtOrderId($transactionId);
+                $order->save();
+
+                $invoiceService = $this->getCheckoutHelper()->getInvoiceService();
+                $transaction =  $this->getCheckoutHelper()->getTransaction();
+                $this->postProcessing($order, $params, $invoiceService, $transaction, $result);
+
+            } catch (\Exception $e) {
+                throw new \Exception( sprintf( 'Error post callback to place the order: "%s"', $e->getMessage() ) );
+            }
+        }
+        die(json_encode(true));
+    }
+
+    public function createCsrfValidationException(RequestInterface $request): ?InvalidRequestException
+    {
+        return null;
+    }
+
+    public function validateForCsrf(RequestInterface $request): ?bool
+    {
+        return true;
+    }
 }
