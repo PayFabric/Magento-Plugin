@@ -190,7 +190,7 @@ class Helper extends AbstractHelper
     {
         try {
             $maxiPago = new Payments();
-            $maxiPago->setLogger(PayFabric_LOG_DIR,PayFabric_LOG_SEVERITY);
+            $maxiPago->setLogger(PayFabric_LOG_DIR, $this->getConfigData('debug_log'));
             $maxiPago->setCredentials($this->getConfigData('merchant_id') , $this->getConfigData('merchant_password'));
             $maxiPago->setDebug(PayFabric_DEBUG);
             $maxiPago->setEnvironment($this->getConfigData('environment'));

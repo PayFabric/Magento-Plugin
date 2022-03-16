@@ -11,7 +11,7 @@
                 <merchant_id></merchant_id>
                 <merchant_password></merchant_password>
                 <display_mode>Redirect</display_mode>
-                <debug_log>1</debug_log>
+                <debug_log>Off</debug_log>
                 <environment>production</environment>
                 <is_gateway>1</is_gateway>
                 <allowspecific>0</allowspecific>

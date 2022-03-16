@@ -47,8 +47,9 @@ class Gateway extends \Magento\Framework\App\Config\Value
         $api_password = $this->getFieldsetDataValue('merchant_password');
         $sandbox = $this->getFieldsetDataValue('environment');
         $payment_action = $this->getFieldsetDataValue('payment_action');
+        $debug_log = $this->getFieldsetDataValue('debug_log');
         $maxiPago = new Payments();
-        $maxiPago->setLogger(PayFabric_LOG_DIR,PayFabric_LOG_SEVERITY);
+        $maxiPago->setLogger(PayFabric_LOG_DIR, $debug_log);
 
         // Set your credentials before any other transaction methods
         $maxiPago->setCredentials($api_merchant_id, $api_password);
