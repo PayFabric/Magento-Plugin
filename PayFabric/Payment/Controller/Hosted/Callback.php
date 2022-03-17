@@ -181,6 +181,7 @@ class Callback extends \PayFabric\Payment\Controller\Checkout implements CsrfAwa
         } catch (\Exception $e) {
             throw new \Exception( sprintf( 'Error post callback to get the result: "%s"', $e->getMessage() ) );
         }
+        if($params['Status'] != 'Approved')   die(json_encode(false));
         // Get payment method code
         $code = $paymentMethod->getCode();
         $refNo = isset($result->TrxUserDefine1) ? $result->TrxUserDefine1 : '';
