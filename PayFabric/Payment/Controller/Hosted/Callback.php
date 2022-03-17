@@ -173,7 +173,7 @@ class Callback extends \PayFabric\Payment\Controller\Checkout implements CsrfAwa
     }
 
     public function postCallback($params){
-        sleep(3);
+        sleep(10);
         $paymentMethod = $this->getPaymentMethod();
         try {
             $transactionId = $params['TrxKey'];
