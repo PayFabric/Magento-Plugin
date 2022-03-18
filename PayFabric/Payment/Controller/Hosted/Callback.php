@@ -78,10 +78,15 @@ class Callback extends \PayFabric\Payment\Controller\Checkout implements CsrfAwa
 			    );
 			    $order = $this->getOrder();
 			    $order->addStatusHistoryComment(__('Order created when redirected from payment page.'));
+                $order->setExtOrderId($transactionId);
+                $order->save();
 
+                $invoiceService = $this->getCheckoutHelper()->getInvoiceService();
+                $transaction =  $this->getCheckoutHelper()->getTransaction();
+                $this->postProcessing($order, $params, $invoiceService, $transaction, $result);
+                $returnUrl = $this->getCheckoutHelper()->getUrl('checkout/onepage/success');
 		    } catch (\Exception $e) {
-			    $this->messageManager->addExceptionMessage($e, __('We can\'t place the order.'));
-
+			    $this->messageManager->addExceptionMessage($e, $e->getMessage());
 		    }
 	    } else {
 		    // set the checkoutSession for the redirect
@@ -92,17 +97,6 @@ class Callback extends \PayFabric\Payment\Controller\Checkout implements CsrfAwa
 		         ->setLastOrderId($order->getId())
 		         ->setLastOrderStatus($order->getStatus());
             $returnUrl = $this->getCheckoutHelper()->getUrl('checkout/onepage/success');
-	    }
-
-	    if ($order) {
-		    $order->setExtOrderId($transactionId);
-		    $order->save();
-
-		    $invoiceService = $this->getCheckoutHelper()->getInvoiceService();
-		    $transaction =  $this->getCheckoutHelper()->getTransaction();
-
-		    $this->postProcessing($order, $params, $invoiceService, $transaction, $result);
-		    $returnUrl = $this->getCheckoutHelper()->getUrl('checkout/onepage/success');
 	    }
 	    $this->getResponse()->setRedirect($returnUrl);
     }
