@@ -6,6 +6,7 @@ PayFabric gateway extension allows you to add payment processing capabilities in
 
 ## Installation 
 Before installing please take a full backup of your website.
+#### Manual installation.
 1. Download the extension zip file.
 2. Unzip the extension and upload the PayFabric folder to your Magento root directory app/code(create folder if not exists) via FTP/SSH.
 3. Enable the extension and clear the static view files by running the command.
@@ -15,6 +16,18 @@ Before installing please take a full backup of your website.
 5. Recompile the Magento project by running the command.
     bin/magento setup:di:compile
 6. Clear the Magento store’s cache by running the command.
+    bin/magento cache:flush
+    
+#### Install with composer
+1. Run from magento root folder.
+    composer require payfabric/module-payment
+2. Enable the extension and clear the static view files by running the command.
+    bin/magento module:enable PayFabric_Payment --clear-static-content
+3. Register the extension and initiate the database migrations by running the command.
+    bin/magento setup:upgrade
+4. Recompile the Magento project by running the command.
+    bin/magento setup:di:compile
+5. Clear the Magento store’s cache by running the command.
     bin/magento cache:flush
 
 ## Configuration
