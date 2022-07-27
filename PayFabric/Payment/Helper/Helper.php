@@ -190,7 +190,7 @@ class Helper extends AbstractHelper
     {
         try {
             $maxiPago = new Payments();
-            $maxiPago->setLogger(PayFabric_LOG_DIR,PayFabric_LOG_SEVERITY);
+            $maxiPago->setLogger(PayFabric_LOG_DIR, $this->getConfigData('debug_log'));
             $maxiPago->setCredentials($this->getConfigData('merchant_id') , $this->getConfigData('merchant_password'));
             $maxiPago->setDebug(PayFabric_DEBUG);
             $maxiPago->setEnvironment($this->getConfigData('environment'));
@@ -353,7 +353,7 @@ class Helper extends AbstractHelper
             "Amount" => $this->formatAmount($quote->getGrandTotal()),
             "Currency" => strtoupper( $quote->getCurrency()->getQuoteCurrencyCode() ),
             "pluginName" => "Magento PayFabric Gateway",
-            "pluginVersion" => "1.1.0",
+            "pluginVersion" => "1.2.0",
             "customerId" => $customerId,
             //level2/3
             'freightAmount'    => $this->formatAmount($shippingAddress->getBaseShippingAmount()),

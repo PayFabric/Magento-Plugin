@@ -71,7 +71,7 @@ class RequestBase {
     	self::$sslVerifyPeer = $param;
     }
     
-    public static function setLogger($path, $severity='INFO') {
+    public static function setLogger($path, $severity) {
         switch ($severity) {
             case "EMERG":
                 self::$logger = new KLogger($path, KLogger::EMERG);
@@ -97,8 +97,11 @@ class RequestBase {
             case "DEBUG": // Do NOT use 'DEBUG' for Production environment as Credit Card info WILL BE LOGGED
                 self::$logger = new KLogger($path, KLogger::DEBUG);
                 break;
+            default:
+                self::$logger = new KLogger($path, KLogger::OFF);
+                break;
         }
-        if (self::$logger->_logStatus == 1) { 
+        if (self::$logger && self::$logger->_logStatus == 1) {
         	self::$loggerSev = $severity; 
         }
         else { 

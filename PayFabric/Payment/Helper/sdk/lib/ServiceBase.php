@@ -17,10 +17,8 @@ class ServiceBase {
             $this->credentials["merchantId"] = $mid;
             $this->credentials["merchantKey"] = $key;
             if (is_object(RequestBase::$logger)) {
-                RequestBase::$logger->logNotice('Setting credentials "'.$mid.'" and "'.RequestBase::clearForLog($key).'"');
+                RequestBase::$logger->logNotice('Setting credentials "'.$mid.'"');
             }
-
-            else { throw new \InvalidArgumentException('[PayFabric Class error] Invalid credentials.', 401); }
         }
         catch (\Exception $e) {
             if (is_object(RequestBase::$logger)) { RequestBase::$logger->logFatal($e->getMessage()." in ".$e->getFile()." on line ".$e->getLine()); }
