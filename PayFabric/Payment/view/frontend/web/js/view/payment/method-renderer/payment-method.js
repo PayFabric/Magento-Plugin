@@ -19,6 +19,7 @@ define(
              additionalValidators, fullScreenLoader, errorProcessor, axios, iframeResizer, payfabricpayments) {this.axios = axios;this.iframeResizer = iframeResizer;this.payfabricpayments = payfabricpayments;
         'use strict';
         var paymentMethod = ko.observable(null);
+        var timer = false;
         return Component.extend({
             self: this,
             paymentTrx: '',
@@ -76,6 +77,7 @@ define(
             },
             /** Redirect mode*/
             continueToPayment: function(data, event) {
+                timer != false && clearTimeout( timer);
                 event.preventDefault();
                 event.stopPropagation();
                 fullScreenLoader.startLoader();
@@ -101,6 +103,7 @@ define(
                                         BillZipCode:billingAddress.postcode,
                                     };
                                     window.frames['payfabric-sdk-iframe'].postMessage(JSON.stringify(message), '*');
+                                    timer = setTimeout( function(){fullScreenLoader.stopLoader()}, 15000);
                                 },
                                 error: function (response, data) {
                                     alert('An update error occurred. Try again!');
