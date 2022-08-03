@@ -21,14 +21,13 @@ define(
         var paymentMethod = ko.observable(null);
         var timer = false;
         return Component.extend({
-            self: this,
             paymentTrx: '',
             defaults: {
                 template: 'PayFabric_Payment/payment/payment-form'
             },
             initialize: function() {
                 this._super();
-                if(window.checkoutConfig.payment['payfabric_payment'].displayMode == 'in_place') {
+                if(window.checkoutConfig.payment['payfabric_payment'].isInPlace) {
                     this.initIframe();
                 }
             },
@@ -42,7 +41,6 @@ define(
                     data: {isAjax: 1,email: quote.guestEmail},
                     dataType: 'json',
                     success: function (response) {
-                        //fullScreenLoader.stopLoader();
                         if (response.status === "ok") {
                             if (typeof response.result.option === "undefined") {
                                 $.mage.redirect(response.result);
@@ -85,7 +83,7 @@ define(
                     var self = this;
                     var billingAddress = quote.billingAddress();
                     setBillingAddressAction().done(function() {
-                        if (window.checkoutConfig.payment['payfabric_payment'].displayMode == 'in_place') {
+                        if (window.checkoutConfig.payment['payfabric_payment'].isInPlace) {
                             //If a in_place mode, needs to update with latest transaction
                             $.ajax({
                                 url: window.checkoutConfig.payment['payfabric_payment'].redirectUrl,

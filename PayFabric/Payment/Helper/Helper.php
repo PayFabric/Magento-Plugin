@@ -551,4 +551,8 @@ class Helper extends AbstractHelper
     public function getOrderRepo() {
         return $this->_orderRepo;
     }
+
+    public function isInPlace(){
+        return $this->getConfigData('display_mode') == DisplayMode::DISPLAY_MODE_IN_PLACE;
+    }
 }

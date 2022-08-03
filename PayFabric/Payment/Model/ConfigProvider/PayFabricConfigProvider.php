@@ -41,7 +41,7 @@ class PayFabricConfigProvider implements ConfigProviderInterface
         foreach ($this->_methodCodes as $code) {
             if ($this->methods[$code]->isAvailable()) {
                 $config['payment'] [$code]['redirectUrl'] = $this->getMethodRedirectUrl($code);
-                $config['payment'] [$code]['displayMode'] = $this->_helper->getConfigData('display_mode');
+                $config['payment'] [$code]['isInPlace'] = $this->_helper->isInPlace('display_mode');
             }
         }
 
