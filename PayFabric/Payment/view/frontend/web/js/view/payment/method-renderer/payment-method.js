@@ -4,6 +4,7 @@ define(
     [
         'ko',
         'jquery',
+        'Magento_Ui/js/modal/alert',
         'Magento_Checkout/js/view/payment/default',
         'Magento_Checkout/js/action/set-billing-address',
         'PayFabric_Payment/js/action/set-payment-method',
@@ -15,7 +16,7 @@ define(
         'iframeResizer',
         'payfabricpayments'
     ],
-    function(ko, $, Component, setBillingAddressAction, setPaymentMethodAction, quote,
+    function(ko, $, alert, Component, setBillingAddressAction, setPaymentMethodAction, quote,
              additionalValidators, fullScreenLoader, errorProcessor, axios, iframeResizer, payfabricpayments) {this.axios = axios;this.iframeResizer = iframeResizer;this.payfabricpayments = payfabricpayments;
         'use strict';
         var paymentMethod = ko.observable(null);
@@ -49,26 +50,29 @@ define(
                                     successCallback: function (data) {
                                     },
                                     failureCallback: function (data) {
-                                        //alert('Payment has failed for: ' + JSON.stringify(data, Object.getOwnPropertyNames(data)));
+                                        fullScreenLoader.stopLoader();
                                         setTimeout(function(){location.reload();}, 3000);
-
                                     },
                                     cancelCallback: function () {
                                         location.reload();
                                     }
                                 }));
                                 self.setPaymentTrx(response.result.paymentTrx);
-                                fullScreenLoader.stopLoader();
                             }
                         } else if(response.status === "error"){
-                            alert(response.message);
+                            alert({
+                                content: response.message
+                            });
                         }
                     },
                     error: function (response, data) {
-                        alert('An error occurred. Try again!');
+                        alert({
+                            content: $.mage.__('An error occurred. Try again!')
+                        });
                     },
                     complete: function (response) {
                         console.log('complete initIframe');
+                        fullScreenLoader.stopLoader();
                     }
                 });
 
@@ -91,23 +95,42 @@ define(
                                 data: {isAjax: 1, email: quote.guestEmail, action: 'update', paymentTrx: self.getPaymentTrx()},
                                 dataType: 'json',
                                 success: function (response) {
-                                    var message = {
-                                        action: "pay",
-                                        BillCountryCode:billingAddress.countryId,
-                                        BillAddressLine1:billingAddress.street[0],
-                                        BillAddressLine2:billingAddress.street[1],
-                                        BillCityCode:billingAddress.city,
-                                        BillStateCode:billingAddress.regionCode,
-                                        BillZipCode:billingAddress.postcode,
-                                    };
-                                    window.frames['payfabric-sdk-iframe'].postMessage(JSON.stringify(message), '*');
-                                    timer = setTimeout( function(){fullScreenLoader.stopLoader()}, 15000);
+                                    if (response.status === "ok") {
+                                        var message = {
+                                            action: "pay",
+                                            BillCountryCode: billingAddress.countryId,
+                                            BillAddressLine1: billingAddress.street[0],
+                                            BillAddressLine2: billingAddress.street[1],
+                                            BillCityCode: billingAddress.city,
+                                            BillStateCode: billingAddress.regionCode,
+                                            BillZipCode: billingAddress.postcode,
+                                        };
+                                        if(typeof window.frames['payfabric-sdk-iframe'] !== "undefined") {
+                                            window.frames['payfabric-sdk-iframe'].postMessage(JSON.stringify(message), '*');
+                                            timer = setTimeout(function () {
+                                                fullScreenLoader.stopLoader()
+                                            }, 15000);
+                                        }else{
+                                            alert({
+                                                content: $.mage.__('Something went wrong, please try to refresh the page.')
+                                            });
+                                            fullScreenLoader.stopLoader();
+                                        }
+                                    } else if(response.status === "error"){
+                                        alert({
+                                            content: response.message
+                                        });
+                                        fullScreenLoader.stopLoader();
+                                    }
                                 },
                                 error: function (response, data) {
-                                    alert('An update error occurred. Try again!');
+                                    alert({
+                                        content: $.mage.__('Unable to update the transaction.')
+                                    });
+                                    fullScreenLoader.stopLoader();
                                 },
                                 complete: function (response) {
-                                    console.log('complete!');
+                                    console.log('complete continueToPayment.');
                                 }
                             });
 
