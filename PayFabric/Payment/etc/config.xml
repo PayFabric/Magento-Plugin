@@ -4,7 +4,7 @@
             <payfabric_payment>
                 <active>0</active>
                 <model>PayFabric\Payment\Model\PaymentMethod</model>
-                <title>PayFabric</title>
+                <title>Credit Debit</title>
                 <payment_action>sale</payment_action>
                 <order_status>pending</order_status>
                 <payment_cancelled>canceled</payment_cancelled>
