@@ -10,11 +10,9 @@ class Request extends \PayFabric\Payment\Controller\Checkout
     public function execute()
     {
         if ( ! $this->getRequest()->isAjax() ) {
-            $this->_cancelPayment();
-            $this->_checkoutSession->restoreQuote();
             $this->getResponse()->setRedirect(
                 $this->getCheckoutHelper()->getUrl( 'checkout' )
-            );
+            )->sendResponse();
         }
 
         $quote         = $this->getQuote();
@@ -35,9 +33,6 @@ class Request extends \PayFabric\Payment\Controller\Checkout
         } else {
             $quote->setCheckoutMethod( \Magento\Checkout\Model\Type\Onepage::METHOD_GUEST );
         }
-
-        $quote->setPaymentMethod( $this->getPaymentMethod()->getCode() );
-        $quote->getPayment()->importData( [ 'method' => $this->getPaymentMethod()->getCode() ] );
         $this->_quoteRepository->save( $quote );
         $result = $this->getCheckoutHelper()->processPayment( $paymentMethod, $quote );
         die(json_encode($result));

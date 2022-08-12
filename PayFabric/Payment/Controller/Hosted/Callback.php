@@ -54,17 +54,7 @@ class Callback extends \PayFabric\Payment\Controller\Checkout implements CsrfAwa
 		    $this->messageManager->addExceptionMessage(new \Exception(__('Missing order and quote data!')),
 			    __('Missing order and quote data!'));
 	    }
-
 	    if ($quote && !$order) {
-		    if ($this->getCustomerSession()->isLoggedIn()) {
-			    if (isset($params['email']) && !empty($params['email'])) {
-				    $quote->setCustomerEmail($params['email']);
-			    }
-			    $quote->setCheckoutMethod(\Magento\Checkout\Model\Type\Onepage::METHOD_CUSTOMER);
-		    } else {
-			    $quote->setCheckoutMethod(\Magento\Checkout\Model\Type\Onepage::METHOD_GUEST);
-		    }
-
 		    $quote->setPaymentMethod($code);
 		    $quote->getPayment()->importData(['method' => $code]);
 		    $this->_quoteRepository->save($quote);

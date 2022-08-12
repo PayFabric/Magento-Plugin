@@ -106,19 +106,6 @@ abstract class Checkout extends \Magento\Framework\App\Action\Action
     }
 
     /**
-     * Cancel order, return quote to customer
-     *
-     * @param string $errorMsg
-     * @return false|string
-     */
-    protected function _cancelPayment($errorMsg = '')
-    {
-        $gotoSection = false;
-        $this->_checkoutHelper->cancelCurrentOrder($errorMsg);
-        $this->_checkoutSession->restoreQuote();
-    }
-
-    /**
      * Get order object
      *
      * @return \Magento\Sales\Model\Order
