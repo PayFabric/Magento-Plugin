@@ -62,16 +62,6 @@ class Helper extends AbstractHelper
     }
 
     /**
-     * @desc Return synchronous notification url
-     *
-     * @return string
-     */
-    public function getLandingPageOnReturnAfterRedirect($orderId)
-    {
-        return 'payfabric/hosted/response/orderid/' . $orderId;
-    }
-
-    /**
      * @desc Return Cashier URL
      *
      * @return string
@@ -93,24 +83,6 @@ class Helper extends AbstractHelper
         $maxiPago = new Payments();
         $maxiPago->setEnvironment($this->getConfigData('environment'));
         return $maxiPago->jsUrl;
-    }
-
-    /**
-     * @desc Return the method of the HTTP Request that the form executes
-     *
-     * @return string
-     */
-    public function getFormMethod()
-    {
-        $displayMode = $this->getConfigData('display_mode');
-        if ($displayMode === DisplayMode::DISPLAY_MODE_REDIRECT) {
-            return "GET";
-        } else if ($displayMode === DisplayMode::DISPLAY_MODE_IFRAME) {
-            return "GET";
-        } else {
-            $this->logDebug("Display mode not valid: " . $displayMode);
-            return '';
-        }
     }
 
     /**
