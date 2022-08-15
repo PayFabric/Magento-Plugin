@@ -353,7 +353,7 @@ class Helper extends AbstractHelper
             "Amount" => $this->formatAmount($quote->getGrandTotal()),
             "Currency" => strtoupper( $quote->getCurrency()->getQuoteCurrencyCode() ),
             "pluginName" => "Magento PayFabric Gateway",
-            "pluginVersion" => "1.2.0",
+            "pluginVersion" => "2.0.0",
             "customerId" => $customerId,
             //level2/3
             'freightAmount'    => $this->formatAmount($shippingAddress->getBaseShippingAmount()),
