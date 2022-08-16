@@ -156,7 +156,7 @@ class RequestBase {
                     $this->setCaptureComplete();
                     break;
                 case "update":
-                    $this->setUpdate();
+                    $this->setParams();
                     break;
                 default:
                     break;
@@ -167,5 +167,13 @@ class RequestBase {
         	if (is_object(self::$logger)) { self::$logger->logCrit($e->getMessage()." in ".$e->getFile()." on line ".$e->getLine()); }
             throw $e;
         }
+    }
+
+    /**
+     * @return mixed
+     */
+    public function __get($var)
+    {
+        return '';
     }
 }

@@ -268,16 +268,12 @@ class Helper extends AbstractHelper
      * @return array
      * @throws Exception
      */
-    public function updatePayment( $paymentTrx, $quote ) {
-        $billingAddress  = $quote->getBillingAddress();
-        $billingArray    = $this->getBillingArray( $billingAddress );
-        $updateData = array_merge(array(
-            "action" => 'UPDATE',
-            "Key" => $paymentTrx,
-            "Amount" => $this->formatAmount($quote->getGrandTotal())
-        ),$billingArray);
+    public function updatePayment( $paymentTrx, $quote, $paymentMethod) {
         try {
-            $result = $this->executeGatewayTransaction($updateData['action'], $updateData);
+            $updateData = array_merge(array(
+                "Key" => $paymentTrx
+            ), $this->getGatewayPostArgs($paymentMethod, $quote));
+            $result = $this->executeGatewayTransaction("UPDATE", $updateData);
         }catch (\Exception $e){
             $this->_logger->critical( sprintf( 'There was an error in the api response, last known error was "%s", in file %s, at line %s. Error message: %s',
                 json_last_error(), __FILE__, __LINE__, $e->getMessage() ) );
@@ -297,44 +293,24 @@ class Helper extends AbstractHelper
      * @throws Exception
      */
     public function processPayment( $paymentMethod, $quote ) {
-        $billingAddress  = $quote->getBillingAddress();
-        $shippingAddress = $quote->getShippingAddress();
-        $billingArray    = $this->getBillingArray( $billingAddress );
-        $shippingArray   = $this->getShippingArray( $shippingAddress, $billingAddress );
-
-        // customer id
-        $customerId = $quote->getCustomerId();
-        if ($customerId == '') {
-            $customerId = 'guest_'.$quote->getReservedOrderId();
+        if ($this->isInPlace()) {
+            // customer id
+            $customerId = $quote->getCustomerId();
+            if ($customerId == '') {
+                $customerId = 'guest_'.$quote->getReservedOrderId();
+            }
+            if(strlen($customerId) > 20) {
+                $customerId = substr($customerId, -20);
+            }
+            $sessionTokenData = array(
+                "action" => $paymentMethod->toAPIOperation($this->getConfigData('payment_action')),
+                "Amount" => $this->formatAmount($quote->getGrandTotal()), // REQUIRED - Transaction amount in US format //
+                "Currency" => strtoupper( $quote->getCurrency()->getQuoteCurrencyCode() ),
+                "customerId" => $customerId
+            );
+        } else {
+            $sessionTokenData = $this->getGatewayPostArgs($paymentMethod, $quote);
         }
-        if(strlen($customerId) > 20) {
-            $customerId = substr($customerId, -20);
-        }
-
-        $url = $paymentMethod->getUrlBuilder()->getBaseUrl();
-        $parse_result = parse_url($url);
-        if(isset($parse_result['port'])){
-            $allowOriginUrl = $parse_result['scheme']."://".$parse_result['host'].":".$parse_result['port'];
-        }else{
-            $allowOriginUrl = $parse_result['scheme']."://".$parse_result['host'];
-        }
-
-        $sessionTokenData = array_merge(array(
-            "action" => $paymentMethod->toAPIOperation($this->getConfigData('payment_action')),
-            "referenceNum" => sprintf( '%s', $quote->getReservedOrderId() ),
-            "Amount" => $this->formatAmount($quote->getGrandTotal()),
-            "Currency" => strtoupper( $quote->getCurrency()->getQuoteCurrencyCode() ),
-            "pluginName" => "Magento PayFabric Gateway",
-            "pluginVersion" => "2.0.0",
-            "customerId" => $customerId,
-            //level2/3
-            'freightAmount'    => $this->formatAmount($shippingAddress->getBaseShippingAmount()),
-            'taxAmount' => $this->formatAmount($shippingAddress->getBaseTaxAmount()),
-            'lineItems' => $this->get_level3_data_from_order($quote),
-            //Optional
-            'allowOriginUrl' => $allowOriginUrl,
-            "merchantNotificationUrl" => $this->getUrl($this->getNotificationRoute($quote->getReservedOrderId())),
-        ), $shippingArray, $billingArray);
 
         try {
             $response = $this->executeGatewayTransaction($sessionTokenData['action'], $sessionTokenData);
@@ -526,5 +502,48 @@ class Helper extends AbstractHelper
 
     public function isInPlace(){
         return $this->getConfigData('display_mode') == DisplayMode::DISPLAY_MODE_IN_PLACE;
+    }
+
+    //Generate transaction data
+    private function getGatewayPostArgs($paymentMethod, $quote)
+    {
+        $billingAddress  = $quote->getBillingAddress();
+        $shippingAddress = $quote->getShippingAddress();
+        $billingArray    = $this->getBillingArray( $billingAddress );
+        $shippingArray   = $this->getShippingArray( $shippingAddress, $billingAddress );
+
+        // customer id
+        $customerId = $quote->getCustomerId();
+        if ($customerId == '') {
+            $customerId = 'guest_'.$quote->getReservedOrderId();
+        }
+        if(strlen($customerId) > 20) {
+            $customerId = substr($customerId, -20);
+        }
+
+        $url = $paymentMethod->getUrlBuilder()->getBaseUrl();
+        $parse_result = parse_url($url);
+        if(isset($parse_result['port'])){
+            $allowOriginUrl = $parse_result['scheme']."://".$parse_result['host'].":".$parse_result['port'];
+        }else{
+            $allowOriginUrl = $parse_result['scheme']."://".$parse_result['host'];
+        }
+
+        return array_merge(array(
+            "action" => $paymentMethod->toAPIOperation($this->getConfigData('payment_action')),
+            "referenceNum" => sprintf( '%s', $quote->getReservedOrderId() ),
+            "Amount" => $this->formatAmount($quote->getGrandTotal()),
+            "Currency" => strtoupper( $quote->getCurrency()->getQuoteCurrencyCode() ),
+            "pluginName" => "Magento PayFabric Gateway",
+            "pluginVersion" => "2.0.0",
+            "customerId" => $customerId,
+            //level2/3
+            'freightAmount'    => $this->formatAmount($shippingAddress->getBaseShippingAmount()),
+            'taxAmount' => $this->formatAmount($shippingAddress->getBaseTaxAmount()),
+            'lineItems' => $this->get_level3_data_from_order($quote),
+            //Optional
+            'allowOriginUrl' => $allowOriginUrl,
+            "merchantNotificationUrl" => $this->getUrl($this->getNotificationRoute($quote->getReservedOrderId())),
+        ), $shippingArray, $billingArray);
     }
 }
