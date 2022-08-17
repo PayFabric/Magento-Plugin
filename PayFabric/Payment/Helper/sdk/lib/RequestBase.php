@@ -116,15 +116,15 @@ class RequestBase {
         elseif (is_array($text)) {
             isset($text["cvvNumber"]) && @$text["cvvNumber"] = str_ireplace($text["cvvNumber"], str_repeat("*", strlen($text["cvvNumber"])), $text["cvvNumber"]);
             isset($text["shippingEmail"]) && @$text["shippingEmail"] = str_ireplace($text["shippingEmail"], substr_replace($text["shippingEmail"], str_repeat("*", 3), 1, 3), $text["shippingEmail"]);
-			isset($text["shippingAddress1"]) && @$text["shippingAddress1"] = substr_replace($text["shippingAddress1"], str_repeat('*',strlen($text["shippingAddress1"])-8),'8');
-			isset($text["shippingAddress2"]) && @$text["shippingAddress2"] = substr_replace($text["shippingAddress2"], str_repeat('*',strlen($text["shippingAddress2"])-8),'8');
-			isset($text["shippingPhone"]) && @$text["shippingPhone"] = substr_replace($text["shippingPhone"], str_repeat('*',strlen($text["shippingPhone"])-4),'4');
+			isset($text["shippingAddress1"]) && strlen($text["shippingAddress1"]) >= 8 && @$text["shippingAddress1"] = substr_replace($text["shippingAddress1"], str_repeat('*',strlen($text["shippingAddress1"])-8),'8');
+			isset($text["shippingAddress2"]) && strlen($text["shippingAddress2"]) >= 8 && @$text["shippingAddress2"] = substr_replace($text["shippingAddress2"], str_repeat('*',strlen($text["shippingAddress2"])-8),'8');
+			isset($text["shippingPhone"]) && strlen($text["shippingPhone"]) >= 4 && @$text["shippingPhone"] = substr_replace($text["shippingPhone"], str_repeat('*',strlen($text["shippingPhone"])-4),'4');
 			isset($text["billingEmail"]) && @$text["billingEmail"] = str_ireplace($text["billingEmail"], substr_replace($text["billingEmail"], str_repeat("*", 3), 1, 3), $text["billingEmail"]);
-			isset($text["billingAddress1"]) && @$text["billingAddress1"] = substr_replace($text["billingAddress1"], str_repeat('*',strlen($text["billingAddress1"])-8),'8');
-			isset($text["billingAddress2"]) && @$text["billingAddress2"] = substr_replace($text["billingAddress2"], str_repeat('*',strlen($text["billingAddress2"])-8),'8');
-			isset($text["billingPhone"]) && @$text["billingPhone"] = substr_replace($text["billingPhone"], str_repeat('*',strlen($text["billingPhone"])-4),'4');
-            if (isset($text["number"]) && ServiceBase::checkCreditCard(@$text["number"])) {
-            	@$text["number"] = str_ireplace($text["number"], substr_replace($text["number"], str_repeat('*',strlen($text["number"])-4),'4'), $text["number"]); 
+			isset($text["billingAddress1"]) && strlen($text["billingAddress1"]) >= 8 && @$text["billingAddress1"] = substr_replace($text["billingAddress1"], str_repeat('*',strlen($text["billingAddress1"])-8),'8');
+			isset($text["billingAddress2"]) && strlen($text["billingAddress2"]) >= 8 && @$text["billingAddress2"] = substr_replace($text["billingAddress2"], str_repeat('*',strlen($text["billingAddress2"])-8),'8');
+			isset($text["billingPhone"]) && strlen($text["billingPhone"]) >= 4 && @$text["billingPhone"] = substr_replace($text["billingPhone"], str_repeat('*',strlen($text["billingPhone"])-4),'4');
+            if (isset($text["number"]) && strlen($text["number"]) >= 4 && ServiceBase::checkCreditCard(@$text["number"])) {
+            	@$text["number"] = str_ireplace($text["number"], substr_replace($text["number"], str_repeat('*',strlen($text["number"])-4),'4'), $text["number"]);
             }
             return $text;
         }
