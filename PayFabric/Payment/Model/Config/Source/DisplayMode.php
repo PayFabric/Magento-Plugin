@@ -17,10 +17,6 @@ class DisplayMode implements \Magento\Framework\Option\ArrayInterface
     {
         return [
             [
-                'value' => self::DISPLAY_MODE_REDIRECT,
-                'label' => 'Redirect',
-            ],
-            [
                 'value' => self::DISPLAY_MODE_IFRAME,
                 'label' => 'Dialog',
             ],
@@ -28,6 +24,10 @@ class DisplayMode implements \Magento\Framework\Option\ArrayInterface
                 'value' => self::DISPLAY_MODE_IN_PLACE,
                 'label' => 'Iframe',
             ],
+            [
+                'value' => self::DISPLAY_MODE_REDIRECT,
+                'label' => 'Redirect',
+            ]
         ];
     }
 }

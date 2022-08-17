@@ -10,7 +10,7 @@
                 <payment_cancelled>canceled</payment_cancelled>
                 <merchant_id></merchant_id>
                 <merchant_password></merchant_password>
-                <display_mode>Redirect</display_mode>
+                <display_mode>Dialog</display_mode>
                 <debug_log>Off</debug_log>
                 <environment>production</environment>
                 <is_gateway>1</is_gateway>
