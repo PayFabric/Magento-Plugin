@@ -135,6 +135,7 @@ define(
                             });
 
                         } else {
+                            fullScreenLoader.stopLoader();
                             self.initIframe();
                         }
                     }).fail(

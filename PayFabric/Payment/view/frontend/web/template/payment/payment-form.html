@@ -25,7 +25,7 @@
             <div class="primary">
                 <button class="action primary checkout"
                         type="submit"
-                        data-bind="click: continueToPayment, enable: (getCode() == isChecked())"
+                        data-bind="click: continueToPayment, enable: (getCode() == isChecked()), css: {disabled: !isPlaceOrderActionAllowed()}"
                         disabled>
                     <span data-bind="text: $t('Place Order')"></span>
                 </button>
