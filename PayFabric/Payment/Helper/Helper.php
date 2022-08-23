@@ -237,6 +237,10 @@ class Helper extends AbstractHelper
                 );
             }
 
+            if($order->getStatus() == \Magento\Sales\Model\Order::STATUS_FRAUD){
+                $order->getPayment()->setIsFraudDetected(true);
+            }
+
             $invoice = $invoiceService->prepareInvoice($order);
             if (!$invoice) {
                 throw new \Magento\Framework\Exception\LocalizedException(__('We can\'t save the invoice right now.'));
@@ -251,7 +255,7 @@ class Helper extends AbstractHelper
             $invoice->save();
             $invoice->getOrder()->setCustomerNoteNotify(false);
             $invoice->getOrder()->setIsInProcess(true);
-            $order->addStatusHistoryComment(__('Automatically INVOICED'), true);
+            $order->addStatusHistoryComment(__('Automatically INVOICED'), $order->getStatus());
             $transactionSave = $transaction->addObject($invoice)->addObject($invoice->getOrder());
             $transactionSave->save();
         } catch (\Exception $e) {

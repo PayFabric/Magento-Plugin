@@ -99,16 +99,18 @@ class Callback extends \PayFabric\Payment\Controller\Checkout implements CsrfAwa
         try {
             $transactionId = ( isset( $response['TrxKey'] ) ) ? $response['TrxKey'] : $response['trxKey'];
             if($this->getCheckoutHelper()->formatAmount($result->OrigTrxAmount) != $this->getCheckoutHelper()->formatAmount($order->getGrandTotal())){
+                $state = \Magento\Sales\Model\Order::STATE_PROCESSING;
                 $status = \Magento\Sales\Model\Order::STATUS_FRAUD;
             } else{
+                $state = \Magento\Sales\Model\Order::STATE_PROCESSING;
                 $status = \Magento\Sales\Model\Order::STATE_PROCESSING;
             }
             $transactionState = strtolower($result->TransactionState);
             if($transactionState == "pending capture") { //Auth transaction
-                if($order->getState() == \Magento\Sales\Model\Order::STATE_PROCESSING){
+                if($order->getState() == $state){
                     return false;
                 }
-                $order->setState(\Magento\Sales\Model\Order::STATE_PROCESSING)
+                $order->setState($state)
                     ->setStatus($status)
                     ->addStatusHistoryComment(__('Order payment authorized'))
                     ->setIsCustomerNotified(true);
@@ -122,11 +124,11 @@ class Callback extends \PayFabric\Payment\Controller\Checkout implements CsrfAwa
                 $transaction->save();
                 $payment->save();
             } elseif (in_array($transactionState,array('pending settlement','settled','captured'))){
-                if($order->getStatus() != \Magento\Sales\Model\Order::STATE_PROCESSING && $order->getStatus() != \Magento\Sales\Model\Order::STATE_COMPLETE){
-                    if($order->getState() == \Magento\Sales\Model\Order::STATE_PROCESSING){
+                if($order->getStatus() != $state && $order->getStatus() != \Magento\Sales\Model\Order::STATE_COMPLETE){
+                    if($order->getState() == $state){
                         return false;
                     }
-                    $order->setState(\Magento\Sales\Model\Order::STATE_PROCESSING)
+                    $order->setState($state)
                         ->setStatus($status)
                         ->addStatusHistoryComment(__('Payment completed successfully.'))
                         ->setIsCustomerNotified(true);
@@ -137,7 +139,7 @@ class Callback extends \PayFabric\Payment\Controller\Checkout implements CsrfAwa
                             ->setTransactionId($transactionId);
                     $payment->save();
                     try {
-                        if($status != \Magento\Sales\Model\Order::STATUS_FRAUD)  $this->getCheckoutHelper()->generateInvoice($order, $invoiceService, $transaction);
+                        $this->getCheckoutHelper()->generateInvoice($order, $invoiceService, $transaction);
                         $transaction = $payment->addTransaction(\Magento\Sales\Model\Order\Payment\Transaction::TYPE_ORDER, null, true);
                         $transaction->setIsClosed(0)->setAdditionalInformation(\Magento\Sales\Model\Order\Payment\Transaction::RAW_DETAILS, (array) $response);
                         $transaction->save();
