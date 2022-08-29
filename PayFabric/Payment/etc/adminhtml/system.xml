@@ -51,6 +51,11 @@
                 </field>
                 <field id="display_mode" translate="label" type="select" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Display Mode</label>
+                    <comment><![CDATA[Display Mode controls the presentation of the Hosted Payment Page (HPP):<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<b>• Dialog:</b> HPP shown as a pop-up on the checkout page.<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<b>• Iframe:</b> HPP shown directly on the checkout page, payment made when placing order. (A theme is required, see <a href="https://github.com/PayFabric/Magento-Plugin#readme" target="_blank">Guide</a>).<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<b>• Redirect:</b> Shopping site redirects user to the HPP.]]>
+                    </comment>
                     <source_model>PayFabric\Payment\Model\Config\Source\DisplayMode</source_model>
                     <config_path>payment/payfabric_payment/display_mode</config_path>
                 </field>

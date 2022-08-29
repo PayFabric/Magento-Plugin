@@ -46,6 +46,28 @@ In your Magneto account:
 * Click Save Config.
 * Go to System > Cache Management to flush Magento cache.
 ![image](ScreenShots/cache_admin.png)
+* When using "Iframe" as your Display Mode, you must create a theme to add the following custom js and configure this theme as default theme in the PayFabric Portal(please refer to [PayFabric Themes](https://github.com/PayFabric/Portal/blob/master/PayFabric/Sections/Themes.md "Themes")), please don't do that for other display modes which will affect your payment UI.
+```javascript
+$(".BillingContent").hide();
+$("#payButton").hide();
+typeof (receiveMessage) !== "undefined" && window.removeEventListener("message", receiveMessage, false);
+var receiveMessage = function (event)
+{
+    var data = event.data;
+    if(data.match("^\{(.+:.+,*){1,}\}$"))  data = $.parseJSON(data);
+    if (data.action == 'pay' ) {
+        typeof (data.BillCountryCode) !== "undefined" && $("#BillCountryCode").val($("#BillCountryCode").find("option[value^=" + data.BillCountryCode + "]").val()).trigger('change');
+        typeof (data.BillAddressLine1) !== "undefined" && $("#BillAddressLine1").val(data.BillAddressLine1);
+        typeof (data.BillAddressLine2) !== "undefined" && $("#BillAddressLine2").val(data.BillAddressLine2);
+        typeof (data.BillCityCode) !== "undefined" && $("#BillCityCode").val(data.BillCityCode);
+        typeof (data.BillStateCode) !== "undefined" && $(".state").val($("#BillStateCode").find("option[value^=" + data.BillStateCode + "]").val() || data.BillStateCode);
+        typeof (data.BillZipCode) !== "undefined" && $("#BillZipCode").val(data.BillZipCode);
+        $("#payButton").click();
+    }
+}
+window.addEventListener("message", receiveMessage, false);
+```
+
 * When using Authorization as your Payment Action, you must “Capture” the transaction when the sale has been completed. If you do not “Capture” the Authorization, no funds will be settled as the transaction is not complete.
     * To Capture an Authorized transaction: Click on "Invoice" button at the top right side.
     ![image](ScreenShots/invoice_create_admin.png)
