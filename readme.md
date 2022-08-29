@@ -41,12 +41,7 @@ Please refer to user guide in [PayFabric](https://github.com/PayFabric/Portal/bl
 In your Magneto account:
 * Go to STORES > Configuration > Sales > Payment Methods to enter your gateway and device data.
 ![image](ScreenShots/setting_admin.png)
-* Next Select your Payment Action.   Select Sale for a normal website purchase transaction.  This is the default option and automatically executes both the authorization and capture for the transaction.   The funds from this transaction will be included in your next batch settlement.
-    * If you choose Authorization, see the Capture instructions below.
-* Click Save Config.
-* Go to System > Cache Management to flush Magento cache.
-![image](ScreenShots/cache_admin.png)
-* When using "Iframe" as your Display Mode, you must create a theme to add the following custom js and configure this theme as default theme in the PayFabric Portal(please refer to [PayFabric Themes](https://github.com/PayFabric/Portal/blob/master/PayFabric/Sections/Themes.md "Themes")), please don't do that for other display modes which will affect your payment UI.
+* Select your Display Mode. When using "Iframe" as your Display Mode, you must create a theme to add the following custom js and configure this theme as default theme in the PayFabric Portal(please refer to [PayFabric Themes](https://github.com/PayFabric/Portal/blob/master/PayFabric/Sections/Themes.md "Themes")), please don't do that for other display modes which will affect your payment UI.
 ```javascript
 $(".BillingContent").hide();
 $("#payButton").hide();
@@ -67,7 +62,11 @@ var receiveMessage = function (event)
 }
 window.addEventListener("message", receiveMessage, false);
 ```
-
+* Next Select your Payment Action. Select Sale for a normal website purchase transaction.  This is the default option and automatically executes both the authorization and capture for the transaction.   The funds from this transaction will be included in your next batch settlement.
+    * If you choose Authorization, see the Capture instructions below.
+* Click Save Config.
+* Go to System > Cache Management to flush Magento cache.
+![image](ScreenShots/cache_admin.png)
 * When using Authorization as your Payment Action, you must “Capture” the transaction when the sale has been completed. If you do not “Capture” the Authorization, no funds will be settled as the transaction is not complete.
     * To Capture an Authorized transaction: Click on "Invoice" button at the top right side.
     ![image](ScreenShots/invoice_create_admin.png)
