@@ -37,6 +37,13 @@ In the PayFabric Portal, prepare a device with a default gateway configured.
 1. Go to Settings > Dev Central > Device Management to create a device to obtain the Device ID and Password.
 2. Go to Settings > Gateway Account Configuration, click '+ New Gateway Account' if the payment gateway account is not associated to an existing PayFabric account, and then set the default gateway under Default Gateway Settings.
 Please refer to user guide in [PayFabric](https://github.com/PayFabric/Portal/blob/master/PayFabric/README.md "PayFabric").
+3. If you enable the eCheck Gateway Account, you can customize the eCheck payment UI to default the Entry Class to ‘WEB’ and hide it by adding the following custom js in the PayFabric theme(please refer to [PayFabric Themes](https://github.com/PayFabric/Portal/blob/master/PayFabric/Sections/Themes.md "Themes"))
+    ```javascript
+    $(function(){
+        $(".entryClassDiv").hide();
+        $("#EntryClass option").each(function(){if(this.value == 'WEB')this.selected = true; else this.selected = false;});
+    });
+    ```
 
 In your Magneto account:
 * Go to STORES > Configuration > Sales > Payment Methods to enter your gateway and device data.
