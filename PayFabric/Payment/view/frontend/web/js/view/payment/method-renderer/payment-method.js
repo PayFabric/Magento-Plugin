@@ -145,6 +145,8 @@ define(
                         });
 
                     return false;
+                } else {
+                    fullScreenLoader.stopLoader();
                 }
             },
             validate: function() {
