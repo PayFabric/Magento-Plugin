@@ -210,6 +210,12 @@ class Helper extends AbstractHelper
                 case "UPDATE":
                     $maxiPago->updateTransaction($params);
                     break;
+                case "GET_WALLETS":
+                    $maxiPago->getWallets($params['customer_id']);
+                    break;
+                case "DEL_WALLET":
+                    $maxiPago->delWallet($params['id']);
+                    break;
             }
             return json_decode($maxiPago->response);
         }catch (\Exception $e){

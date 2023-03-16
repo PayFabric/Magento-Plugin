@@ -239,5 +239,51 @@ class Payments extends ResponseBase {
             throw $e;
         }
     }
-    
+
+    /**
+     * Get wallets
+     *
+     * @param string $customerId
+     * @param string $cardType
+     * @throws BadMethodCallException
+     */
+    public function getWallets($customerId, $cardType = '') {
+        try {
+            if (empty($customerId)) {
+                throw new \BadMethodCallException('[PayFabric Class] Method '.__METHOD__.' must receive a customer id');
+            }
+            if (is_object(RequestBase::$logger)) {
+                RequestBase::$logger->logNotice('Calling method '.__METHOD__);
+            }
+            $req = new Request($this->credentials);
+            $req->setEndpoint($this->host . '/payment/api/wallet/getByCustomer?customer=' . $customerId . ($cardType ? "&tender=" . $cardType : ""));
+            $this->response = $req->processRequest();
+        }
+        catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Delete a wallet
+     *
+     * @param string $id
+     * @throws BadMethodCallException
+     */
+    public function delWallet($id) {
+        try {
+            if (empty($id)) {
+                throw new \BadMethodCallException('[PayFabric Class] Method '.__METHOD__.' must receive a id');
+            }
+            if (is_object(RequestBase::$logger)) {
+                RequestBase::$logger->logNotice('Calling method '.__METHOD__);
+            }
+            $req = new Request($this->credentials);
+            $req->setEndpoint($this->host . '/payment/api/wallet/delete/' . $id);
+            $this->response = $req->processRequest();
+        }
+        catch (\Exception $e) {
+            throw $e;
+        }
+    }
 }
