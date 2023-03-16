@@ -1,0 +1,91 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+// @codingStandardsIgnoreFile
+/** @var \Magento\Vault\Block\Customer\CreditCards $block */
+$tokens = $block->getWallets();
+?>
+<?php ///** @var \Dotdigitalgroup\Email\Block\Adminhtml\Studio $block */?>
+<!--<iframe src="https://dev-us2.payfabric.com/Payment/Web/Wallet/Create?customer=1&token=1:4uj9g7t6rvw3&CookieChecked=1&TENDER=CreditCard" width=100% height=1650 frameborder='0' scrolling='no'-->
+<!--        style='margin:0;padding: 0;display:block;'>-->
+<!--</iframe>-->
+<?php if (count($tokens) !== 0): ?>
+    <div class="table-wrapper my-credit-cards">
+        <table class="data table table-credit-cards" id="my-orders-table">
+            <caption class="table-caption"><?= /* @noEscape */ __('My Wallets') ?></caption>
+            <thead>
+            <tr>
+                <th scope="col" class="col card-number"><?= /* @noEscape */ __('Tender') ?></th>
+                <th scope="col" class="col card-type"><?= /* @noEscape */ __('Card Type') ?></th>
+                <th scope="col" class="col expire"><?= /* @noEscape */ __('Exp. Date') ?></th>
+                <th scope="col" class="col card-number"><?= /* @noEscape */ __('Account #') ?></th>
+                <th scope="col" class="col card-number"><?= /* @noEscape */ __('First Name') ?></th>
+                <th scope="col" class="col card-number"><?= /* @noEscape */ __('Last Name') ?></th>
+                <th scope="col" class="col actions">&nbsp;</th>
+            </tr>
+            </thead>
+            <tbody>
+            <?php
+            foreach ($tokens as $field => $token) {
+            ?>
+            <tr>
+                <td data-th="<?= $block->escapeHtml(__('Tender')) ?>" class="col card-number">
+                    <?= $token->Tender ?>
+                </td>
+                <td data-th="<?= $block->escapeHtml(__('Card Type')) ?>" class="col card-expire">
+                    <?= $block->escapeHtml($token->CardName ) ?>
+                </td>
+                <td data-th="<?= $block->escapeHtml(__('Exp. Date')) ?>" class="col card-type">
+                    <?= $block->escapeHtml($token->ExpDate) ?>
+                </td>
+                <td data-th="<?= $block->escapeHtml(__('Account')) ?>" class="col card-type">
+                    <?= $block->escapeHtml($token->Account) ?>
+                </td>
+                <td data-th="<?= $block->escapeHtml(__('FirstName')) ?>" class="col card-type">
+                    <?= $block->escapeHtml($token->CardHolder->FirstName) ?>
+                </td>
+                <td data-th="<?= $block->escapeHtml(__('LastName')) ?>" class="col card-type">
+                    <?= $block->escapeHtml($token->CardHolder->LastName) ?>
+                </td>
+                <td data-th="<?= $block->escapeHtml(__('Actions')) ?>" class="col actions">
+                    <form
+                            class="form"
+                            action="<?= $block->escapeUrl($block->getUrl('payfabric/wallet/deleteaction')) ?>"
+                            method="post"
+                    >
+                        <?= $block->getBlockHtml('formkey') ?>
+                        <input
+                                name="<?= /* @noEscape */ 'id' ?>"
+                                value="<?= /* @noEscape */ $token->ID ?>"
+                                type="hidden"/>
+                        <button type="submit"
+                                class="action delete"
+                                data-mage-init='{
+                                "Magento_Vault/js/customer_account/deleteWidget":{
+                                    "type": "popup",
+                                    "modalClass": "my-credit-cards-popup",
+                                    "toggleEvent": "click",
+                                    "title": "<?= $block->escapeHtml(__('Delete')) ?>",
+                                    "content": "Are you sure you want to delete this wallet: <?=
+                                /* @noEscape */ $token->Account
+                                ?>?"
+                                }
+                            }'>
+                            <span><?= $block->escapeHtml(__('Delete')) ?></span>
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            <?php
+            }
+            ?>
+            </tbody>
+        </table>
+    </div>
+
+<?php else: ?>
+    <div class="message info empty"><span><?= /* @noEscape */ __('You have no wallet.') ?></span></div>
+<?php endif ?>
