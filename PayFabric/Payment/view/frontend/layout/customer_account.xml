@@ -11,7 +11,7 @@
             <block class="Magento\Framework\View\Element\Html\Link\Current" name="customer-account-navigation-new-tab">
                 <arguments>
                     <argument name="path" xsi:type="string">payfabric/wallet/indexaction</argument>
-                    <argument name="label" xsi:type="string">My Wallets</argument>
+                    <argument name="label" xsi:type="string">PayFabric Wallet</argument>
                 </arguments>
             </block>
         </referenceBlock>

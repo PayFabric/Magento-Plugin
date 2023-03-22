@@ -5,17 +5,13 @@
  */
 
 // @codingStandardsIgnoreFile
-/** @var \Magento\Vault\Block\Customer\CreditCards $block */
-$tokens = $block->getWallets();
+/** @var PayFabric\Payment\Block\Customer\Wallets $block */
+$wallets = $block->getWallets();
 ?>
-<?php ///** @var \Dotdigitalgroup\Email\Block\Adminhtml\Studio $block */?>
-<!--<iframe src="https://dev-us2.payfabric.com/Payment/Web/Wallet/Create?customer=1&token=1:4uj9g7t6rvw3&CookieChecked=1&TENDER=CreditCard" width=100% height=1650 frameborder='0' scrolling='no'-->
-<!--        style='margin:0;padding: 0;display:block;'>-->
-<!--</iframe>-->
-<?php if (count($tokens) !== 0): ?>
+<?php if (count($wallets) !== 0): ?>
     <div class="table-wrapper my-credit-cards">
         <table class="data table table-credit-cards" id="my-orders-table">
-            <caption class="table-caption"><?= /* @noEscape */ __('My Wallets') ?></caption>
+            <caption class="table-caption"><?= /* @noEscape */ __('PayFabric Wallet') ?></caption>
             <thead>
             <tr>
                 <th scope="col" class="col card-number"><?= /* @noEscape */ __('Tender') ?></th>
@@ -29,26 +25,26 @@ $tokens = $block->getWallets();
             </thead>
             <tbody>
             <?php
-            foreach ($tokens as $field => $token) {
+            foreach ($wallets as $field => $wallet) {
             ?>
             <tr>
-                <td data-th="<?= $block->escapeHtml(__('Tender')) ?>" class="col card-number">
-                    <?= $token->Tender ?>
+                <td data-th="<?= $block->escapeHtml(__('Tender')) ?>" class="col card-tender">
+                    <?= $wallet->Tender ?>
                 </td>
-                <td data-th="<?= $block->escapeHtml(__('Card Type')) ?>" class="col card-expire">
-                    <?= $block->escapeHtml($token->CardName ) ?>
+                <td data-th="<?= $block->escapeHtml(__('Card Type')) ?>" class="col card-type">
+                    <?= $block->escapeHtml($wallet->CardName ) ?>
                 </td>
-                <td data-th="<?= $block->escapeHtml(__('Exp. Date')) ?>" class="col card-type">
-                    <?= $block->escapeHtml($token->ExpDate) ?>
+                <td data-th="<?= $block->escapeHtml(__('Exp. Date')) ?>" class="col card-expire">
+                    <?= $block->escapeHtml($wallet->ExpDate) ?>
                 </td>
-                <td data-th="<?= $block->escapeHtml(__('Account')) ?>" class="col card-type">
-                    <?= $block->escapeHtml($token->Account) ?>
+                <td data-th="<?= $block->escapeHtml(__('Account')) ?>" class="col card-number">
+                    <?= $block->escapeHtml($wallet->Account) ?>
                 </td>
-                <td data-th="<?= $block->escapeHtml(__('FirstName')) ?>" class="col card-type">
-                    <?= $block->escapeHtml($token->CardHolder->FirstName) ?>
+                <td data-th="<?= $block->escapeHtml(__('FirstName')) ?>" class="col card-firstname">
+                    <?= $block->escapeHtml($wallet->CardHolder->FirstName) ?>
                 </td>
-                <td data-th="<?= $block->escapeHtml(__('LastName')) ?>" class="col card-type">
-                    <?= $block->escapeHtml($token->CardHolder->LastName) ?>
+                <td data-th="<?= $block->escapeHtml(__('LastName')) ?>" class="col card-lastname">
+                    <?= $block->escapeHtml($wallet->CardHolder->LastName) ?>
                 </td>
                 <td data-th="<?= $block->escapeHtml(__('Actions')) ?>" class="col actions">
                     <form
@@ -59,7 +55,7 @@ $tokens = $block->getWallets();
                         <?= $block->getBlockHtml('formkey') ?>
                         <input
                                 name="<?= /* @noEscape */ 'id' ?>"
-                                value="<?= /* @noEscape */ $token->ID ?>"
+                                value="<?= /* @noEscape */ $wallet->ID ?>"
                                 type="hidden"/>
                         <button type="submit"
                                 class="action delete"
@@ -70,7 +66,7 @@ $tokens = $block->getWallets();
                                     "toggleEvent": "click",
                                     "title": "<?= $block->escapeHtml(__('Delete')) ?>",
                                     "content": "Are you sure you want to delete this wallet: <?=
-                                /* @noEscape */ $token->Account
+                                /* @noEscape */ $wallet->Account
                                 ?>?"
                                 }
                             }'>

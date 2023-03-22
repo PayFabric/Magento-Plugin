@@ -38,7 +38,7 @@ class IndexAction extends WalletsManagement
     public function execute()
     {
         $resultPage = $this->pageFactory->create();
-        $resultPage->getConfig()->getTitle()->set(__('My Wallets'));
+        $resultPage->getConfig()->getTitle()->set(__('PayFabric Wallet'));
 
         return $resultPage;
     }

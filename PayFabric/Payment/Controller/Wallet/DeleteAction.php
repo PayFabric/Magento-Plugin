@@ -107,7 +107,7 @@ class DeleteAction extends WalletsManagement
     private function createSuccessMessage()
     {
         $this->messageManager->addSuccessMessage(
-            __('Deleted the wallet card successfully!')
+            __('Deleted the wallet successfully!')
         );
         return $this->_redirect('payfabric/wallet/indexaction');
     }
