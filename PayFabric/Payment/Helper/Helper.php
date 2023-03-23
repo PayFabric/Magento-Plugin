@@ -306,9 +306,6 @@ class Helper extends AbstractHelper
         if ($this->isInPlace()) {
             // customer id
             $customerId = $quote->getCustomerId();
-            if ($customerId == '') {
-                $customerId = 'guest_'.$quote->getReservedOrderId();
-            }
             if(strlen($customerId) > 20) {
                 $customerId = substr($customerId, -20);
             }
