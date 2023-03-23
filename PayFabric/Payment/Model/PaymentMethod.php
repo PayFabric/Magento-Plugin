@@ -66,7 +66,7 @@ class PaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod impleme
     /**
      * @var bool
      */
-    protected $_canUseInternal = true;
+    protected $_canUseInternal = false;
 
     /**
      * @var bool
