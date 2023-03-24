@@ -2,6 +2,7 @@
 
 namespace PayFabric\Payment\Helper;
 
+use Magento\Quote\Model\Quote;
 use PayFabric\Payment\Helper\sdk\lib\Payments;
 use PayFabric\Payment\Model\Config\Source\DisplayMode;
 use Magento\Framework\App\Helper\AbstractHelper;
@@ -10,6 +11,8 @@ use PayFabric\Payment\Model\Config\Source\Environment;
 class Helper extends AbstractHelper
 {
     const METHOD_CODE = 'payfabric_payment';
+    const PLUGIN_VERSION = '2.1.0';
+    const PLUGIN_NAME = 'Magento PayFabric Gateway';
 
     /**
      * @var \Magento\Store\Model\StoreManagerInterface
@@ -304,16 +307,11 @@ class Helper extends AbstractHelper
      */
     public function processPayment( $paymentMethod, $quote ) {
         if ($this->isInPlace()) {
-            // customer id
-            $customerId = $quote->getCustomerId();
-            if(strlen($customerId) > 20) {
-                $customerId = substr($customerId, -20);
-            }
             $sessionTokenData = array(
                 "action" => $paymentMethod->toAPIOperation($this->getConfigData('payment_action')),
                 "Amount" => $this->formatAmount($quote->getGrandTotal()), // REQUIRED - Transaction amount in US format //
                 "Currency" => strtoupper( $quote->getCurrency()->getQuoteCurrencyCode() ),
-                "customerId" => $customerId
+                "customerId" => $this->getCustomerIdByQuote($quote)
             );
         } else {
             $sessionTokenData = $this->getGatewayPostArgs($paymentMethod, $quote);
@@ -511,6 +509,15 @@ class Helper extends AbstractHelper
         return $this->getConfigData('display_mode') == DisplayMode::DISPLAY_MODE_IN_PLACE;
     }
 
+    public function getCustomerIdByQuote(Quote $quote)
+    {
+        $customerId = $quote->getCustomerId();
+        if (strlen($customerId) > 20) {
+            $customerId = substr($customerId, -20);
+        }
+        return $customerId;
+    }
+
     //Generate transaction data
     private function getGatewayPostArgs($paymentMethod, $quote)
     {
@@ -518,15 +525,6 @@ class Helper extends AbstractHelper
         $shippingAddress = $quote->getShippingAddress();
         $billingArray    = $this->getBillingArray( $billingAddress );
         $shippingArray   = $this->getShippingArray( $shippingAddress, $billingAddress );
-
-        // customer id
-        $customerId = $quote->getCustomerId();
-        if ($customerId == '') {
-            $customerId = 'guest_'.$quote->getReservedOrderId();
-        }
-        if(strlen($customerId) > 20) {
-            $customerId = substr($customerId, -20);
-        }
 
         $url = $paymentMethod->getUrlBuilder()->getBaseUrl();
         $parse_result = parse_url($url);
@@ -541,9 +539,9 @@ class Helper extends AbstractHelper
             "referenceNum" => sprintf( '%s', $quote->getReservedOrderId() ),
             "Amount" => $this->formatAmount($quote->getGrandTotal()),
             "Currency" => strtoupper( $quote->getCurrency()->getQuoteCurrencyCode() ),
-            "pluginName" => "Magento PayFabric Gateway",
-            "pluginVersion" => "2.0.0",
-            "customerId" => $customerId,
+            "pluginName" => self::PLUGIN_NAME,
+            "pluginVersion" => self::PLUGIN_VERSION,
+            "customerId" => $this->getCustomerIdByQuote($quote),
             //level2/3
             'freightAmount'    => $this->formatAmount($shippingAddress->getBaseShippingAmount()),
             'taxAmount' => $this->formatAmount($shippingAddress->getBaseTaxAmount()),
