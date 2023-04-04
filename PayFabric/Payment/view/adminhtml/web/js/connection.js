@@ -44,7 +44,7 @@ define([
 
             element.removeClass('success').addClass('fail');
             $.each($.parseJSON(this.options.fieldMapping), function (key, el) {
-                params[key] = $("select[id$="+ el + "]").val() || jQuery("input[id$=" + el + "]").val();
+                params[key] = $("select[id$="+ el + "]").val() || $("input[id$=" + el + "]").val();
             });
             $.ajax({
                 url: this.options.url,

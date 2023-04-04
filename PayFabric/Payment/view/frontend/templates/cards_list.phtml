@@ -8,18 +8,18 @@
 /** @var PayFabric\Payment\Block\Customer\Wallets $block */
 $wallets = $block->getWallets();
 ?>
-<?php if (count($wallets) !== 0): ?>
+<?php if (is_array($wallets) && count($wallets) !== 0): ?>
     <div class="table-wrapper my-credit-cards">
         <table class="data table table-credit-cards" id="my-orders-table">
             <caption class="table-caption"><?= /* @noEscape */ __('PayFabric Wallet') ?></caption>
             <thead>
             <tr>
-                <th scope="col" class="col card-number"><?= /* @noEscape */ __('Tender') ?></th>
+                <th scope="col" class="col card-tender"><?= /* @noEscape */ __('Tender') ?></th>
                 <th scope="col" class="col card-type"><?= /* @noEscape */ __('Card Type') ?></th>
-                <th scope="col" class="col expire"><?= /* @noEscape */ __('Exp. Date') ?></th>
+                <th scope="col" class="col card-expire"><?= /* @noEscape */ __('Exp. Date') ?></th>
                 <th scope="col" class="col card-number"><?= /* @noEscape */ __('Account #') ?></th>
-                <th scope="col" class="col card-number"><?= /* @noEscape */ __('First Name') ?></th>
-                <th scope="col" class="col card-number"><?= /* @noEscape */ __('Last Name') ?></th>
+                <th scope="col" class="col card-firstname"><?= /* @noEscape */ __('First Name') ?></th>
+                <th scope="col" class="col card-lastname"><?= /* @noEscape */ __('Last Name') ?></th>
                 <th scope="col" class="col actions">&nbsp;</th>
             </tr>
             </thead>
