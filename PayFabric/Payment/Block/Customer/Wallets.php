@@ -31,9 +31,9 @@ class Wallets extends Template
      */
     public function __construct(
         Template\Context $context,
-        array $data = [],
         Helper $helper,
-        Session $session
+        Session $session,
+        array $data = []
     ) {
         parent::__construct($context, $data);
         $this->_helper = $helper;

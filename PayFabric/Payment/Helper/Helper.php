@@ -512,6 +512,7 @@ class Helper extends AbstractHelper
     public function getCustomerIdByQuote(Quote $quote)
     {
         $customerId = $quote->getCustomerId();
+        if (empty($customerId)) return '';
         if (strlen($customerId) > 20) {
             $customerId = substr($customerId, -20);
         }
