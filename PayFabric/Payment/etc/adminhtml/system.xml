@@ -24,7 +24,7 @@
                 <field id="merchant_password" translate="label" type="obscure" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Password</label>
                     <comment>
-                        Entering the Password is required before each "Connection Test".
+                        Entering the Website Password is required before each "Connection Test".
                     </comment>
                     <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
                     <config_path>payment/payfabric_payment/merchant_password</config_path>
