@@ -146,7 +146,7 @@ class Builder extends RequestBase {
         );
         //set level3
         $this->_data['Document']['Lines'] = array();
-        if(!empty($this->lineItems)) {
+        if($this->lineItems && is_array($this->lineItems)) {
             foreach ($this->lineItems as $item) {
                 $this->_data['Document']['Lines'][]['Columns'] = array(
                     array('Name' => 'ItemProdCode', 'Value' => $item['product_code']),
