@@ -36,7 +36,7 @@ class Builder extends RequestBase {
         }else{
             throw new \InvalidArgumentException("[PayFabric Class] Field 'Type' cannot be null.");
         }
-        if (isset($this->Amount) && is_numeric($this->Amount)) {
+        if (strlen($this->Amount) >0 && is_numeric($this->Amount)) {
             $this->_data["Amount"] = $this->Amount;
         }else{
             throw new \InvalidArgumentException("[PayFabric Class] Field 'Amount' is invalid.");
@@ -57,7 +57,7 @@ class Builder extends RequestBase {
         if (strlen($this->referenceNum) > 0) {
             $this->_data["TrxUserDefine1"] = $this->referenceNum;
         }
-        if (isset($this->Amount) && is_numeric($this->Amount)) {
+        if (strlen($this->Amount) > 0 && is_numeric($this->Amount)) {
             $this->_data["Amount"] = $this->Amount;
         }else{
             throw new \InvalidArgumentException("[PayFabric Class] Field 'Amount' is invalid.");

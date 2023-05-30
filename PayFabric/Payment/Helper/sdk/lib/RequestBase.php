@@ -1,7 +1,7 @@
 <?php
 namespace PayFabric\Payment\Helper\sdk\lib;
+
 class RequestBase {
-    
     protected $version = '1.0.0';
     protected $timeout = 60;
     protected static $sslVerifyPeer = 0;
@@ -9,6 +9,7 @@ class RequestBase {
     public static $logger;
     public static $loggerSev;
     public static $debug;
+    public $request = array();
 
     public function setEndpoint($param) {
         try {
@@ -48,7 +49,7 @@ class RequestBase {
             if (!$array) { 
             	throw new \BadMethodCallException('[PayFabric Class] INTERNAL ERROR on '.__METHOD__.' method: no array to format.', 400);
             }
-            foreach($array as $k => $v) { 
+            foreach($array as $k => $v) {
             	$this->$k = $v; 
             }
             if (is_object(self::$logger)) { 
@@ -172,8 +173,16 @@ class RequestBase {
     /**
      * @return mixed
      */
-    public function __get($var)
+    public function __get($key)
     {
-        return '';
+        return $this->request[$key] ?? '';
+    }
+
+    /**
+     * Set dynamic properties into array to be compatible with php8.2
+     */
+    public function __set($key, $value)
+    {
+        $this->request[$key] = $value;
     }
 }
