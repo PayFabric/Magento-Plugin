@@ -18,7 +18,7 @@ class Callback extends \PayFabric\Payment\Controller\Checkout implements CsrfAwa
     {
         $returnUrl = $this->getCheckoutHelper()->getUrl('checkout');
 
-        if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] == 'GET') {
+        if ($this->getRequest()->isGet()) {
             // Get callback
             $params = $this->getRequest()->getParams();
         } else if ($raw_post = file_get_contents('php://input')) {
