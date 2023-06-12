@@ -1,6 +1,7 @@
 <?php
 
 namespace PayFabric\Payment\Controller\Hosted;
+use Magento\Framework\Controller\ResultFactory;
 
 class Request extends \PayFabric\Payment\Controller\Checkout
 {
@@ -11,14 +12,16 @@ class Request extends \PayFabric\Payment\Controller\Checkout
                 $this->getCheckoutHelper()->getUrl( 'checkout' )
             )->sendResponse();
         }
-
+        /** @var \Magento\Framework\Controller\Result\Json $resultJson */
+        $resultJson = $this->resultFactory->create(ResultFactory::TYPE_JSON);
         $quote         = $this->getQuote();
         $email         = $this->getRequest()->getParam( 'email' );
         $paymentMethod = $this->getPaymentMethod();
         //Update payment
         if ($this->getRequest()->getParam( 'action' ) == 'update' && $this->getRequest()->getParam( 'paymentTrx' )) {
             $result = $this->getCheckoutHelper()->updatePayment( $this->getRequest()->getParam( 'paymentTrx' ), $quote, $paymentMethod );
-            die(json_encode($result));
+            $resultJson->setData($result);
+            return $resultJson;
         }
 
         $quote->setCustomerEmail( $email );
@@ -32,6 +35,7 @@ class Request extends \PayFabric\Payment\Controller\Checkout
         }
         $this->_quoteRepository->save( $quote );
         $result = $this->getCheckoutHelper()->processPayment( $paymentMethod, $quote );
-        die(json_encode($result));
+        $resultJson->setData($result);
+        return $resultJson;
     }
 }

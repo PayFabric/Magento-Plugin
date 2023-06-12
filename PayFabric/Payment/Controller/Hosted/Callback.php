@@ -4,6 +4,7 @@ namespace PayFabric\Payment\Controller\Hosted;
 use Magento\Framework\App\CsrfAwareActionInterface;
 use Magento\Framework\App\Request\InvalidRequestException;
 use Magento\Framework\App\RequestInterface;
+use Magento\Framework\Controller\ResultFactory;
 
 class Callback extends \PayFabric\Payment\Controller\Checkout implements CsrfAwareActionInterface
 {
@@ -17,7 +18,7 @@ class Callback extends \PayFabric\Payment\Controller\Checkout implements CsrfAwa
     {
         $returnUrl = $this->getCheckoutHelper()->getUrl('checkout');
 
-        if ($_SERVER['REQUEST_METHOD'] == 'GET') {
+        if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] == 'GET') {
             // Get callback
             $params = $this->getRequest()->getParams();
         } else if ($raw_post = file_get_contents('php://input')) {
@@ -165,6 +166,8 @@ class Callback extends \PayFabric\Payment\Controller\Checkout implements CsrfAwa
 
     public function postCallback($params){
         sleep(10);
+        /** @var \Magento\Framework\Controller\Result\Json $resultJson */
+        $resultJson = $this->resultFactory->create(ResultFactory::TYPE_JSON);
         $paymentMethod = $this->getPaymentMethod();
         try {
             $transactionId = $params['TrxKey'];
@@ -172,7 +175,10 @@ class Callback extends \PayFabric\Payment\Controller\Checkout implements CsrfAwa
         } catch (\Exception $e) {
             throw new \Exception( sprintf( 'Error post callback to get the result: "%s"', $e->getMessage() ) );
         }
-        if($params['Status'] != 'Approved')   die(json_encode(false));
+        if($params['Status'] != 'Approved') {
+            $resultJson->setData(__("Your payment was not approved!"));
+            return $resultJson;
+        }
         // Get payment method code
         $code = $paymentMethod->getCode();
         $refNo = isset($result->TrxUserDefine1) ? $result->TrxUserDefine1 : '';
@@ -180,7 +186,8 @@ class Callback extends \PayFabric\Payment\Controller\Checkout implements CsrfAwa
         $quote = $this->getCheckoutHelper()->getQuoteByIncrementId($refNo);
 
         if (!$order && !$quote) {
-            die(json_encode(__('Missing order and quote data!')));
+            $resultJson->setData(__("Missing order and quote data!"));
+            return $resultJson;
         }
 
         if ($quote && !$order) {
@@ -208,7 +215,8 @@ class Callback extends \PayFabric\Payment\Controller\Checkout implements CsrfAwa
                 throw new \Exception( sprintf( 'Error post callback to place the order: "%s"', $e->getMessage() ) );
             }
         }
-        die(json_encode(true));
+        $resultJson->setData(true);
+        return $resultJson;
     }
 
     public function createCsrfValidationException(RequestInterface $request): ?InvalidRequestException

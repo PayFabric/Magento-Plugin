@@ -60,7 +60,7 @@ class Request extends Builder {
     
     private function debugger($string) {
         $_d = date('Y-m-d H:m:s',substr(microtime(),"11","10")).":".substr(microtime(),"2","5");
-        echo("<br>".str_repeat("-",20)."<br>[".$_d."] ".$string."<br>".str_repeat("-",20)."<br>");
+        print_r("<br>".str_repeat("-",20)."<br>[".$_d."] ".$string."<br>".str_repeat("-",20)."<br>");
     }
     
 }

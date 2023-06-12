@@ -219,6 +219,9 @@ class Helper extends AbstractHelper
                     break;
                 case "UPDATE":
                     $maxiPago->updateTransaction($params);
+                    if(empty(json_decode($maxiPago->response)->Result)){
+                        throw new \UnexpectedValueException($maxiPago->response, 503);
+                    }
                     break;
                 case "GET_WALLETS":
                     $maxiPago->getWallets($params['customer_id']);
