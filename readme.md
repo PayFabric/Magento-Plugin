@@ -6,17 +6,16 @@ Requires an active PayFabric account. Development can be done on a PayFabric San
 ## Description
 PayFabric gateway extension allows you to add PayFabric payment processing capabilities into Magento 2.3 or higher without any custom coding.
 
-## Presentation Modes
-
+## Display Modes
 The plugin offers three modes to present the Hosted Payment Page:
 - **Dialog**
 - **Iframe**
 - **Redirect**
 
-## Alternative Payment Methods Supported
-
+## Alternative Payment Methods
+Alternative Payment Methods supported by each display mode:
 | Payment Method   | Dialog | Iframe | Redirect |
-|------------------|--------|--------|----------|
+|------------------|:------:|:------:|:--------:|
 | **Apple Pay**    | ✔      | ✘      | ✘        |
 | **Google Pay**   | ✔      | ✘      | ✔        |
 | **PayPal/Venmo** | ✔      | ✘      | ✘        |
