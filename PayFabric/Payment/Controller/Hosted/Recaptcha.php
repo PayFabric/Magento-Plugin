@@ -35,14 +35,6 @@ class Recaptcha extends \Magento\Framework\App\Action\Action
         parent::__construct($context);
     }
 
-    public function execute1()
-    {
-        $resultJson = $this->resultFactory->create(ResultFactory::TYPE_JSON);
-        $res = $this->validate();
-        $resultJson->setData($res);
-        return $resultJson;
-    }
-
     public function execute()
     {
         try {
