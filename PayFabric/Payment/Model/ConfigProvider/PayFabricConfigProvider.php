@@ -42,6 +42,7 @@ class PayFabricConfigProvider implements ConfigProviderInterface
             if ($this->methods[$code]->isAvailable()) {
                 $config['payment'] [$code]['redirectUrl'] = $this->getMethodRedirectUrl($code);
                 $config['payment'] [$code]['isInPlace'] = $this->_helper->isInPlace('display_mode');
+                $config['payment'] [$code]['recaptchaUrl'] = $this->getRecaptchaUrl($code);
             }
         }
 
@@ -51,5 +52,10 @@ class PayFabricConfigProvider implements ConfigProviderInterface
     private function getMethodRedirectUrl($code)
     {
         return $this->methods[$code]->getCheckoutRedirectUrl();
+    }
+
+    private function getRecaptchaUrl($code)
+    {
+        return $this->methods[$code]->getRecaptchaUrl();
     }
 }

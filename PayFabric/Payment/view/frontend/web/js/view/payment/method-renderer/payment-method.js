@@ -14,10 +14,12 @@ define(
         'Magento_Checkout/js/model/error-processor',
         'axios',
         'iframeResizer',
-        'payfabricpayments'
+        'payfabricpayments',
+        'Magento_ReCaptchaWebapiUi/js/webapiReCaptchaRegistry',
+        'mage/storage'
     ],
     function(ko, $, alert, Component, setBillingAddressAction, setPaymentMethodAction, quote,
-             additionalValidators, fullScreenLoader, errorProcessor, axios, iframeResizer, payfabricpayments) {this.axios = axios;this.iframeResizer = iframeResizer;this.payfabricpayments = payfabricpayments;
+             additionalValidators, fullScreenLoader, errorProcessor, axios, iframeResizer, payfabricpayments, recaptchaRegistry, storage) {this.axios = axios;this.iframeResizer = iframeResizer;this.payfabricpayments = payfabricpayments;
         'use strict';
         var paymentMethod = ko.observable(null);
         var timer = false;
@@ -77,13 +79,13 @@ define(
                 });
 
             },
-            /** Redirect mode*/
-            continueToPayment: function(data, event) {
+
+            submitPayment: function(data, event) {
                 timer != false && clearTimeout( timer);
                 event.preventDefault();
                 event.stopPropagation();
                 fullScreenLoader.startLoader();
-                if (this.validate() && additionalValidators.validate()) {
+                if (additionalValidators.validate()) {
                     var self = this;
                     var billingAddress = quote.billingAddress();
                     setBillingAddressAction().done(function() {
@@ -130,7 +132,7 @@ define(
                                     fullScreenLoader.stopLoader();
                                 },
                                 complete: function (response) {
-                                    console.log('complete continueToPayment.');
+                                    console.log('complete submitPayment.');
                                 }
                             });
 
@@ -149,15 +151,59 @@ define(
                     fullScreenLoader.stopLoader();
                 }
             },
-            validate: function() {
-                return true;
+            continueToPayment: function(data, event) {
+                var self = this;
+                var payload = {'xReCaptchaValue': ''};
+                var recaptchaDeferred;
+                if (recaptchaRegistry.triggers.hasOwnProperty('recaptcha-checkout-place-order')) {
+                    //ReCaptcha is present for checkout
+                    recaptchaDeferred = $.Deferred();
+                    recaptchaRegistry.addListener('recaptcha-checkout-place-order', function (token) {
+                        //Add reCaptcha value to place-order request and resolve deferred with the API call results
+                        payload.xReCaptchaValue = token;
+                        fullScreenLoader.startLoader();
+                        self.validateReCaptcha(payload).done(function (response) {
+                            recaptchaDeferred.resolve.apply(recaptchaDeferred, arguments);
+                            if (true == response.success) self.submitPayment(data, event);
+                            else {
+                                errorProcessor.process({
+                                    responseText : JSON.stringify({
+                                        message: response.error_message
+                                    })
+                                }, self.messageContainer);
+                            }
+                        }).fail(function () {
+                            recaptchaDeferred.reject.apply(recaptchaDeferred, arguments);
+                        }).always(function () {
+                            fullScreenLoader.stopLoader();
+                        });
+                    });
+                    //Trigger ReCaptcha validation
+                    recaptchaRegistry.triggers['recaptcha-checkout-place-order']();
+
+                    if (
+                        !recaptchaRegistry._isInvisibleType.hasOwnProperty('recaptcha-checkout-place-order') ||
+                        recaptchaRegistry._isInvisibleType['recaptcha-checkout-place-order'] === false
+                    ) {
+                        //remove listener so that place order action is only triggered by the 'Place Order' button
+                        recaptchaRegistry.removeListener('recaptcha-checkout-place-order');
+                    }
+
+                    return recaptchaDeferred;
+                }
+                self.submitPayment(data, event);
+            },
+            validateReCaptcha: function(payload) {
+                return storage.post(
+                    window.checkoutConfig.payment['payfabric_payment'].recaptchaUrl, '', true, 'application/json', {'X-ReCaptcha': payload.xReCaptchaValue}
+                );
             },
             getPaymentTrx: function() {
                 return this.paymentTrx;
             },
             setPaymentTrx: function(paymentTrx) {
                 this.paymentTrx = paymentTrx;
-            },
+            }
         });
     }
 );

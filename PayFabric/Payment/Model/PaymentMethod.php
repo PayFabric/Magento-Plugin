@@ -207,6 +207,16 @@ class PaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod impleme
     }
 
     /**
+     * Recaptcha validation URL.
+     *
+     * @return string
+     */
+    public function getRecaptchaUrl()
+    {
+        return $this->_urlBuilder->getUrl('payfabric/hosted/recaptcha');
+    }
+
+    /**
      * Checkout redirect URL.
      *
      * @see \Magento\Checkout\Controller\Onepage::savePaymentAction()
