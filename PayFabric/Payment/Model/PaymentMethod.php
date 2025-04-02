@@ -275,7 +275,7 @@ class PaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod impleme
             "amount" => $amount,
             "originalMerchantTxId" => $payment->getParentTransactionId()
         );
-		$result = $this->_helper->executeGatewayTransaction("CAPTURE", $params);
+		$result = $this->_helper->executeGatewayTransaction("CAPTURE", $params, $this->getStore());
         if(strtolower($result->Status) == 'approved') {
             $payment->setTransactionId($result->TrxKey)
                 ->setTransactionAdditionalInfo(\Magento\Sales\Model\Order\Payment\Transaction::RAW_DETAILS, json_decode(json_encode($result),true));
@@ -310,7 +310,7 @@ class PaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod impleme
             "amount" => $amount,
             "originalMerchantTxId" => $payment->getRefundTransactionId()
         );
-        $result = $this->_helper->executeGatewayTransaction("REFUND", $params);
+        $result = $this->_helper->executeGatewayTransaction("REFUND", $params, $this->getStore());
         if(strtolower($result->Status) == 'approved') {
             $payment->setTransactionId($result->TrxKey)
                 ->setTransactionAdditionalInfo(\Magento\Sales\Model\Order\Payment\Transaction::RAW_DETAILS, json_decode(json_encode($result), true));
@@ -359,7 +359,7 @@ class PaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod impleme
         $params = array(
             "originalMerchantTxId" => $payment->getParentTransactionId()
         );
-        $result = $this->_helper->executeGatewayTransaction("VOID", $params);
+        $result = $this->_helper->executeGatewayTransaction("VOID", $params, $this->getStore());
         if(strtolower($result->Status) == 'approved') {
             $payment->setTransactionId($result->TrxKey)
                 ->setTransactionAdditionalInfo(\Magento\Sales\Model\Order\Payment\Transaction::RAW_DETAILS, json_decode(json_encode($result), true));
