@@ -168,14 +168,14 @@ class Helper extends AbstractHelper
      *
      * @return string|object
      */
-    public function executeGatewayTransaction($action, $params = array())
+    public function executeGatewayTransaction($action, $params = array(), $storeId = null)
     {
         try {
             $maxiPago = new Payments();
-            $maxiPago->setLogger(PayFabric_LOG_DIR, $this->getConfigData('debug_log'));
-            $maxiPago->setCredentials($this->getConfigData('merchant_id') , $this->getConfigData('merchant_password'));
+            $maxiPago->setLogger(PayFabric_LOG_DIR, $this->getConfigData('debug_log', $storeId));
+            $maxiPago->setCredentials($this->getConfigData('merchant_id', $storeId) , $this->getConfigData('merchant_password', $storeId));
             $maxiPago->setDebug(PayFabric_DEBUG);
-            $maxiPago->setEnvironment($this->getConfigData('environment'));
+            $maxiPago->setEnvironment($this->getConfigData('environment', $storeId));
 
             switch ($action){
                 case "TOKEN":
