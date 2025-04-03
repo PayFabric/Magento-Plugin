@@ -1,10 +1,10 @@
-## PayFabric Gateway Plugin for Magento 2.3 or Higher
-Requires Magento version 2.3 or higher.
+## PayFabric Gateway Plugin for Magento 2.4.3 or Higher
+Requires Magento version 2.4.3 or higher.
 
 Requires an active PayFabric account. Development can be done on a PayFabric Sandbox account. PayFabric is an EVO Payments processing platform.
 
 ## Description
-PayFabric gateway extension allows you to add PayFabric payment processing capabilities into Magento 2.3 or higher without any custom coding.
+PayFabric gateway extension allows you to add PayFabric payment processing capabilities into Magento 2.4.3 or higher without any custom coding.
 
 ## Display Modes
 The plugin offers three modes to present the Hosted Payment Page:

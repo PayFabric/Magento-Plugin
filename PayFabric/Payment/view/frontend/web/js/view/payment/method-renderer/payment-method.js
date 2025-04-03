@@ -154,11 +154,20 @@ define(
             continueToPayment: function(data, event) {
                 var self = this;
                 var payload = {'xReCaptchaValue': ''};
-                var recaptchaDeferred;
-                if (recaptchaRegistry.triggers.hasOwnProperty('recaptcha-checkout-place-order')) {
+                var recaptchaDeferred,
+                    reCaptchaId = 'recaptcha-checkout-place-order',
+                    $activeReCaptcha;
+
+                $activeReCaptcha = $('.recaptcha-checkout-place-order:visible .g-recaptcha');
+
+                if ($activeReCaptcha.length > 0) {
+                    reCaptchaId = $activeReCaptcha.last().attr('id');
+                }
+
+                if (recaptchaRegistry.triggers.hasOwnProperty(reCaptchaId)) {
                     //ReCaptcha is present for checkout
                     recaptchaDeferred = $.Deferred();
-                    recaptchaRegistry.addListener('recaptcha-checkout-place-order', function (token) {
+                    recaptchaRegistry.addListener(reCaptchaId, function (token) {
                         //Add reCaptcha value to place-order request and resolve deferred with the API call results
                         payload.xReCaptchaValue = token;
                         fullScreenLoader.startLoader();
@@ -179,14 +188,14 @@ define(
                         });
                     });
                     //Trigger ReCaptcha validation
-                    recaptchaRegistry.triggers['recaptcha-checkout-place-order']();
+                    recaptchaRegistry.triggers[reCaptchaId]();
 
                     if (
-                        !recaptchaRegistry._isInvisibleType.hasOwnProperty('recaptcha-checkout-place-order') ||
-                        recaptchaRegistry._isInvisibleType['recaptcha-checkout-place-order'] === false
+                        !recaptchaRegistry._isInvisibleType.hasOwnProperty(reCaptchaId) ||
+                        recaptchaRegistry._isInvisibleType[reCaptchaId] === false
                     ) {
                         //remove listener so that place order action is only triggered by the 'Place Order' button
-                        recaptchaRegistry.removeListener('recaptcha-checkout-place-order');
+                        recaptchaRegistry.removeListener(reCaptchaId);
                     }
 
                     return recaptchaDeferred;
