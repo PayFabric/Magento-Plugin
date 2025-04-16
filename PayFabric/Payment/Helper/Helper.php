@@ -11,7 +11,7 @@ use PayFabric\Payment\Model\Config\Source\Environment;
 class Helper extends AbstractHelper
 {
     const METHOD_CODE = 'payfabric_payment';
-    const PLUGIN_VERSION = '2.1.1';
+    const PLUGIN_VERSION = '2.1.2';
     const PLUGIN_NAME = 'Magento PayFabric Gateway';
 
     /**
