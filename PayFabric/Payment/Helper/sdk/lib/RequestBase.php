@@ -1,6 +1,7 @@
 <?php
 namespace PayFabric\Payment\Helper\sdk\lib;
 
+#[\AllowDynamicProperties]
 class RequestBase {
     protected $version = '1.0.0';
     protected $timeout = 60;
@@ -184,5 +185,10 @@ class RequestBase {
     public function __set($key, $value)
     {
         $this->request[$key] = $value;
+    }
+
+    public function __isset($key)
+    {
+        return isset($this->request[$key]);
     }
 }
