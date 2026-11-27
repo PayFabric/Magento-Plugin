@@ -4,11 +4,7 @@ define([
     'use strict';
 
     function Payments(options, nonce) {
-        if (!nonce) {
-            throw new Error('PayFabric checkout CSP nonce is missing.');
-        }
-
-        this.cspNonce = nonce;
+        this.cspNonce = nonce || null;
         PayFabricPayments.call(this, options);
     }
 
@@ -19,7 +15,7 @@ define([
         var script = PayFabricPayments.prototype.getScriptTag.call(this, method, handler);
         var hostname = new URL(script.src, window.location.href).hostname;
 
-        if (hostname === 'paypal.com' || hostname.endsWith('.paypal.com')) {
+        if (this.cspNonce && (hostname === 'paypal.com' || hostname.endsWith('.paypal.com'))) {
             script.setAttribute('nonce', this.cspNonce);
             script.setAttribute('data-csp-nonce', this.cspNonce);
         }

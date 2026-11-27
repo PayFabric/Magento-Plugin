@@ -3,7 +3,7 @@
 namespace PayFabric\Payment\Model\ConfigProvider;
 
 use Magento\Checkout\Model\ConfigProviderInterface;
-use Magento\Csp\Helper\CspNonceProvider;
+use Magento\Framework\App\ObjectManager;
 use Magento\Payment\Helper\Data as PaymentHelper;
 
 class PayFabricConfigProvider implements ConfigProviderInterface
@@ -20,13 +20,17 @@ class PayFabricConfigProvider implements ConfigProviderInterface
 
     public function __construct(
         PaymentHelper $paymentHelper,
-        \PayFabric\Payment\Helper\Helper $helper,
-        CspNonceProvider $cspNonceProvider
+        \PayFabric\Payment\Helper\Helper $helper
     )
     {
         $this->_paymentHelper = $paymentHelper;
         $this->_helper = $helper;
-        $this->cspNonceProvider = $cspNonceProvider;
+        $this->cspNonceProvider = null;
+
+        $cspNonceProviderClass = 'Magento\Csp\Helper\CspNonceProvider';
+        if (class_exists($cspNonceProviderClass)) {
+            $this->cspNonceProvider = ObjectManager::getInstance()->get($cspNonceProviderClass);
+        }
 
         foreach ($this->_methodCodes as $code) {
             $this->methods[$code] = $this->_paymentHelper->getMethodInstance($code);
@@ -47,7 +51,9 @@ class PayFabricConfigProvider implements ConfigProviderInterface
                 $config['payment'] [$code]['redirectUrl'] = $this->getMethodRedirectUrl($code);
                 $config['payment'] [$code]['isInPlace'] = $this->_helper->isInPlace('display_mode');
                 $config['payment'] [$code]['recaptchaUrl'] = $this->getRecaptchaUrl($code);
-                $config['payment'] [$code]['cspNonce'] = $this->cspNonceProvider->generateNonce();
+                $config['payment'] [$code]['cspNonce'] = $this->cspNonceProvider
+                    ? $this->cspNonceProvider->generateNonce()
+                    : null;
                 $config['payment'] [$code]['assetBaseUrl'] = $this->_helper->getAssetBaseUrl();
             }
         }
