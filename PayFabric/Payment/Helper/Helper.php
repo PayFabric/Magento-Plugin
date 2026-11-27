@@ -11,7 +11,7 @@ use PayFabric\Payment\Model\Config\Source\Environment;
 class Helper extends AbstractHelper
 {
     const METHOD_CODE = 'payfabric_payment';
-    const PLUGIN_VERSION = '2.1.2';
+    const PLUGIN_VERSION = '2.1.3';
     const PLUGIN_NAME = 'Magento PayFabric Gateway';
 
     /**
@@ -93,6 +93,12 @@ class Helper extends AbstractHelper
         $maxiPago = new Payments();
         $maxiPago->setEnvironment($this->getConfigData('environment'));
         return $maxiPago->jsUrl;
+    }
+
+    public function getAssetBaseUrl()
+    {
+        $url = parse_url($this->getJsUrl());
+        return $url['scheme'] . '://' . $url['host'];
     }
 
     /**

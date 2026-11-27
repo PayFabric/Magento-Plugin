@@ -12,14 +12,12 @@ define(
         'Magento_Checkout/js/model/payment/additional-validators',
         'Magento_Checkout/js/model/full-screen-loader',
         'Magento_Checkout/js/model/error-processor',
-        'axios',
-        'iframeResizer',
-        'payfabricpayments',
+        'PayFabric_Payment/js/payfabric-sdk!load',
         'Magento_ReCaptchaWebapiUi/js/webapiReCaptchaRegistry',
         'mage/storage'
     ],
     function(ko, $, alert, Component, setBillingAddressAction, setPaymentMethodAction, quote,
-             additionalValidators, fullScreenLoader, errorProcessor, axios, iframeResizer, payfabricpayments, recaptchaRegistry, storage) {this.axios = axios;this.iframeResizer = iframeResizer;this.payfabricpayments = payfabricpayments;
+             additionalValidators, fullScreenLoader, errorProcessor, payfabricSdk, recaptchaRegistry, storage) {
         'use strict';
         var paymentMethod = ko.observable(null);
         var timer = false;
@@ -30,6 +28,9 @@ define(
             },
             initialize: function() {
                 this._super();
+                this.axios = payfabricSdk.axios;
+                this.iframeResizer = payfabricSdk.iframeResizer;
+                this.payfabricpayments = payfabricSdk.payfabricpayments;
                 if(window.checkoutConfig.payment['payfabric_payment'].isInPlace) {
                     this.initIframe();
                 }
@@ -48,7 +49,7 @@ define(
                             if (typeof response.result.option === "undefined") {
                                 $.mage.redirect(response.result);
                             }else{
-                                new payfabricpayments($.extend(response.result.option, {
+                                new self.payfabricpayments($.extend(response.result.option, {
                                     successCallback: function (data) {
                                     },
                                     failureCallback: function (data) {
@@ -58,7 +59,7 @@ define(
                                     cancelCallback: function () {
                                         location.reload();
                                     }
-                                }));
+                                }), window.checkoutConfig.payment['payfabric_payment'].cspNonce);
                                 self.setPaymentTrx(response.result.paymentTrx);
                             }
                         } else if(response.status === "error"){

@@ -26,7 +26,6 @@ class Request extends Builder {
         	self::$logger->logInfo('Sending data to '.$this->endpoint);
         }
         $curlInfo = curl_getinfo($curl);
-        curl_close($curl);
         if ($this->xmlResponse) {
             if (is_object(RequestBase::$logger)) {
                 self::$logger->logInfo('Response received');
